@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+.env.local
+.env*.local
+Dockerfile
+docker-compose.yml
+.dockerignore
+README.md
+.vscode
+.windsurf

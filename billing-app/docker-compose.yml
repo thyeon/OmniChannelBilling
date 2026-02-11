@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  billing-app:
+    build: .
+    container_name: billing-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/billing
+      - MONGODB_DB_NAME=billing
+    depends_on:
+      - mongo
+    networks:
+      - billing-network
+
+  mongo:
+    image: mongo:4.4
+    container_name: billing-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - billing-network
+
+volumes:
+  mongo-data:
+
+networks:
+  billing-network:
+    driver: bridge
