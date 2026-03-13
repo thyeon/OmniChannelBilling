@@ -79,7 +79,7 @@ Authorization: Bearer {AUTOCOUNT_API_TOKEN}
 1. Receive request with period and mode
        │
        ▼
-2. Fetch client master data from Partner API
+2. Fetch client master data from Partner API (for potential future use - validation)
        │
        ▼
 3. Fetch billable items for given period
