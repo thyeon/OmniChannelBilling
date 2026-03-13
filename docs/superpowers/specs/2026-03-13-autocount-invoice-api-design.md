@@ -91,7 +91,7 @@ Authorization: Bearer {AUTOCOUNT_API_TOKEN}
 5. Transform each line_item to AutoCount schema
        │
        ▼
-6. Generate Excel with all 49 headers (16 standard + 33 empty)
+6. Generate Excel with all 52 headers (16 standard + 3 AIA Malaysia + 33 empty)
        │
        ▼
 7a. Download mode → stream Excel to client
@@ -106,7 +106,7 @@ Authorization: Bearer {AUTOCOUNT_API_TOKEN}
 
 | AutoCount Header | Value / Logic |
 | :--- | :--- |
-| DocNo | `"<>"` |
+| DocNo | `"<>"` (AutoCount placeholder for auto-generate document number) |
 | DocDate | Current date (DD/MM/YYYY) |
 | TaxDate | Current date (DD/MM/YYYY) |
 | SalesLocation | `"HQ"` |
@@ -179,6 +179,12 @@ The `/billable` endpoint returns items with the following structure (per API doc
 - **Request timeout:** 30 seconds per external API call
 - If timeout occurs, return 502 with error details
 
+### Logging
+
+- **Skipped records:** Log at `warn` level when a billable item is skipped (non-AIA Malaysia)
+- **Format:** `{ timestamp: ISO8601, level: "warn", reason: "non_aia_client", source_client_name: "..." }`
+- **Successful generation:** Log at `info` level with record count and period
+
 ### AIA Malaysia Special Fields
 
 When `source_client_name === "AIA Malaysia"`:
@@ -212,6 +218,7 @@ OriginCountry
 | :--- | :--- | :--- |
 | Missing `period` param | 400 | `{ "error": "Missing required parameter: period" }` |
 | Invalid period format | 400 | `{ "error": "Invalid period format. Use YYYY-MM" }` |
+| Invalid `mode` param | 400 | `{ "error": "Invalid mode. Use 'download' or 'save'" }` |
 | API token missing/invalid | 401 | `{ "error": "Unauthorized: Invalid or missing API token" }` |
 | External API call fails | 502 | `{ "error": "Failed to fetch from Partner API", "details": "..." }` |
 | Client master data returns empty | 502 | `{ "error": "Failed to fetch client master data", "details": "..." }` |
@@ -237,7 +244,7 @@ OriginCountry
 3. ✅ AIA Malaysia specific mapping is applied correctly
 4. ✅ Non-AIA Malaysia records are skipped (logged as warning)
 5. ✅ Output is a valid .xlsx file where one line_item = one row
-6. ✅ All 49 headers (16 standard + 33 empty) are present in the final Excel file
+6. ✅ All 52 headers (16 standard + 3 AIA Malaysia + 33 empty) are present in the final Excel file
 7. ✅ Download mode returns Excel file directly
 8. ✅ Save mode writes file to /exports and returns path
 9. ✅ Invalid requests return appropriate error responses
