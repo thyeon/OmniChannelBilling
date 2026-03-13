@@ -1,0 +1,191 @@
+# AutoCount Invoice Integration API - Design Specification
+
+**Date:** 2026-03-13
+**Status:** Approved
+
+---
+
+## 1. Project Overview
+
+Build a Next.js API Route Handler to orchestrate data from the INGLAB Partner API and generate a formatted Excel file for AutoCount bulk import. The service will be integrated into the existing billing-app as Next.js API routes.
+
+---
+
+## 2. API Structure
+
+### Endpoint
+
+```
+GET /api/autocount/generate-excel
+```
+
+### Query Parameters
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `period` | string | Yes | Billing period in YYYY-MM format (e.g., "2026-03") |
+| `mode` | string | No | `"download"` (default) or `"save"` |
+
+### Responses
+
+**Download Mode (default):**
+- Content-Type: `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- Content-Disposition: `attachment; filename="autocount-invoice-2026-03.xlsx"`
+
+**Save Mode:**
+```json
+{
+  "success": true,
+  "filePath": "/exports/autocount-invoice-2026-03-1699999999.xlsx",
+  "period": "2026-03",
+  "recordCount": 5,
+  "savedAt": "2026-03-13T10:00:00Z"
+}
+```
+
+---
+
+## 3. Technical Configuration
+
+### Environment Variables (.env.local)
+
+```env
+# AutoCount API
+AUTOCOUNT_API_TOKEN=bda81890-f098-4998-85a8-358a2aeb6de1
+AUTOCOUNT_BASE_URL=https://partner-billing-inglab.hypedmind.ai/partner-api/INGLAB
+```
+
+### External API Endpoints
+
+- **Client Master Data:** `GET {AUTOCOUNT_BASE_URL}/clients`
+- **Billable Items:** `GET {AUTOCOUNT_BASE_URL}/billable?period={period}`
+
+---
+
+## 4. Data Flow
+
+```
+1. Receive request with period and mode
+       │
+       ▼
+2. Fetch client master data from Partner API
+       │
+       ▼
+3. Fetch billable items for given period
+       │
+       ▼
+4. Filter: keep only items where source_client_name === "AIA Malaysia"
+       │
+       ▼
+5. Transform each line_item to AutoCount schema
+       │
+       ▼
+6. Generate Excel with all 46+ headers
+       │
+       ▼
+7a. Download mode → stream Excel to client
+7b. Save mode → write to /exports, return path
+```
+
+---
+
+## 5. Excel Field Mapping
+
+### Standard Fields
+
+| AutoCount Header | Value / Logic |
+| :--- | :--- |
+| DocNo | `"<>"` |
+| DocDate | Current date (DD/MM/YYYY) |
+| TaxDate | Current date (DD/MM/YYYY) |
+| SalesLocation | `"HQ"` |
+| SalesAgent | `"Darren Lim"` |
+| CreditTerm | `"Next 30 Days"` |
+| Description | `"INVOICE"` |
+| InclusiveTax | `"FALSE"` |
+| SubmitEInvoice | `"FALSE"` |
+| ProductCode | `"MODE-WA-API"` |
+| AccNo | `"500-0000"` |
+| ClassificationCode | `"22"` |
+| TaxCode | `"SV-8"` |
+| DetailDescription | `line_item.description` |
+| Qty | `line_item.qty` |
+| Unit | `line_item.unit` |
+| UnitPrice | `line_item.unitprice` |
+| LocalTotalCost | `line_item.totalAmount` |
+
+### AIA Malaysia Special Fields
+
+When `source_client_name === "AIA Malaysia"`:
+
+| Field | Value |
+| :--- | :--- |
+| DebtorCode | `"300-0001"` |
+| TaxEntity | `"Tax Entity: C20395547010"` |
+| Address | `"Level 19, Menara AIA, 99, Jalan Ampang, 50450 Kuala Lumpur, Malaysia."` |
+
+### Mandatory Empty Headers (33 columns)
+
+```
+TaxExemptionExpiryDate, PaymentMethod, PaymentRef, PaymentAmt, Email, EmailCC,
+EmailBCC, Attention, Phone1, Fax1, DeliverAddress, DeliverContact, DeliverPhone1,
+DeliverFax1, Ref, Note, Remark1, Remark2, Remark3, Remark4, CurrencyRate,
+ToTaxCurrencyRate, ToBankRate, ShippingRecipientTaxEntity, FreightAllowanceCharge,
+FreightAllowanceChargeReason, ReferenceNumberOfCustomsFormNo1And9,
+FreeTradeAgreementInformation, ReferenceNumberOfCustomsFormNo2, Incoterms,
+AuthorisationNumberForCertifiedExporter, EInvoiceIssueDateTime, EInvoiceUuid,
+ProductVariant, FurtherDescription, DeptNo, Discount, UnitType, TaxExportCountry,
+TaxPermitNo, TaxAdjustment, LocalTaxAdjustment, TariffCode, YourPONo, YourPODate,
+OriginCountry
+```
+
+---
+
+## 6. Error Handling
+
+| Scenario | HTTP Status | Response |
+| :--- | :--- | :--- |
+| Missing `period` param | 400 | `{ "error": "Missing required parameter: period" }` |
+| Invalid period format | 400 | `{ "error": "Invalid period format. Use YYYY-MM" }` |
+| API token missing/invalid | 401 | `{ "error": "Unauthorized: Invalid or missing API token" }` |
+| External API call fails | 502 | `{ "error": "Failed to fetch from Partner API", "details": "..." }` |
+| No matching billable items | 200 | Empty Excel file (no error) |
+| Save mode: write fails | 500 | `{ "error": "Failed to save file", "details": "..." }` |
+
+---
+
+## 7. File Storage
+
+- **Directory:** `{project-root}/exports/`
+- **Filename pattern:** `autocount-invoice-{period}-{timestamp}.xlsx`
+- **Example:** `autocount-invoice-2026-03-1699999999.xlsx`
+
+---
+
+## 8. Acceptance Criteria
+
+1. ✅ Service successfully authenticates using the Bearer token from env
+2. ✅ `/clients` and `/billable` endpoints are called in sequence
+3. ✅ AIA Malaysia specific mapping is applied correctly
+4. ✅ Non-AIA Malaysia records are skipped (logged as warning)
+5. ✅ Output is a valid .xlsx file where one line_item = one row
+6. ✅ All 46+ mandatory headers are present in the final Excel file
+7. ✅ Download mode returns Excel file directly
+8. ✅ Save mode writes file to /exports and returns path
+9. ✅ Invalid requests return appropriate error responses
+
+---
+
+## 9. File Structure
+
+```
+billing-app/
+├── src/
+│   └── app/
+│       └── api/
+│           └── autocount/
+│               └── generate-excel/
+│                   └── route.ts       # Main API handler
+├── exports/                           # Generated Excel files (gitignored)
+└── .env.local                         # Configuration
+```
