@@ -125,6 +125,60 @@ Authorization: Bearer {AUTOCOUNT_API_TOKEN}
 | UnitPrice | `line_item.unitprice` |
 | LocalTotalCost | `line_item.totalAmount` |
 
+### Expected API Response Fields
+
+The `/billable` endpoint returns items with the following structure (per API docs):
+
+```json
+{
+  "id": "draft-SERVICE-001-PARTNER-2026-03-01",
+  "service_id": "SERVICE-001",
+  "client_id": "INGLAB",
+  "client_name": "Partner Company",
+  "source_client_id": "CLIENT-001",
+  "source_client_name": "Original Client",
+  "billing_target": "PARTNER",
+  "service": "WhatsApp Business API",
+  "period_start": "2026-03-01",
+  "period_end": "2026-03-31",
+  "bill_date": "2026-04-01",
+  "currency": "MYR",
+  "line_items": [
+    {
+      "description": "Service description",
+      "qty": 1,
+      "unit": "month",
+      "unitprice": 100.00,
+      "totalAmount": 100.00
+    }
+  ]
+}
+```
+
+**Fields used in Excel mapping:**
+- `source_client_name` - Used to filter for "AIA Malaysia"
+- `line_items[].description` → `DetailDescription`
+- `line_items[].qty` → `Qty`
+- `line_items[].unit` → `Unit`
+- `line_items[].unitprice` → `UnitPrice`
+- `line_items[].totalAmount` → `LocalTotalCost`
+
+### Date Handling
+
+- **DocDate / TaxDate:** Server's current date at time of execution (DD/MM/YYYY format)
+- Example: If generated on 2026-03-13, value is "13/03/2026"
+
+### Duplicate Handling
+
+- **No deduplication:** Each billable item is processed as-is
+- If the same line_item appears multiple times, each will be a separate row in the Excel output
+- This allows AutoCount to handle any business logic for duplicates
+
+### API Timeout
+
+- **Request timeout:** 30 seconds per external API call
+- If timeout occurs, return 502 with error details
+
 ### AIA Malaysia Special Fields
 
 When `source_client_name === "AIA Malaysia"`:
