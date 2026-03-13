@@ -51,14 +51,25 @@ GET /api/autocount/generate-excel
 
 ```env
 # AutoCount API
+# Bearer token for authentication
 AUTOCOUNT_API_TOKEN=bda81890-f098-4998-85a8-358a2aeb6de1
+# Full base URL including partner path (INGLAB partner)
 AUTOCOUNT_BASE_URL=https://partner-billing-inglab.hypedmind.ai/partner-api/INGLAB
+```
+
+### Authentication
+
+All external API requests include the Bearer token:
+```
+Authorization: Bearer {AUTOCOUNT_API_TOKEN}
 ```
 
 ### External API Endpoints
 
 - **Client Master Data:** `GET {AUTOCOUNT_BASE_URL}/clients`
 - **Billable Items:** `GET {AUTOCOUNT_BASE_URL}/billable?period={period}`
+
+**Note:** Based on the Partner API documentation, responses are not paginated. Assume all data is returned in a single response. If pagination is needed in the future, the implementation should be updated.
 
 ---
 
@@ -80,7 +91,7 @@ AUTOCOUNT_BASE_URL=https://partner-billing-inglab.hypedmind.ai/partner-api/INGLA
 5. Transform each line_item to AutoCount schema
        │
        ▼
-6. Generate Excel with all 46+ headers
+6. Generate Excel with all 49 headers (16 standard + 33 empty)
        │
        ▼
 7a. Download mode → stream Excel to client
@@ -149,7 +160,8 @@ OriginCountry
 | Invalid period format | 400 | `{ "error": "Invalid period format. Use YYYY-MM" }` |
 | API token missing/invalid | 401 | `{ "error": "Unauthorized: Invalid or missing API token" }` |
 | External API call fails | 502 | `{ "error": "Failed to fetch from Partner API", "details": "..." }` |
-| No matching billable items | 200 | Empty Excel file (no error) |
+| Client master data returns empty | 502 | `{ "error": "Failed to fetch client master data", "details": "..." }` |
+| No matching billable items (no AIA Malaysia) | 200 | Empty Excel file with headers (no error) |
 | Save mode: write fails | 500 | `{ "error": "Failed to save file", "details": "..." }` |
 
 ---
@@ -157,8 +169,10 @@ OriginCountry
 ## 7. File Storage
 
 - **Directory:** `{project-root}/exports/`
-- **Filename pattern:** `autocount-invoice-{period}-{timestamp}.xlsx`
+- **Implementation:** Create directory if it does not exist
+- **Filename pattern:** `autocount-invoice-{period}-{unix_timestamp}.xlsx`
 - **Example:** `autocount-invoice-2026-03-1699999999.xlsx`
+- **Timestamp:** Unix epoch (seconds since 1970-01-01)
 
 ---
 
@@ -169,7 +183,7 @@ OriginCountry
 3. ✅ AIA Malaysia specific mapping is applied correctly
 4. ✅ Non-AIA Malaysia records are skipped (logged as warning)
 5. ✅ Output is a valid .xlsx file where one line_item = one row
-6. ✅ All 46+ mandatory headers are present in the final Excel file
+6. ✅ All 49 headers (16 standard + 33 empty) are present in the final Excel file
 7. ✅ Download mode returns Excel file directly
 8. ✅ Save mode writes file to /exports and returns path
 9. ✅ Invalid requests return appropriate error responses
