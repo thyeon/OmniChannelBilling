@@ -5,8 +5,9 @@ import { findAllBillingDefaults } from "@/infrastructure/db/billingDefaultsRepos
 import { insertExportHistory } from "@/infrastructure/db/billingExportHistoryRepository";
 import { fetchIngLabBillable } from "@/infrastructure/external/inglabClient";
 import { fetchCowayBillable } from "@/infrastructure/external/cowayClient";
+import { fetchEmailReconSummary } from "@/infrastructure/external/reconClient";
 import { findAllCustomers } from "@/infrastructure/db/customerRepository";
-import { Customer } from "@/types";
+import { Customer, ReconServer } from "@/types";
 
 // Supported clients for export
 const SUPPORTED_CLIENTS = [
@@ -210,6 +211,41 @@ export async function generatePreview(
         qty: item.line_items[0].qty,
         unit_price: rate,
       };
+
+      // Fetch email count from recon server
+      const emailReconServer = customerConfig.reconServers?.find(
+        (r: ReconServer) => r.type === "EMAIL"
+      );
+      if (emailReconServer) {
+        try {
+          const emailData = await fetchEmailReconSummary(emailReconServer, period);
+          const emailCount = emailData.count || 0;
+          if (emailCount > 0) {
+            const emailRate = customerConfig.rates?.EMAIL || 0.11;
+            const emailProductOverride = customerConfig.serviceProductOverrides?.find(
+              (s: { serviceType: string; productCode: string }) => s.serviceType === "EMAIL"
+            );
+            const emailProductCode = emailProductOverride?.productCode || "Email-Blast";
+
+            const emailTemplate = customerConfig.invoiceDescriptionTemplate ||
+              "For {BillingCycle}, the total number of Email sent was {EmailCount}, charged at RM {EmailRate} per message.";
+            const resolvedEmailDescription = resolveTemplate(emailTemplate, {
+              BillingCycle: billingCycle,
+              EmailCount: emailCount.toLocaleString(),
+              EmailRate: emailRate.toFixed(2),
+            });
+
+            item.line_items.push({
+              description: emailProductCode,
+              description_detail: resolvedEmailDescription,
+              qty: emailCount,
+              unit_price: emailRate,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch email recon for Coway:", error);
+        }
+      }
     }
 
     // For Coway, we'll handle it directly below
