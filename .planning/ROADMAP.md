@@ -14,10 +14,12 @@
 2. Export CSV has SMS and EMAIL rows with correct data
 3. Description template applied correctly
 
+**Plan:** 01-PLAN.md (1 plan, Wave 1)
+
 ---
 
 | Phase | Requirements | Status |
 |-------|--------------|--------|
-| Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Pending |
+| Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Planned |
 
 **Coverage:** 3 requirements | Mapped: 3 | Unmapped: 0 ✓
