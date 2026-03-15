@@ -62,6 +62,7 @@ export async function fetchCowayBillable(period: string): Promise<CowayBillableI
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(60000), // 60 second timeout
   });
 
   if (!response.ok) {
