@@ -39,9 +39,26 @@ Plans:
 
 ### Phase 3: AutoCount Invoice Generation - Generate invoices directly in AutoCount Cloud Accounting via API for Coway (Malaysia) Sdn Bhd
 
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 2
+**Goal:** User can generate invoices directly in AutoCount via API for Coway (Malaysia) Sdn Bhd
+
+**Requirements:**
+- INV-01: Create new API endpoint POST /api/invoices/generate-auto
+- INV-02: Create cowayBillingService.ts to fetch SMS, WhatsApp, Email billable data
+- INV-03: Validate customer has AutoCount config (autocountAccountBookId, autocountDebtorCode)
+- INV-04: Check for duplicate invoice before generation
+- INV-05: Build AutoCount invoice payload using customer rates
+- INV-06: Call AutoCount API to create invoice
+- INV-07: Save invoice record to MongoDB with status tracking
+- INV-08: Create Generate Invoice UI page at /billing/generate-invoice
+- INV-09: Support Mock Mode for testing (AUTOCOUNT_MOCK=true)
+
+**Success Criteria:**
+1. API endpoint accepts customerId + billingMonth and returns invoice result
+2. Billable data fetched correctly (SMS, WhatsApp, Email)
+3. Invoice created in AutoCount with correct line items
+4. Invoice record saved in MongoDB
+5. Mock mode works for testing
+
 **Plans:** 0 plans
 
 Plans:
@@ -53,5 +70,6 @@ Plans:
 |-------|--------------|--------|
 | Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Complete |
 | Phase 2 | WA-01, WA-02, WA-03 | Planned |
+| Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | Planned |
 
-**Coverage:** 6 requirements | Mapped: 6 | Unmapped: 0 ✓
+**Coverage:** 15 requirements | Mapped: 15 | Unmapped: 0 ✓
