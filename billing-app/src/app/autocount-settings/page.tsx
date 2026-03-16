@@ -18,6 +18,8 @@ interface AutoCountAccountBook {
   apiKey: string;
   defaultCreditTerm: string;
   defaultSalesLocation: string;
+  defaultTaxCode?: string;
+  taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
 }
@@ -49,6 +51,8 @@ export default function AutoCountSettingsPage() {
     apiKey: "",
     defaultCreditTerm: "Net 30 days",
     defaultSalesLocation: "HQ",
+    defaultTaxCode: "",
+    taxEntity: "",
     invoiceDescriptionTemplate: "",
     furtherDescriptionTemplate: "",
   });
@@ -204,6 +208,8 @@ export default function AutoCountSettingsPage() {
       apiKey: "",
       defaultCreditTerm: "Net 30 days",
       defaultSalesLocation: "HQ",
+      defaultTaxCode: "",
+      taxEntity: "",
       invoiceDescriptionTemplate: "",
       furtherDescriptionTemplate: "",
     });
@@ -232,6 +238,8 @@ export default function AutoCountSettingsPage() {
         apiKey: book.apiKey,
         defaultCreditTerm: book.defaultCreditTerm,
         defaultSalesLocation: book.defaultSalesLocation,
+        defaultTaxCode: book.defaultTaxCode || "",
+        taxEntity: book.taxEntity || "",
         invoiceDescriptionTemplate: book.invoiceDescriptionTemplate || "",
         furtherDescriptionTemplate: book.furtherDescriptionTemplate || "",
       });
@@ -312,7 +320,7 @@ export default function AutoCountSettingsPage() {
                           Account Book ID: {book.accountBookId}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                          Default: {book.defaultCreditTerm} | {book.defaultSalesLocation}
+                          Default: {book.defaultCreditTerm} | {book.defaultSalesLocation} {book.defaultTaxCode ? `| Tax: ${book.defaultTaxCode}` : ""}
                         </p>
                       </div>
                       <div className="flex gap-2">
@@ -480,6 +488,32 @@ export default function AutoCountSettingsPage() {
                   placeholder="HQ"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="defaultTaxCode">Default Tax Code (Optional)</Label>
+              <Input
+                id="defaultTaxCode"
+                value={accountBookForm.defaultTaxCode}
+                onChange={(e) => setAccountBookForm({ ...accountBookForm, defaultTaxCode: e.target.value })}
+                placeholder="SV-6"
+              />
+              <p className="text-xs text-muted-foreground">
+                Tax code for invoice line items (e.g., SV-6, SR, ZRL). Leave empty to not apply tax.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="taxEntity">Tax Entity (Optional)</Label>
+              <Input
+                id="taxEntity"
+                value={accountBookForm.taxEntity}
+                onChange={(e) => setAccountBookForm({ ...accountBookForm, taxEntity: e.target.value })}
+                placeholder="TIN:C12113374050"
+              />
+              <p className="text-xs text-muted-foreground">
+                Tax identification number (e.g., TIN:C12113374050). Shown on invoice.
+              </p>
             </div>
 
             <div className="space-y-2">

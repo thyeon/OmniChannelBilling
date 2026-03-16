@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
+import { NextAuthSessionProvider } from "@/providers/session-provider";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataSeeder } from "@/components/data-seeder";
 
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <DataSeeder />
-          <div className="flex min-h-screen">
-            <AppSidebar />
-            <main className="flex-1 md:ml-60">{children}</main>
-          </div>
-        </QueryProvider>
+        <NextAuthSessionProvider>
+          <QueryProvider>
+            <DataSeeder />
+            <div className="flex min-h-screen">
+              <AppSidebar />
+              <main className="flex-1 md:ml-60">{children}</main>
+            </div>
+          </QueryProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

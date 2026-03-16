@@ -26,7 +26,7 @@ export interface CowayBillableItem {
  * @param period - Format: "2026-03"
  * @returns { dtFrom: string, dtTo: string } in Malaysia timezone (UTC+8)
  */
-function getDateRange(period: string): { dtFrom: string; dtTo: string } {
+export function getDateRange(period: string): { dtFrom: string; dtTo: string } {
   const [year, month] = period.split("-").map(Number);
 
   // Start of month: 1st day at 00:00:00 MYT (UTC+8)
@@ -87,4 +87,45 @@ export async function fetchCowayBillable(period: string): Promise<CowayBillableI
       unit_price: 0,  // Will be populated from MongoDB rates
     }],
   }];
+}
+
+/**
+ * Fetch WhatsApp billable count from WHATSAPP Recon Server API
+ * @param period - Format: "2026-03"
+ * @param whatsappReconServer - ReconServer config containing apiEndpoint, userId, apiKey
+ * @returns WhatsApp total count
+ */
+export async function fetchWhatsAppBillable(
+  period: string,
+  whatsappReconServer: { apiEndpoint: string; userId: string; apiKey: string }
+): Promise<number> {
+  const { dtFrom, dtTo } = getDateRange(period);
+
+  const payload = {
+    user: whatsappReconServer.userId,
+    secret: whatsappReconServer.apiKey,
+    serviceProvider: "ali",  // Different from SMS which uses "gts"
+    dtFrom,
+    dtTo,
+  };
+
+  const response = await fetch(whatsappReconServer.apiEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(60000),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to fetch WhatsApp billable data: ${response.status} - ${error}`);
+  }
+
+  const data: CowayApiResponse = await response.json();
+
+  if (!data.success) {
+    throw new Error(`WhatsApp API returned success: false`);
+  }
+
+  return data.total || 0;
 }

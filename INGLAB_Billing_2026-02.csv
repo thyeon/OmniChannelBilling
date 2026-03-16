@@ -1,0 +1,535 @@
+DocNo,DocDate,TaxDate,SalesLocation,SalesAgent,CreditTerm,Description,DebtorCode,TaxEntity,Address,InclusiveTax,SubmitEInvoice,ProductCode,AccNo,ClassificationCode,TaxCode,DetailDescription,FurtherDescription,Qty,Unit,UnitPrice,LocalTotalCost,ToBankRate,TaxExemptionExpiryDate,PaymentMethod,PaymentRef,PaymentAmt,Email,EmailCC,EmailBCC,Attention,Phone1,Fax1,DeliverAddress,DeliverContact,DeliverPhone1,DeliverFax1,Ref,Note,Remark1,Remark2,Remark3,Remark4,CurrencyRate,ToTaxCurrencyRate,ShippingRecipientTaxEntity,FreightAllowanceCharge,FreightAllowanceChargeReason,ReferenceNumberOfCustomsFormNo1And9,FreeTradeAgreementInformation,ReferenceNumberOfCustomsFormNo2,Incoterms,AuthorisationNumberForCertifiedExporter,EInvoiceIssueDateTime,EInvoiceUuid,ProductVariant,DeptNo,Discount,UnitType,TaxExportCountry,TaxPermitNo,TaxAdjustment,LocalTaxAdjustment,TariffCode,YourPONo,YourPODate,OriginCountry
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (Others)","• Cost Center: MY037101
+• Country: Others
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",35,35,0.3464,12.1240,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AE)","• Cost Center: MY037101
+• Country: AE
+• Pay-per-use: USD 0.0499 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2030,0.2030,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AU)","• Cost Center: MY037101
+• Country: AU
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",11,11,0.2978,3.2758,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (BN)","• Cost Center: MY037101
+• Country: BN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2978,0.5956,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (CH)","• Cost Center: MY037101
+• Country: CH
+• Pay-per-use: USD 0.0592 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2409,0.2409,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (CN)","• Cost Center: MY037101
+• Country: CN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (DE)","• Cost Center: MY037101
+• Country: DE
+• Pay-per-use: USD 0.1365 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.5554,0.5554,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (GB)","• Cost Center: MY037101
+• Country: GB
+• Pay-per-use: USD 0.0529 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",8,8,0.2152,1.7216,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (IE)","• Cost Center: MY037101
+• Country: IE
+• Pay-per-use: USD 0.0592 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2409,0.2409,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (IN)","• Cost Center: MY037101
+• Country: IN
+• Pay-per-use: USD 0.0107 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.0435,0.0435,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (JP)","• Cost Center: MY037101
+• Country: JP
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",4,4,0.2978,1.1912,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (KR)","• Cost Center: MY037101
+• Country: KR
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY037101
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",36438,36438,0.3464,12622.1232,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (NZ)","• Cost Center: MY037101
+• Country: NZ
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SA)","• Cost Center: MY037101
+• Country: SA
+• Pay-per-use: USD 0.0455 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.1851,0.1851,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SG)","• Cost Center: MY037101
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",154,154,0.2978,45.8612,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TC)","• Cost Center: MY037101
+• Country: TC
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.3464,0.3464,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TH)","• Cost Center: MY037101
+• Country: TH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TW)","• Cost Center: MY037101
+• Country: TW
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY037510
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",220,220,0.3464,76.2080,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (Others)","• Cost Center: MY038502
+• Country: Others
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",636,636,0.3464,220.3104,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AE)","• Cost Center: MY038502
+• Country: AE
+• Pay-per-use: USD 0.0499 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",21,21,0.2030,4.2630,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AG)","• Cost Center: MY038502
+• Country: AG
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",14,14,0.3464,4.8496,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AI)","• Cost Center: MY038502
+• Country: AI
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.3464,0.3464,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AU)","• Cost Center: MY038502
+• Country: AU
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",228,228,0.2978,67.8984,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (BN)","• Cost Center: MY038502
+• Country: BN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",22,22,0.2978,6.5516,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (CA)","• Cost Center: MY038502
+• Country: CA
+• Pay-per-use: USD 0.025 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.1017,0.5085,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (CN)","• Cost Center: MY038502
+• Country: CN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.2978,1.4890,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (DE)","• Cost Center: MY038502
+• Country: DE
+• Pay-per-use: USD 0.1365 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.5554,2.7770,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (GB)","• Cost Center: MY038502
+• Country: GB
+• Pay-per-use: USD 0.0529 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",92,92,0.2152,19.7984,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (GU)","• Cost Center: MY038502
+• Country: GU
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",4,4,0.3464,1.3856,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (HK)","• Cost Center: MY038502
+• Country: HK
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",40,40,0.2978,11.9120,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (ID)","• Cost Center: MY038502
+• Country: ID
+• Pay-per-use: USD 0.0411 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.1672,0.8360,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (IE)","• Cost Center: MY038502
+• Country: IE
+• Pay-per-use: USD 0.0592 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",28,28,0.2409,6.7452,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (IT)","• Cost Center: MY038502
+• Country: IT
+• Pay-per-use: USD 0.0691 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2811,0.5622,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (JP)","• Cost Center: MY038502
+• Country: JP
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",19,19,0.2978,5.6582,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (KR)","• Cost Center: MY038502
+• Country: KR
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MO)","• Cost Center: MY038502
+• Country: MO
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.3464,1.7320,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY038502
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",499322,499322,0.3464,172965.1408,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (NL)","• Cost Center: MY038502
+• Country: NL
+• Pay-per-use: USD 0.1597 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",6,6,0.6497,3.8982,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (NZ)","• Cost Center: MY038502
+• Country: NZ
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",9,9,0.2978,2.6802,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (PH)","• Cost Center: MY038502
+• Country: PH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.2978,0.8934,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (PR)","• Cost Center: MY038502
+• Country: PR
+• Pay-per-use: USD 0.074 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",8,8,0.3011,2.4088,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (QA)","• Cost Center: MY038502
+• Country: QA
+• Pay-per-use: USD 0.0341 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",11,11,0.1387,1.5257,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (RO)","• Cost Center: MY038502
+• Country: RO
+• Pay-per-use: USD 0.086 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.3499,1.0497,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SA)","• Cost Center: MY038502
+• Country: SA
+• Pay-per-use: USD 0.0455 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",7,7,0.1851,1.2957,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SE)","• Cost Center: MY038502
+• Country: SE
+• Pay-per-use: USD 0.0592 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.2409,0.7227,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SG)","• Cost Center: MY038502
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",6968,6968,0.2978,2075.0704,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SX)","• Cost Center: MY038502
+• Country: SX
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.3464,1.0392,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TH)","• Cost Center: MY038502
+• Country: TH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",14,14,0.2978,4.1692,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TW)","• Cost Center: MY038502
+• Country: TW
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",33,33,0.2978,9.8274,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY038504
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1587,1587,0.3464,549.7368,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SG)","• Cost Center: MY038504
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",6,6,0.2978,1.7868,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (Others)","• Cost Center: MY038505
+• Country: Others
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.3464,0.3464,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AE)","• Cost Center: MY038505
+• Country: AE
+• Pay-per-use: USD 0.0499 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2030,0.4060,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (AU)","• Cost Center: MY038505
+• Country: AU
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.2978,1.4890,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (BN)","• Cost Center: MY038505
+• Country: BN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",5,5,0.2978,1.4890,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (CN)","• Cost Center: MY038505
+• Country: CN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (DE)","• Cost Center: MY038505
+• Country: DE
+• Pay-per-use: USD 0.1365 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.5554,0.5554,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (GB)","• Cost Center: MY038505
+• Country: GB
+• Pay-per-use: USD 0.0529 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",6,6,0.2152,1.2912,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (HK)","• Cost Center: MY038505
+• Country: HK
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2978,0.5956,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MO)","• Cost Center: MY038505
+• Country: MO
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.3464,0.3464,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY038505
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",27894,27894,0.3464,9662.4816,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (NZ)","• Cost Center: MY038505
+• Country: NZ
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SG)","• Cost Center: MY038505
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",178,178,0.2978,53.0084,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TH)","• Cost Center: MY038505
+• Country: TH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (TW)","• Cost Center: MY038505
+• Country: TW
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (MY)","• Cost Center: MY038508
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1556,1556,0.3464,538.9984,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing (SG)","• Cost Center: MY038508
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2978,0.5956,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (MY)","• Cost Center: 
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",36205,36205,0.3464,12541.4120,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (AU)","• Cost Center: Atom
+• Country: AU
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.2978,0.8934,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (BD)","• Cost Center: Atom
+• Country: BD
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (BN)","• Cost Center: Atom
+• Country: BN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",21,21,0.2978,6.2538,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (HK)","• Cost Center: Atom
+• Country: HK
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (ID)","• Cost Center: Atom
+• Country: ID
+• Pay-per-use: USD 0.0411 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",29,29,0.1672,4.8488,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (JP)","• Cost Center: Atom
+• Country: JP
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (KH)","• Cost Center: Atom
+• Country: KH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.2978,0.8934,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (KR)","• Cost Center: Atom
+• Country: KR
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (MY)","• Cost Center: Atom
+• Country: MY
+• Pay-per-use: USD 0.08514 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",46571,46571,0.3464,16132.1944,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (PH)","• Cost Center: Atom
+• Country: PH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (PK)","• Cost Center: Atom
+• Country: PK
+• Pay-per-use: USD 0.0473 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",3,3,0.1924,0.5772,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (SA)","• Cost Center: Atom
+• Country: SA
+• Pay-per-use: USD 0.0455 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.1851,0.1851,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (SG)","• Cost Center: Atom
+• Country: SG
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",137,137,0.2978,40.7986,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (TH)","• Cost Center: Atom
+• Country: TH
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",6,6,0.2978,1.7868,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (TW)","• Cost Center: Atom
+• Country: TW
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2,2,0.2978,0.5956,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (VN)","• Cost Center: Atom
+• Country: VN
+• Pay-per-use: USD 0.0732 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.2978,0.2978,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (MY)","• Cost Center: 
+• Country: MY
+• Pay-per-use: USD 0.086 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1114,1114,0.3499,389.7886,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing_lite (MY)","• Cost Center: 
+• Country: MY
+• Pay-per-use: USD 0.086 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1970,1970,0.3499,689.3030,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0861 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.3499,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0141 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0570,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0141 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0570,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0861 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",14,14,0.3499,4.8986,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0141 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0570,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-0001,TIN:C20395547010,"Level 19 Menara AIA 99 Jalan Ampang 50450 Kuala Lumpur Malaysia",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0141 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0570,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",118813,118813,0.3919,46562.8147,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",178942,178942,0.0638,11416.4996,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0638,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.1002,0.1002,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business API Monthly Platform Fee","",1,1,100.0000,100.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",642,642,0.3919,251.5998,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1310,1310,0.0638,83.5780,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0638,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",172,172,0.1002,17.2344,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business API Monthly Platform Fee","",1,1,100.0000,100.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.3919,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0638,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0157 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0638,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",4396,4396,0.1002,440.4792,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H002,TIN:C25196213100,"Level 23A Mercu 3 Jalan Bangsar KL Eco City 59200 Kuala Lumpur",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business API Monthly Platform Fee","",1,1,100.0000,100.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H003,TIN:C2899590020,"Level 20, Menara Prudential, Persiaran TRX Barat, Tun Razak Exchange, 55188 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.3919,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H003,TIN:C2899590020,"Level 20, Menara Prudential, Persiaran TRX Barat, Tun Razak Exchange, 55188 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.024 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0976,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H003,TIN:C2899590020,"Level 20, Menara Prudential, Persiaran TRX Barat, Tun Razak Exchange, 55188 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0202 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0820,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-H003,TIN:C2899590020,"Level 20, Menara Prudential, Persiaran TRX Barat, Tun Razak Exchange, 55188 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",14563,14563,0.1002,1459.2126,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",12419,12419,0.3919,4867.0061,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0224 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0911,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0202 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0820,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",731,731,0.1002,73.2462,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.1131 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.4600,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0246 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.1000,0.1000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Authentication","• Pay-per-use : USD 0.0222 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",0,0,0.0900,0.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0295 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2013,2013,0.1200,241.5600,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business API Monthly Platform Fee","",1,1,100.0000,100.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

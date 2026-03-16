@@ -6,16 +6,33 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { findCustomerById } from "@/infrastructure/db/customerRepository";
+import { findAllCustomers } from "@/infrastructure/db/customerRepository";
 import { insertInvoice, findInvoicesByCustomer } from "@/infrastructure/db/invoiceRepository";
 import { buildAutoCountInvoice } from "@/domain/services/autocountInvoiceBuilder";
 import { createInvoice } from "@/infrastructure/external/autocountClient";
 import { fetchCowayBillableData } from "@/domain/services/cowayBillingService";
-import { InvoiceHistory, InvoiceStatus } from "@/types";
+import { InvoiceHistory, InvoiceStatus, Customer } from "@/types";
 import { findAccountBookById } from "@/infrastructure/db/autoCountAccountBookRepository";
+import fs from "fs";
+import path from "path";
+
+const COWAY_CUSTOMER_NAME = "Coway (Malaysia) Sdn Bhd";
+
+/**
+ * Log payload to file for debugging
+ */
+function logToFile(filename: string, content: string): void {
+  const logDir = path.join(process.cwd(), "logs");
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir, { recursive: true });
+  }
+  const filepath = path.join(logDir, filename);
+  fs.appendFileSync(filepath, content + "\n");
+}
 
 interface GenerateInvoiceRequest {
-  customerId: string;
+  customerId?: string;
+  customerName?: string;
   billingMonth: string; // Format: "2026-03"
 }
 
@@ -47,11 +64,13 @@ export async function POST(request: NextRequest) {
     // 1. Validate request body
     const body: GenerateInvoiceRequest = await request.json();
 
-    if (!body.customerId) {
-      return NextResponse.json(
-        { success: false, error: "customerId is required" },
-        { status: 400 }
-      );
+    // Allow either customerId (for future multi-customer) or use default Coway
+    let customerName = body.customerName;
+    const customerId = body.customerId;
+
+    // For v1, default to Coway customer if not specified
+    if (!customerName && !customerId) {
+      customerName = COWAY_CUSTOMER_NAME;
     }
 
     if (!body.billingMonth || !isValidBillingMonth(body.billingMonth)) {
@@ -61,10 +80,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { customerId, billingMonth } = body;
+    const billingMonth = body.billingMonth;
 
-    // 2. Fetch customer from MongoDB
-    const customer = await findCustomerById(customerId);
+    // 2. Fetch customer from MongoDB (by name for Coway)
+    let customer: Customer | null = null;
+
+    if (customerId) {
+      // Future: support finding by ID for other customers
+      const { findCustomerById } = await import("@/infrastructure/db/customerRepository");
+      customer = await findCustomerById(customerId);
+    } else if (customerName) {
+      // Find by name (how cowayBillingService works)
+      const customers = await findAllCustomers();
+      customer = customers.find((c) => c.name === customerName) || null;
+    }
 
     if (!customer) {
       return NextResponse.json(
@@ -86,7 +115,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Check for duplicate invoice (INV-04)
-    const isDuplicate = await hasDuplicateInvoice(customerId, billingMonth);
+    const isDuplicate = await hasDuplicateInvoice(customer.id, billingMonth);
     if (isDuplicate) {
       return NextResponse.json(
         {
@@ -143,12 +172,13 @@ export async function POST(request: NextRequest) {
     let invoiceStatus: InvoiceStatus = "GENERATED";
 
     if (isMockMode) {
-      // Mock mode: log payload and return fake success
-      console.log("[MOCK MODE] Invoice payload:", JSON.stringify(buildResult.payload, null, 2));
+      // Mock mode: log payload to file and return fake success
       const timestamp = Date.now();
+      const logEntry = `[${new Date().toISOString()}] MOCK INVOICE: ${timestamp}\n${JSON.stringify(buildResult.payload, null, 2)}\n`;
+      logToFile("autocount-mock-invoices.log", logEntry);
+      console.log(`[MOCK MODE] Invoice logged to logs/autocount-mock-invoices.log`);
       autoCountDocNo = `MOCK-${timestamp}`;
       invoiceStatus = "DRAFT"; // Mock invoices are saved as DRAFT
-      console.log(`[MOCK MODE] Generated mock invoice: ${autoCountDocNo}`);
     } else {
       // Real mode: fetch AutoCount credentials from account book
       const accountBook = await findAccountBookById(customer.autocountAccountBookId!);

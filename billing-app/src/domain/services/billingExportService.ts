@@ -4,7 +4,7 @@ import { findAllBillingClients } from "@/infrastructure/db/billingClientReposito
 import { findAllBillingDefaults } from "@/infrastructure/db/billingDefaultsRepository";
 import { insertExportHistory } from "@/infrastructure/db/billingExportHistoryRepository";
 import { fetchIngLabBillable } from "@/infrastructure/external/inglabClient";
-import { fetchCowayBillable } from "@/infrastructure/external/cowayClient";
+import { fetchCowayBillable, fetchWhatsAppBillable } from "@/infrastructure/external/cowayClient";
 import { fetchEmailReconSummary } from "@/infrastructure/external/reconClient";
 import { findAllCustomers } from "@/infrastructure/db/customerRepository";
 import { Customer, ReconServer } from "@/types";
@@ -97,6 +97,7 @@ export interface PreviewRow {
   unit: number;
   unit_price: number;
   local_total_cost: number;
+  product_code?: string;
   tax_code?: string;
 }
 
@@ -212,6 +213,45 @@ export async function generatePreview(
         unit_price: rate,
       };
 
+      // Fetch WhatsApp count from WHATSAPP recon server (after SMS)
+      const whatsappReconServer = customerConfig.reconServers?.find(
+        (r: ReconServer) => r.type === "WHATSAPP"
+      );
+      if (whatsappReconServer) {
+        try {
+          const whatsappCount = await fetchWhatsAppBillable(period, whatsappReconServer);
+          if (whatsappCount > 0) {
+            const whatsappRate = customerConfig.rates?.WHATSAPP || 0.079;
+            const whatsappProductOverride = customerConfig.serviceProductOverrides?.find(
+              (s: { serviceType: string; productCode: string }) => s.serviceType === "WHATSAPP"
+            );
+            const whatsappProductCode = whatsappProductOverride?.productCode || "SMS-Enhanced";
+
+            const whatsappTemplate = customerConfig.furtherDescriptionSMSIntl ||
+              "For {BillingCycle}, the total number of International SMS messages sent via ECS Service was {SMSCount}, charged at RM {SMSRate} per message.";
+
+            // Build values object - use SMSCount and SMSRate placeholders for the template
+            const templateValues: Record<string, string> = {
+              BillingCycle: billingCycle,
+              SMSCount: whatsappCount.toLocaleString(),
+              SMSRate: whatsappRate.toFixed(3),
+            };
+
+            const resolvedWhatsappDescription = resolveTemplate(whatsappTemplate, templateValues);
+
+            // Add WhatsApp line item after SMS
+            item.line_items.push({
+              description: whatsappProductCode,
+              description_detail: resolvedWhatsappDescription,
+              qty: whatsappCount,
+              unit_price: whatsappRate,
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch WhatsApp billable for Coway:", error);
+        }
+      }
+
       // Fetch email count from recon server
       const emailReconServer = customerConfig.reconServers?.find(
         (r: ReconServer) => r.type === "EMAIL"
@@ -320,6 +360,7 @@ export async function generatePreview(
         unit: qty,
         unit_price: unitPrice,
         local_total_cost: Math.round(localTotalCost * 100) / 100,
+        product_code: lineItem.description || defaults.product_code,
         tax_code: clientMapping.tax_code,
       };
 
@@ -375,7 +416,7 @@ export function generateCSV(data: PreviewRow[]): string {
       row.address,
       "FALSE", // InclusiveTax
       "FALSE", // SubmitEInvoice
-      "MODE-WA-API", // ProductCode
+      row.product_code || "MODE-WA-API", // ProductCode
       "500-0000", // AccNo
       "'022", // ClassificationCode
       row.tax_code || "SV-8", // TaxCode

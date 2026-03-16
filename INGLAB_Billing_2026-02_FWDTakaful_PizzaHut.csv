@@ -1,0 +1,14 @@
+DocNo,DocDate,TaxDate,SalesLocation,SalesAgent,CreditTerm,Description,DebtorCode,TaxEntity,Address,InclusiveTax,SubmitEInvoice,ProductCode,AccNo,ClassificationCode,TaxCode,DetailDescription,FurtherDescription,Qty,Unit,UnitPrice,LocalTotalCost,ToBankRate,TaxExemptionExpiryDate,PaymentMethod,PaymentRef,PaymentAmt,Email,EmailCC,EmailBCC,Attention,Phone1,Fax1,DeliverAddress,DeliverContact,DeliverPhone1,DeliverFax1,Ref,Note,Remark1,Remark2,Remark3,Remark4,CurrencyRate,ToTaxCurrencyRate,ShippingRecipientTaxEntity,FreightAllowanceCharge,FreightAllowanceChargeReason,ReferenceNumberOfCustomsFormNo1And9,FreeTradeAgreementInformation,ReferenceNumberOfCustomsFormNo2,Incoterms,AuthorisationNumberForCertifiedExporter,EInvoiceIssueDateTime,EInvoiceUuid,ProductVariant,DeptNo,Discount,UnitType,TaxExportCountry,TaxPermitNo,TaxAdjustment,LocalTaxAdjustment,TariffCode,YourPONo,YourPODate,OriginCountry
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Marketing","• Pay-per-use : USD 0.0964 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",12419,12419,0.3919,4867.0061,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-F001,TIN:C12166642050,"Level 21, Mercu 2, No. 3, KL Eco City, Jalan Bangsar, 59200 Kuala Lumpur.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0247 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",731,731,0.1002,73.2462,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+<<New>>,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Utility","• Pay-per-use : USD 0.0246 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",1,1,0.1000,0.1000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business Fee - Service","• Pay-per-use : USD 0.0295 per message
+• Exchange rate: 1USD = 4.0685MYR
+• Billing period: Feb 2026",2013,2013,0.1200,241.5600,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,13/03/2026,13/03/2026,HQ,Darren Lim,Net 30 days,INVOICE,300-P001,TIN:C3855039030,"Level 13A Tower 1, VSquare @ PJ City Centre, Jalan Utara, 46200 Petaling Jaya, Selangor, Malaysia.",FALSE,FALSE,MODE-WA-API,500-0000,'022,SV-8,"WhatsApp Business API Monthly Platform Fee","",1,1,100.0000,100.0000,1.000000,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,

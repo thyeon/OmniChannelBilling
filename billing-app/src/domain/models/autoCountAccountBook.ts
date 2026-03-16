@@ -13,6 +13,8 @@ export interface AutoCountAccountBook {
   apiKey: string;
   defaultCreditTerm: string;
   defaultSalesLocation: string;
+  defaultTaxCode?: string;
+  taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
   createdAt: string;
@@ -26,6 +28,8 @@ export interface AutoCountAccountBookInput {
   apiKey: string;
   defaultCreditTerm: string;
   defaultSalesLocation: string;
+  defaultTaxCode?: string;
+  taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
 }
@@ -37,6 +41,8 @@ export interface AutoCountAccountBookUpdate {
   apiKey?: string;
   defaultCreditTerm?: string;
   defaultSalesLocation?: string;
+  defaultTaxCode?: string;
+  taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
 }

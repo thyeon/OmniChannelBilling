@@ -55,7 +55,9 @@ interface PreviewRow {
 }
 
 interface PreviewData {
-  period: string;
+  invoiceId?: string;
+  period?: string;  // from /api/invoices/preview
+  billingMonth?: string;  // from /api/invoices/[id]/preview
   customer: string;
   total_rows: number;
   data: PreviewRow[];
@@ -503,7 +505,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
           </CardHeader>
           <CardContent>
             <div className="text-sm text-muted-foreground mb-4">
-              Period: {previewData.period} | Customer: {previewData.customer}
+              Period: {previewData.period ?? previewData.billingMonth} | Customer: {previewData.customer}
             </div>
             <div className="overflow-x-auto">
               <Table>

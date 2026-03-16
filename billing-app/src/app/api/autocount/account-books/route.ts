@@ -23,7 +23,7 @@ export async function GET(): Promise<NextResponse> {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { name, accountBookId, keyId, apiKey, defaultCreditTerm, defaultSalesLocation } = body;
+    const { name, accountBookId, keyId, apiKey, defaultCreditTerm, defaultSalesLocation, defaultTaxCode, taxEntity } = body;
 
     // Validation
     if (!name || !accountBookId || !keyId || !apiKey || !defaultCreditTerm || !defaultSalesLocation) {
@@ -49,6 +49,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       apiKey,
       defaultCreditTerm,
       defaultSalesLocation,
+      defaultTaxCode,
+      taxEntity,
     });
 
     return NextResponse.json({ accountBook }, { status: 201 });

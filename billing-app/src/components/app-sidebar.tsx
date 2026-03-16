@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Receipt, Users, Settings, History } from "lucide-react";
+import { LayoutDashboard, Receipt, Users, Settings, History, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -14,6 +14,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", icon: <LayoutDashboard className="h-5 w-5" /> },
   { label: "Billing", href: "/billing", icon: <Receipt className="h-5 w-5" /> },
+  { label: "INGLAB Export", href: "/billing-export", icon: <FileText className="h-5 w-5" /> },
   { label: "Customers", href: "/customers", icon: <Users className="h-5 w-5" /> },
   { label: "History", href: "/history", icon: <History className="h-5 w-5" /> },
   { label: "AutoCount Settings", href: "/autocount-settings", icon: <Settings className="h-5 w-5" /> },

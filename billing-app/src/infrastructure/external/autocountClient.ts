@@ -33,6 +33,8 @@ export interface AutoCountInvoiceMaster {
   toBankRate: number;
   paymentAmt: number;
   paymentRef: string | null;
+  taxEntity?: string;
+  submitEInvoice?: string;
 }
 
 export interface AutoCountInvoiceDetail {

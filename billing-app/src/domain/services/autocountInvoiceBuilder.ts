@@ -132,7 +132,7 @@ export async function buildAutoCountInvoice(
       unit: "unit",
       unitPrice,
       discount: null,
-      taxCode: null,
+      taxCode: accountBook.defaultTaxCode || null,
       taxAdjustment: 0,
       localTaxAdjustment: 0,
       tariffCode: null,
@@ -177,16 +177,16 @@ export async function buildAutoCountInvoice(
   }
 
   // Calculate doc date (1st day of the month following the billing cycle)
-  const [year, month] = billingMonth.split("-");
-  const nextMonthDate = new Date(parseInt(year), parseInt(month), 1);
-  const firstDayOfNextMonth = `${nextMonthDate.getFullYear()}-${String(nextMonthDate.getMonth() + 1).padStart(2, "0")}-${String(nextMonthDate.getDate()).padStart(2, "0")}`;
+  // Format today's date as DD/MM/YYYY
+  const today = new Date();
+  const todayDDMMYYYY = `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(2, "0")}/${today.getFullYear()}`;
 
   // Build invoice master
   const master: AutoCountInvoiceMaster = {
     docNo: null,
     docNoFormatName: null,
-    docDate: firstDayOfNextMonth,
-    taxDate: null,
+    docDate: todayDDMMYYYY,
+    taxDate: todayDDMMYYYY,
     debtorCode: debtorCode,
     debtorName: customer.name,
     creditTerm,
@@ -208,6 +208,8 @@ export async function buildAutoCountInvoice(
     toBankRate: 1,
     paymentAmt: 0,
     paymentRef: null,
+    taxEntity: accountBook.taxEntity || undefined,
+    submitEInvoice: "FALSE",
   };
 
   // Build auto-fill options

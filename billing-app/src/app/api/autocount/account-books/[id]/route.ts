@@ -38,7 +38,7 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { name, accountBookId, keyId, apiKey, defaultCreditTerm, defaultSalesLocation } = body;
+    const { name, accountBookId, keyId, apiKey, defaultCreditTerm, defaultSalesLocation, defaultTaxCode, taxEntity } = body;
 
     // If credentials changed, test connection before updating
     if (accountBookId || keyId || apiKey) {
@@ -68,6 +68,8 @@ export async function PUT(
       apiKey,
       defaultCreditTerm,
       defaultSalesLocation,
+      defaultTaxCode,
+      taxEntity,
     });
 
     if (!accountBook) {
