@@ -62,8 +62,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [x] 03-01-PLAN.md -- Backend: cowayBillingService + API endpoint + mock mode
-- [x] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice
+- [x] 03-01-PLAN.md -- Backend: cowayBillingService + API endpoint + mock mode (COMPLETED)
+- [ ] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice
 
 ---
 
@@ -71,6 +71,6 @@ Plans:
 |-------|--------------|--------|
 | Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Complete |
 | Phase 2 | WA-01, WA-02, WA-03 | Planned |
-| Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | Planned |
+| Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | In Progress |
 
 **Coverage:** 15 requirements | Mapped: 15 | Unmapped: 0 ✓
