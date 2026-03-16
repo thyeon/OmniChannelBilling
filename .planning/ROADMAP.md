@@ -59,10 +59,11 @@ Plans:
 4. Invoice record saved in MongoDB
 5. Mock mode works for testing
 
-**Plans:** 0 plans
+**Plans:** 2 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 3 to break down)
+- [x] 03-01-PLAN.md -- Backend: cowayBillingService + API endpoint + mock mode
+- [x] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice
 
 ---
 
