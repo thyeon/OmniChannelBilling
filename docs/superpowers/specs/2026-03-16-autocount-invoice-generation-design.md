@@ -631,7 +631,73 @@ Location: https://accounting-api.autocountcloud.com/{accountBookId}/invoice?docN
 }
 ```
 
-## 12. Success Criteria
+## 12. Testing Mode (Mock Mode)
+
+For development and testing purposes, the system supports a **Mock Mode** that simulates AutoCount API calls without actually creating invoices in AutoCount.
+
+### 12.1 Environment Variable
+
+Add to `.env.local`:
+
+```
+AUTOCOUNT_MOCK=true
+```
+
+### 12.2 Behavior
+
+When `AUTOCOUNT_MOCK=true`:
+
+1. **No actual API call** is made to AutoCount
+2. **Payload is logged** to console for debugging
+3. **Fake success response** is returned with a mock document number
+
+### 12.3 Mock Response
+
+```typescript
+// Mock response returned
+{
+  success: true,
+  docNo: "MOCK-XXXXXXXXX"
+}
+```
+
+### 12.4 Console Output
+
+When mock mode is enabled, the full payload is logged:
+
+```
+=== AUTOCOUNT INVOICE PAYLOAD ===
+{
+  "master": {
+    "docNo": null,
+    "docDate": "2026-04-01",
+    ...
+  },
+  "details": [
+    {
+      "productCode": "SMS-Enhanced",
+      ...
+    }
+  ]
+}
+```
+
+### 12.5 How to Enable/Disable
+
+| Environment | Value | Behavior |
+|-------------|-------|----------|
+| Development | `AUTOCOUNT_MOCK=true` | Mock mode enabled |
+| Development | `AUTOCOUNT_MOCK=false` | Real API calls |
+| Production | (not set) | Real API calls (default) |
+
+### 12.6 Best Practices
+
+1. **Always test with mock mode first** before enabling real API calls
+2. **Review console logs** to verify payload structure
+3. **Use mock mode in CI/CD** for automated tests
+4. **Use test account book** in AutoCount for integration testing (if available)
+
+## 13. Success Criteria
 
 - [ ] User can select customer (Coway) and billing month
 - [ ] System validates customer has AutoCount config
