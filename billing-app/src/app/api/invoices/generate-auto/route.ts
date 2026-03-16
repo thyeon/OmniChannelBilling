@@ -167,7 +167,8 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Create invoice in AutoCount (or mock) (INV-06)
-    const isMockMode = process.env.AUTOCOUNT_MOCK === "true";
+    // Generate Invoice always uses mock mode for safe testing
+    const isMockMode = true;
     let autoCountDocNo: string | undefined;
     let invoiceStatus: InvoiceStatus = "GENERATED";
 

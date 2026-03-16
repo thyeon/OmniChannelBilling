@@ -49,7 +49,8 @@ export async function POST(
 
     const body: SubmitRequest = await request.json();
     const useCustomPayload = body.useCustomPayload ?? false;
-    const isMockMode = process.env.AUTOCOUNT_MOCK === "true";
+    // Submit always uses real AutoCount (not mock) for production billing
+    const isMockMode = false;
 
     // Fetch customer
     const customer = await findCustomerById(invoice.customerId);
