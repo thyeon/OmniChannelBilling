@@ -93,10 +93,8 @@ export default function GenerateInvoicePage(): React.ReactElement {
   const [payloadModalOpen, setPayloadModalOpen] = useState(false);
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
 
-  // Preview data
-  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  // Preview data for modals
   const [payloadData, setPayloadData] = useState<PayloadData | null>(null);
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [isLoadingPayload, setIsLoadingPayload] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payloadJson, setPayloadJson] = useState("");
