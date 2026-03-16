@@ -63,7 +63,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md -- Backend: cowayBillingService + API endpoint + mock mode (COMPLETED)
-- [ ] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice
+- [x] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice (COMPLETED)
 
 ---
 
