@@ -70,6 +70,14 @@ interface HistoryRecord {
   createdAt: string;
 }
 
+interface PayloadData {
+  invoiceId: string;
+  billingMonth: string;
+  customerName: string;
+  payload: Record<string, unknown>;
+  hasCustomPayload: boolean;
+}
+
 export default function GenerateInvoicePage(): React.ReactElement {
   const [billingMonth, setBillingMonth] = useState(formatMonth(new Date()));
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
@@ -87,7 +95,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
 
   // Preview data
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
-  const [payloadData, setPayloadData] = useState<any>(null);
+  const [payloadData, setPayloadData] = useState<PayloadData | null>(null);
   const [isLoadingPreview, setIsLoadingPreview] = useState(false);
   const [isLoadingPayload, setIsLoadingPayload] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -663,7 +671,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {previewData.data.map((row: any, idx: number) => (
+                {previewData.data.map((row: PreviewRow, idx: number) => (
                   <TableRow key={idx}>
                     <TableCell className="font-mono">{row.doc_no}</TableCell>
                     <TableCell>{row.doc_date}</TableCell>
