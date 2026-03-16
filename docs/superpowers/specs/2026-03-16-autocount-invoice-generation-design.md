@@ -333,7 +333,169 @@ if (syncResult.success) {
 ### Modified Files
 - `/app/api/invoices/generate/route.ts` - Extend OR create new endpoint
 
-## 10. Success Criteria
+## 10. Sample API Call - Coway (Malaysia) Sdn Bhd, March 2026
+
+This section documents a sample API call for generating an invoice for Coway (Malaysia) Sdn Bhd for billing period March 2026.
+
+### 10.1 Data Sources
+
+| Source | Data | Value |
+|--------|------|-------|
+| **Coway API** | SMS count | 15,000 messages |
+| **WhatsApp Recon** | WhatsApp count | 2,500 messages |
+| **Email Recon** | Email count | 10,000 messages |
+| **Customer Config** | SMS rate | RM 0.079 |
+| **Customer Config** | WhatsApp rate | RM 0.079 |
+| **Customer Config** | Email rate | RM 0.11 |
+| **Billing Client** | Debtor Code | 300-C001 |
+| **Billing Client** | Tax Entity | TIN:C12113374050 |
+| **Billing Client** | Address | Level 20, Ilham Tower, No. 8 Jalan Binjai 50450 Kuala Lumpur |
+
+### 10.2 Calculated Values
+
+| Line Item | Qty | Rate | Total |
+|-----------|-----|------|-------|
+| SMS | 15,000 | 0.079 | RM 1,185.00 |
+| WhatsApp | 2,500 | 0.079 | RM 197.50 |
+| Email | 10,000 | 0.11 | RM 1,100.00 |
+| **Total** | - | - | **RM 2,482.50** |
+
+### 10.3 API Request
+
+**Endpoint:**
+```
+POST https://accounting-api.autocountcloud.com/{accountBookId}/invoice
+```
+
+**Headers:**
+```
+Key-ID: {keyId}
+API-Key: {apiKey}
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "master": {
+    "docNo": null,
+    "docNoFormatName": null,
+    "docDate": "2026-04-01",
+    "taxDate": null,
+    "debtorCode": "300-C001",
+    "debtorName": "Coway (Malaysia) Sdn Bhd",
+    "creditTerm": "Net 30 days",
+    "salesLocation": "HQ",
+    "salesAgent": "Olivia Yap",
+    "email": null,
+    "address": "Level 20, Ilham Tower, No. 8 Jalan Binjai 50450 Kuala Lumpur",
+    "ref": null,
+    "description": "Invoice for March 2026 - SMS, WhatsApp & Email Services",
+    "note": null,
+    "remark1": null,
+    "remark2": null,
+    "remark3": null,
+    "remark4": null,
+    "currencyRate": 1,
+    "inclusiveTax": false,
+    "isRoundAdj": false,
+    "paymentMethod": null,
+    "toBankRate": 1,
+    "paymentAmt": 0,
+    "paymentRef": null
+  },
+  "details": [
+    {
+      "productCode": "SMS-Enhanced",
+      "accNo": "500-0000",
+      "description": "SMS-Enhanced - March 2026",
+      "furtherDescription": "For March 2026, the total number of International SMS messages sent via ECS Service was 15,000, charged at RM 0.079 per message.",
+      "qty": 1,
+      "unit": "unit",
+      "unitPrice": 1185.00,
+      "discount": null,
+      "taxCode": "SV-6",
+      "taxAdjustment": 0,
+      "localTaxAdjustment": 0,
+      "tariffCode": null,
+      "localTotalCost": 0,
+      "classificationCode": "022"
+    },
+    {
+      "productCode": "WA-API",
+      "accNo": "500-0000",
+      "description": "WhatsApp API - March 2026",
+      "furtherDescription": "For March 2026, the total number of International SMS messages sent via ECS Service was 2,500, charged at RM 0.079 per message.",
+      "qty": 1,
+      "unit": "unit",
+      "unitPrice": 197.50,
+      "discount": null,
+      "taxCode": "SV-6",
+      "taxAdjustment": 0,
+      "localTaxAdjustment": 0,
+      "tariffCode": null,
+      "localTotalCost": 0,
+      "classificationCode": "022"
+    },
+    {
+      "productCode": "Email-Blast",
+      "accNo": "500-0000",
+      "description": "Email Blast - March 2026",
+      "furtherDescription": "For March 2026, the total number of Email sent was 10,000, charged at RM 0.11 per message.",
+      "qty": 1,
+      "unit": "unit",
+      "unitPrice": 1100.00,
+      "discount": null,
+      "taxCode": "SV-6",
+      "taxAdjustment": 0,
+      "localTaxAdjustment": 0,
+      "tariffCode": null,
+      "localTotalCost": 0,
+      "classificationCode": "022"
+    }
+  ],
+  "autoFillOption": {
+    "accNo": false,
+    "taxCode": true,
+    "tariffCode": false,
+    "localTotalCost": true
+  },
+  "saveApprove": null
+}
+```
+
+### 10.4 Key Notes
+
+1. **docDate**: Set to first day of month following billing period (April 1, 2026 for March 2026 billing)
+2. **Billing Mode**: Uses LUMP_SUM mode (qty=1, unitPrice=total) to avoid AutoCount 2dp rounding issues
+3. **Product Codes**: Derived from customer config `serviceProductOverrides`
+4. **Tax Code**: SV-6 (as configured for Coway in billing_clients)
+5. **Description Templates**: Resolved from customer config templates
+
+### 10.5 Expected Response
+
+**Success (201 Created):**
+```
+Location: https://accounting-api.autocountcloud.com/{accountBookId}/invoice?docNo=I-000123
+```
+
+**Response Body:**
+```json
+{
+  "success": true,
+  "docNo": "I-000123"
+}
+```
+
+**Error (400/500):**
+```json
+{
+  "success": false,
+  "error": "Error message from AutoCount"
+}
+```
+
+## 11. Success Criteria
 
 - [ ] User can select customer (Coway) and billing month
 - [ ] System validates customer has AutoCount config
