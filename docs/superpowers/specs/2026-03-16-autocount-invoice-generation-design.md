@@ -333,11 +333,147 @@ if (syncResult.success) {
 ### Modified Files
 - `/app/api/invoices/generate/route.ts` - Extend OR create new endpoint
 
-## 10. Sample API Call - Coway (Malaysia) Sdn Bhd, March 2026
+## 10. AutoCount Configuration Storage
+
+This section documents where AutoCount credentials and configurations are stored.
+
+### 10.1 Account Books Collection (autoCountAccountBooks)
+
+**Collection Name:** `autoCountAccountBooks`
+
+**MongoDB Schema:**
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Unique ID | "accbook_001" |
+| `name` | string | Friendly name | "G-I Main Book" |
+| `accountBookId` | string | AutoCount account book ID | "4013" |
+| `keyId` | string | API Key-ID | "671f8a54-..." |
+| `apiKey` | string | Secret API key | "••••••••" |
+| `defaultCreditTerm` | string | Default payment terms | "Net 30 days" |
+| `defaultSalesLocation` | string | Default location | "HQ" |
+| `invoiceDescriptionTemplate` | string | Invoice description template | "SMS Billing - {BillingCycle}" |
+| `furtherDescriptionTemplate` | string | Line item description template | "For {BillingCycle}..." |
+| `createdAt` | string | Timestamp | "2026-03-16T10:00:00Z" |
+| `updatedAt` | string | Timestamp | "2026-03-16T10:00:00Z" |
+
+**Example Document:**
+
+```json
+{
+  "id": "accbook_001",
+  "name": "G-I Main Book",
+  "accountBookId": "4013",
+  "keyId": "671f8a54-xxxx-xxxx",
+  "apiKey": "secret-key-xxxx",
+  "defaultCreditTerm": "Net 30 days",
+  "defaultSalesLocation": "HQ",
+  "invoiceDescriptionTemplate": "Invoice for {BillingCycle}",
+  "furtherDescriptionTemplate": "For {BillingCycle}, the total number of SMS messages sent via ECS Service was {SMSCount}, charged at RM {SMSRate} per message.",
+  "createdAt": "2026-03-16T10:00:00Z",
+  "updatedAt": "2026-03-16T10:00:00Z"
+}
+```
+
+### 10.2 Service Product Mappings Collection (serviceProductMappings)
+
+**Collection Name:** `serviceProductMappings`
+
+**MongoDB Schema:**
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `id` | string | Unique ID | "mapping_001" |
+| `accountBookId` | string | Links to AutoCount account book | "accbook_001" |
+| `serviceType` | string | "SMS" \| "EMAIL" \| "WHATSAPP" | "SMS" |
+| `productCode` | string | AutoCount product code | "SMS-Enhanced" |
+| `description` | string | Optional description | "SMS Blast on ECS" |
+| `defaultUnitPrice` | number | Default rate per message | 0.079 |
+| `defaultBillingMode` | string | "ITEMIZED" or "LUMP_SUM" | "LUMP_SUM" |
+| `createdAt` | string | Timestamp | "2026-03-16T10:00:00Z" |
+| `updatedAt` | string | Timestamp | "2026-03-16T10:00:00Z" |
+
+**Example Documents:**
+
+```json
+{
+  "id": "mapping_001",
+  "accountBookId": "accbook_001",
+  "serviceType": "SMS",
+  "productCode": "SMS-Enhanced",
+  "description": "SMS Blast on ECS",
+  "defaultUnitPrice": 0.079,
+  "defaultBillingMode": "LUMP_SUM",
+  "createdAt": "2026-03-16T10:00:00Z",
+  "updatedAt": "2026-03-16T10:00:00Z"
+}
+```
+
+```json
+{
+  "id": "mapping_002",
+  "accountBookId": "accbook_001",
+  "serviceType": "WHATSAPP",
+  "productCode": "WA-API",
+  "description": "WhatsApp API",
+  "defaultUnitPrice": 0.079,
+  "defaultBillingMode": "LUMP_SUM",
+  "createdAt": "2026-03-16T10:00:00Z",
+  "updatedAt": "2026-03-16T10:00:00Z"
+}
+```
+
+```json
+{
+  "id": "mapping_003",
+  "accountBookId": "accbook_001",
+  "serviceType": "EMAIL",
+  "productCode": "Email-Blast",
+  "description": "Email Marketing",
+  "defaultUnitPrice": 0.11,
+  "defaultBillingMode": "LUMP_SUM",
+  "createdAt": "2026-03-16T10:00:00Z",
+  "updatedAt": "2026-03-16T10:00:00Z"
+}
+```
+
+### 10.3 Customer Link to Account Book
+
+Each customer document in MongoDB (`customers` collection) has these AutoCount-related fields:
+
+| Field | Type | Description | Example |
+|-------|------|-------------|---------|
+| `autocountAccountBookId` | string | Links customer to account book | "accbook_001" |
+| `autocountDebtorCode` | string | Customer's debtor code in AutoCount | "300-C001" |
+| `serviceProductOverrides` | array | Override product codes per service | See below |
+
+**Service Product Overrides Example:**
+
+```json
+"serviceProductOverrides": [
+  { "serviceType": "SMS", "productCode": "SMS-Coway", "billingMode": "LUMP_SUM" },
+  { "serviceType": "WHATSAPP", "productCode": "WA-Coway", "billingMode": "LUMP_SUM" },
+  { "serviceType": "EMAIL", "productCode": "Email-Coway", "billingMode": "LUMP_SUM" }
+]
+```
+
+### 10.4 How to Get AutoCount Credentials
+
+To obtain AutoCount API credentials:
+
+1. Log in to **AutoCount Cloud Accounting**
+2. Navigate to **Settings → API Access** (or similar)
+3. Create new API credentials:
+   - **Key-ID**: Generated automatically
+   - **API Key**: Generated or entered manually
+4. Note the **Account Book ID** from the URL or settings page
+5. Enter these in the app's **AutoCount Settings** page (`/autocount-settings`)
+
+## 11. Sample API Call - Coway (Malaysia) Sdn Bhd, March 2026
 
 This section documents a sample API call for generating an invoice for Coway (Malaysia) Sdn Bhd for billing period March 2026.
 
-### 10.1 Data Sources
+### 11.1 Data Sources
 
 | Source | Data | Value |
 |--------|------|-------|
@@ -351,7 +487,7 @@ This section documents a sample API call for generating an invoice for Coway (Ma
 | **Billing Client** | Tax Entity | TIN:C12113374050 |
 | **Billing Client** | Address | Level 20, Ilham Tower, No. 8 Jalan Binjai 50450 Kuala Lumpur |
 
-### 10.2 Calculated Values
+### 11.2 Calculated Values
 
 | Line Item | Qty | Rate | Total |
 |-----------|-----|------|-------|
@@ -360,7 +496,7 @@ This section documents a sample API call for generating an invoice for Coway (Ma
 | Email | 10,000 | 0.11 | RM 1,100.00 |
 | **Total** | - | - | **RM 2,482.50** |
 
-### 10.3 API Request
+### 11.3 API Request
 
 **Endpoint:**
 ```
@@ -464,7 +600,7 @@ Content-Type: application/json
 }
 ```
 
-### 10.4 Key Notes
+### 11.4 Key Notes
 
 1. **docDate**: Set to first day of month following billing period (April 1, 2026 for March 2026 billing)
 2. **Billing Mode**: Uses LUMP_SUM mode (qty=1, unitPrice=total) to avoid AutoCount 2dp rounding issues
@@ -472,7 +608,7 @@ Content-Type: application/json
 4. **Tax Code**: SV-6 (as configured for Coway in billing_clients)
 5. **Description Templates**: Resolved from customer config templates
 
-### 10.5 Expected Response
+### 11.5 Expected Response
 
 **Success (201 Created):**
 ```
@@ -495,7 +631,7 @@ Location: https://accounting-api.autocountcloud.com/{accountBookId}/invoice?docN
 }
 ```
 
-## 11. Success Criteria
+## 12. Success Criteria
 
 - [ ] User can select customer (Coway) and billing month
 - [ ] System validates customer has AutoCount config
