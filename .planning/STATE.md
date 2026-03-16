@@ -18,7 +18,7 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-15)
 
 **Core value:** Enable Coway (Malaysia) to bill for SMS, EMAIL, and WHATSAPP services in a single export CSV
-**Current focus:** Phase 2
+**Current focus:** Phase 3
 
 ## Progress
 
@@ -26,10 +26,12 @@ See: .planning/PROJECT.md (updated 2026-03-15)
 |-------|--------|
 | Phase 1 | Complete |
 | Phase 2 | Not planned yet |
+| Phase 3 | Not planned yet |
 
 ## Roadmap Evolution
 
 - Phase 2 added: Add WHATSAPP line item to Coway export
+- Phase 3 added: AutoCount Invoice Generation - Generate invoices directly in AutoCount Cloud Accounting via API for Coway (Malaysia) Sdn Bhd
 
 ---
-*Last updated: 2026-03-15*
+*Last updated: 2026-03-16*

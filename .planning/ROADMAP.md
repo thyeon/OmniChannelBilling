@@ -37,6 +37,16 @@
 Plans:
 - [ ] TBD (run /gsd:plan-phase 2 to break down)
 
+### Phase 3: AutoCount Invoice Generation - Generate invoices directly in AutoCount Cloud Accounting via API for Coway (Malaysia) Sdn Bhd
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 2
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 3 to break down)
+
 ---
 
 | Phase | Requirements | Status |
