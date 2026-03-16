@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Loader2, CheckCircle2, XCircle, Eye, History, Settings, Users } from "lucide-react";
+import { FileText, Loader2, CheckCircle2, XCircle, Eye, History, Settings, Users, FileJson, Send, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,6 +21,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 function formatMonth(date: Date): string {
   const year = date.getFullYear();
@@ -71,6 +79,20 @@ export default function GenerateInvoicePage(): React.ReactElement {
   const [showPreview, setShowPreview] = useState(false);
   const [history, setHistory] = useState<HistoryRecord[]>([]);
   const [error, setError] = useState("");
+
+  // Modal states for invoice actions
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [payloadModalOpen, setPayloadModalOpen] = useState(false);
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<string | null>(null);
+
+  // Preview data
+  const [previewData, setPreviewData] = useState<PreviewData | null>(null);
+  const [payloadData, setPayloadData] = useState<any>(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
+  const [isLoadingPayload, setIsLoadingPayload] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [payloadJson, setPayloadJson] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   // Fetch history on load
   useEffect(() => {
@@ -178,6 +200,160 @@ export default function GenerateInvoicePage(): React.ReactElement {
       });
     } finally {
       setIsGenerating(false);
+    }
+  }
+
+  // Preview handlers
+  async function handlePreviewClick(invoiceId: string) {
+    setSelectedInvoiceId(invoiceId);
+    setIsLoadingPreview(true);
+    setPreviewData(null);
+
+    try {
+      const res = await fetch(`/api/invoices/${invoiceId}/preview`);
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error || "Failed to load preview");
+        return;
+      }
+      const data = await res.json();
+      setPreviewData(data);
+      setPreviewModalOpen(true);
+    } catch {
+      setError("Failed to load preview");
+    } finally {
+      setIsLoadingPreview(false);
+    }
+  }
+
+  // Payload handlers
+  async function handlePayloadClick(invoiceId: string) {
+    setSelectedInvoiceId(invoiceId);
+    setIsLoadingPayload(true);
+    setPayloadData(null);
+    setPayloadJson("");
+    setSubmitError("");
+
+    try {
+      const res = await fetch(`/api/invoices/${invoiceId}/payload`);
+      if (!res.ok) {
+        const err = await res.json();
+        setError(err.error || "Failed to load payload");
+        return;
+      }
+      const data = await res.json();
+      setPayloadData(data);
+      setPayloadJson(JSON.stringify(data.payload, null, 2));
+      setPayloadModalOpen(true);
+    } catch {
+      setError("Failed to load payload");
+    } finally {
+      setIsLoadingPayload(false);
+    }
+  }
+
+  // Save payload handler
+  async function handleSavePayload() {
+    if (!selectedInvoiceId) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch(`/api/invoices/${selectedInvoiceId}/payload`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ payload: payloadJson }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        setSubmitError(err.error || "Failed to save payload");
+        return;
+      }
+
+      // Reload payload data
+      const dataRes = await fetch(`/api/invoices/${selectedInvoiceId}/payload`);
+      if (dataRes.ok) {
+        const data = await dataRes.json();
+        setPayloadData(data);
+        setPayloadJson(JSON.stringify(data.payload, null, 2));
+      }
+    } catch {
+      setSubmitError("Failed to save payload");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  // Submit handler
+  async function handleSubmit(useCustomPayload: boolean = false) {
+    if (!selectedInvoiceId) return;
+
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const res = await fetch(`/api/invoices/${selectedInvoiceId}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useCustomPayload }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setSubmitError(json.error || "Failed to submit");
+        return;
+      }
+
+      if (json.success) {
+        setPayloadModalOpen(false);
+        fetchHistory(); // Refresh history
+        setResult({
+          success: true,
+          message: `Invoice submitted successfully`,
+          docNo: json.docNo,
+        });
+      } else {
+        setSubmitError(json.error || "Submission failed");
+      }
+    } catch {
+      setSubmitError("Failed to submit invoice");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  // Retry handler (for ERROR status)
+  async function handleRetry(invoiceId: string) {
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/invoices/${invoiceId}/retry-sync`, {
+        method: "POST",
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.error || "Retry failed");
+        return;
+      }
+
+      if (json.success) {
+        fetchHistory(); // Refresh history
+        setResult({
+          success: true,
+          message: `Invoice synced successfully`,
+          docNo: json.docNo,
+        });
+      } else {
+        setError(json.error || "Retry failed");
+      }
+    } catch {
+      setError("Failed to retry invoice");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -385,6 +561,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
                   <TableHead>Status</TableHead>
                   <TableHead>DocNo</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -393,13 +570,62 @@ export default function GenerateInvoicePage(): React.ReactElement {
                     <TableCell className="font-mono">{record.billingMonth}</TableCell>
                     <TableCell>{record.customerName}</TableCell>
                     <TableCell>
-                      <Badge variant={record.status === "GENERATED" || record.status === "DRAFT" ? "default" : "destructive"}>
+                      <Badge variant={record.status === "GENERATED" || record.status === "DRAFT" ? "default" : record.status === "ERROR" ? "destructive" : "secondary"}>
                         {record.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-mono">{record.autocountRefId || "-"}</TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(record.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {/* Preview Button - always available */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handlePreviewClick(record.id)}
+                          title="Preview"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+
+                        {/* Payload Button - always available */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handlePayloadClick(record.id)}
+                          title="Payload"
+                        >
+                          <FileJson className="h-4 w-4" />
+                        </Button>
+
+                        {/* Submit/Retry Button - only for DRAFT or ERROR */}
+                        {record.status === "DRAFT" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedInvoiceId(record.id);
+                              handlePayloadClick(record.id);
+                            }}
+                            title="Submit"
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {record.status === "ERROR" && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRetry(record.id)}
+                            disabled={isSubmitting}
+                            title="Retry"
+                          >
+                            <RotateCcw className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -408,6 +634,109 @@ export default function GenerateInvoicePage(): React.ReactElement {
           )}
         </CardContent>
       </Card>
+
+      {/* Preview Modal */}
+      <Dialog open={previewModalOpen} onOpenChange={setPreviewModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Invoice Preview</DialogTitle>
+            <DialogDescription>
+              {previewData?.billingMonth} - {previewData?.customer}
+            </DialogDescription>
+          </DialogHeader>
+          {isLoadingPreview ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : previewData ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>DocNo</TableHead>
+                  <TableHead>DocDate</TableHead>
+                  <TableHead>DebtorCode</TableHead>
+                  <TableHead>ProductCode</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Qty</TableHead>
+                  <TableHead>UnitPrice</TableHead>
+                  <TableHead>Total</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {previewData.data.map((row: any, idx: number) => (
+                  <TableRow key={idx}>
+                    <TableCell className="font-mono">{row.doc_no}</TableCell>
+                    <TableCell>{row.doc_date}</TableCell>
+                    <TableCell className="font-mono">{row.debtor_code}</TableCell>
+                    <TableCell className="font-mono">{row.product_code}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">{row.detail_description}</TableCell>
+                    <TableCell>{row.qty}</TableCell>
+                    <TableCell>{row.unit_price?.toFixed(4)}</TableCell>
+                    <TableCell className="font-medium">{row.local_total_cost?.toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-4 text-muted-foreground">No preview data</div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Payload Modal */}
+      <Dialog open={payloadModalOpen} onOpenChange={setPayloadModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>AutoCount Payload</DialogTitle>
+            <DialogDescription>
+              {payloadData?.billingMonth} - {payloadData?.customerName}
+              {payloadData?.hasCustomPayload && (
+                <span className="ml-2 text-amber-600">(Custom Payload)</span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          {isLoadingPayload ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Textarea
+                value={payloadJson}
+                onChange={(e) => setPayloadJson(e.target.value)}
+                className="font-mono text-sm min-h-[300px]"
+              />
+              {submitError && (
+                <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm">
+                  {submitError}
+                </div>
+              )}
+              <div className="flex gap-2 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={handleSavePayload}
+                  disabled={isSubmitting}
+                >
+                  Save
+                </Button>
+                {selectedInvoiceId && (
+                  <Button
+                    onClick={() => handleSubmit(payloadData?.hasCustomPayload)}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    ) : (
+                      <Send className="h-4 w-4 mr-2" />
+                    )}
+                    Submit
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
