@@ -52,6 +52,7 @@ export interface Customer {
   }>;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
+  furtherDescriptionSMSIntl?: string;
 }
 
 export type ConnectionStatus = 'SUCCESS' | 'FAILED' | 'NOT_CONFIGURED';
@@ -98,6 +99,8 @@ export interface InvoiceHistory {
   generatedBy: 'MANUAL' | 'SCHEDULED';
   scheduledJobId?: string;
   syncError?: string;
+  // Custom payload for AutoCount (user-edited)
+  customPayload?: string;
 }
 
 export type ScheduleJobStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'RETRYING';
