@@ -10,21 +10,21 @@ This document covers the deployment of the Billing Solutions application to a Sy
 |----------|-------|
 | **Server** | Synology NAS (DS423+) |
 | **Hostname** | MenaraNas |
-| **IP Address** | 192.168.68.64 |
+| **IP Address** | 192.168.68.50 |
 | **SSH User** | thyeon |
 | **Platform** | Linux (x86_64) |
 | **CPU** | Intel Gemini Lake (no AVX support) |
-| **Deployment Path** | /volume2/docker |
+| **Docker Hub Image** | `inglabn/billing-app:<version>` |
 
 ---
 
 ## Deployment Architecture
 
 ```
-Synology NAS (192.168.68.64)
+Synology NAS (192.168.68.50)
 ├── billing-app (Next.js 14)
 │   ├── Port: 3000
-│   └── Image: docker-billing-app (built from Dockerfile)
+│   └── Image: inglabn/billing-app:<version> (from Docker Hub)
 ├── billing-mongo (MongoDB 4.4)
 │   ├── Port: 27017 (internal)
 │   └── Image: mongo:4.4
@@ -37,8 +37,8 @@ Synology NAS (192.168.68.64)
 
 | Service | URL |
 |---------|-----|
-| **Billing App** | http://192.168.68.64:3000 |
-| **SSH** | `ssh thyeon@192.168.68.64` |
+| **Billing App** | http://192.168.68.50:3000 |
+| **SSH** | `ssh thyeon@192.168.68.50` |
 
 ---
 
@@ -198,7 +198,52 @@ CMD ["node", "server.js"]
 ### SSH Connection
 
 ```bash
-ssh thyeon@192.168.68.64
+ssh thyeon@192.168.68.50
+```
+
+---
+
+## Docker Hub Deployment (Recommended)
+
+### Step 1: Build and Push to Docker Hub
+
+```bash
+cd "/Users/thyeonyam/Desktop/YTO doc/BillingSolutions/billing-app"
+
+# Login to Docker Hub
+cat ~/dockhubkey.txt | docker login --username inglabn --password-stdin
+
+# Build and push (replace 1.0.1 with your version)
+docker buildx build --platform linux/amd64 -t inglabn/billing-app:1.0.1 --push .
+```
+
+### Step 2: Pull and Run on Synology
+
+```bash
+# SSH to Synology
+ssh thyeon@192.168.68.50
+
+# Navigate to deployment directory
+cd /volume2/docker
+
+# Stop existing containers
+sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml down
+
+# Pull latest image
+sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml pull
+
+# Start containers
+sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml up -d
+```
+
+### Update to New Version
+
+```bash
+# On local machine - build and push new version
+docker buildx build --platform linux/amd64 -t inglabn/billing-app:1.0.2 --push .
+
+# On Synology - pull and restart
+ssh thyeon@192.168.68.50 "cd /volume2/docker && sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml pull && sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml up -d"
 ```
 
 ### Build and Deploy
