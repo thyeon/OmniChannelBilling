@@ -53,6 +53,27 @@ export interface Customer {
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
   furtherDescriptionSMSIntl?: string;
+  // Data Sources - for configurable billing (multi-customer support)
+  dataSources?: Array<{
+    id?: string;
+    type: 'COWAY_API' | 'RECON_SERVER' | 'CUSTOM_REST_API';
+    serviceType: ServiceType;
+    name: string;
+    apiEndpoint: string;
+    authType: 'API_KEY' | 'BEARER_TOKEN' | 'BASIC_AUTH' | 'NONE';
+    authCredentials?: {
+      key?: string;
+      token?: string;
+      username?: string;
+      password?: string;
+    };
+    responseMapping: {
+      usageCountPath: string;
+      sentPath?: string;
+      failedPath?: string;
+    };
+    isActive: boolean;
+  }>;
 }
 
 export type ConnectionStatus = 'SUCCESS' | 'FAILED' | 'NOT_CONFIGURED';
