@@ -91,11 +91,11 @@ Plans:
 5. Default field values inherit from system and can be overridden
 
 **Depends on:** Phase 3
-**Plans:** 2/2 plans
+**Plans:** 1/2 plans
 
 Plans:
-- [x] 04-01-PLAN.md -- Backend: DataSource abstraction & generic billing service (PLANNED)
-- [x] 04-02-PLAN.md -- Frontend: Customer wizard UI (PLANNED)
+- [x] 04-01-PLAN.md -- Backend: DataSource abstraction & generic billing service (COMPLETED)
+- [ ] 04-02-PLAN.md -- Frontend: Customer wizard UI (PLANNED)
 
 ---
 
@@ -104,6 +104,6 @@ Plans:
 | Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Complete |
 | Phase 2 | WA-01, WA-02, WA-03 | Planned |
 | Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | Complete |
-| Phase 4 | DS-01, DS-02, DS-03, DS-04, DS-05, DS-06, PM-01, PM-02, DV-01, DV-02, AC-01, UI-01 | Planned |
+| Phase 4 | DS-01, DS-02, DS-03, DS-04, DS-05 (Complete), DS-06, PM-01, PM-02, DV-01, DV-02, AC-01, UI-01 | In Progress |
 
 **Coverage:** 27 requirements | Mapped: 27 | Unmapped: 0 ✓
