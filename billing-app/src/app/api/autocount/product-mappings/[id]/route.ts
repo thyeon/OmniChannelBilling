@@ -36,13 +36,16 @@ export async function PUT(
 ): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { productCode, description, defaultUnitPrice, defaultBillingMode } = body;
+    const { productCode, description, defaultUnitPrice, defaultBillingMode, taxCode, invoiceDescriptionTemplate, furtherDescriptionTemplate } = body;
 
     const mapping = await updateServiceProductMapping(params.id, {
       productCode,
       description,
       defaultUnitPrice,
       defaultBillingMode,
+      taxCode,
+      invoiceDescriptionTemplate,
+      furtherDescriptionTemplate,
     });
 
     if (!mapping) {

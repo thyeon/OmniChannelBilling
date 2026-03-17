@@ -25,13 +25,27 @@ export async function GET(
 
     // If custom payload exists, return it
     if (invoice.customPayload) {
-      return NextResponse.json({
-        invoiceId: invoice.id,
-        billingMonth: invoice.billingMonth,
-        customerName: invoice.customerName,
-        payload: JSON.parse(invoice.customPayload),
-        hasCustomPayload: true,
-      });
+      try {
+        const parsedPayload = JSON.parse(invoice.customPayload);
+        return NextResponse.json({
+          invoiceId: invoice.id,
+          billingMonth: invoice.billingMonth,
+          customerName: invoice.customerName,
+          payload: parsedPayload,
+          hasCustomPayload: true,
+        });
+      } catch (parseError) {
+        console.error("Error parsing customPayload:", parseError);
+        // Return the raw string if parsing fails - let the frontend handle it
+        return NextResponse.json({
+          invoiceId: invoice.id,
+          billingMonth: invoice.billingMonth,
+          customerName: invoice.customerName,
+          payload: invoice.customPayload,
+          hasCustomPayload: true,
+          parseError: "Invalid JSON in custom payload",
+        });
+      }
     }
 
     // Build payload from stored line items

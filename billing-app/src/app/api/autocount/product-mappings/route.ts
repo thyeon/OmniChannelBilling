@@ -29,7 +29,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = await request.json();
-    const { accountBookId, serviceType, productCode, description, defaultUnitPrice, defaultBillingMode } = body;
+    const { accountBookId, serviceType, productCode, description, defaultUnitPrice, defaultBillingMode, taxCode, invoiceDescriptionTemplate, furtherDescriptionTemplate } = body;
 
     // Validation
     if (!accountBookId || !serviceType || !productCode) {
@@ -58,6 +58,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       description,
       defaultUnitPrice,
       defaultBillingMode,
+      taxCode,
+      invoiceDescriptionTemplate,
+      furtherDescriptionTemplate,
     });
 
     return NextResponse.json({ mapping }, { status: 201 });

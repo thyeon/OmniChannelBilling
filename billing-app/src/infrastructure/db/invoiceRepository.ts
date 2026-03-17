@@ -1,6 +1,7 @@
 import { Collection, WithId, Document, ObjectId } from "mongodb";
 import { getDatabase } from "./mongodb";
 import { InvoiceHistory } from "@/types";
+import { randomUUID } from "crypto";
 
 const COLLECTION_NAME = "invoices";
 
@@ -42,11 +43,14 @@ export async function findInvoiceById(
   id: string
 ): Promise<InvoiceHistory | null> {
   const collection = await getCollection();
+  // Don't search for empty id - this would match the first invoice with empty id
+  if (!id) return null;
+
   let doc = null;
   if (ObjectId.isValid(id)) {
     doc = await collection.findOne({ _id: new ObjectId(id) });
   }
-  if (!doc) {
+  if (!doc && id) {
     doc = await collection.findOne({ id });
   }
   if (!doc) return null;
@@ -58,11 +62,14 @@ export async function insertInvoice(
   invoice: InvoiceHistory
 ): Promise<InvoiceHistory> {
   const collection = await getCollection();
+  // Generate a unique ID if not provided
+  const uniqueId = invoice.id || randomUUID();
   await collection.insertOne({
     ...invoice,
+    id: uniqueId,
     createdAt: new Date(),
   });
-  return invoice;
+  return { ...invoice, id: uniqueId };
 }
 
 /** Update an existing invoice by id. Returns the updated invoice or null. */
@@ -71,8 +78,19 @@ export async function updateInvoice(
   updates: Partial<InvoiceHistory>
 ): Promise<InvoiceHistory | null> {
   const collection = await getCollection();
+
+  // Build query - prefer MongoDB _id if valid ObjectId, fallback to id field
+  let query: Document;
+  if (ObjectId.isValid(id)) {
+    query = { _id: new ObjectId(id) };
+  } else {
+    // Only use id field if it's not empty
+    if (!id) return null;
+    query = { id };
+  }
+
   const result = await collection.findOneAndUpdate(
-    { id },
+    query,
     { $set: updates },
     { returnDocument: "after" }
   );

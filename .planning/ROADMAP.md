@@ -65,12 +65,45 @@ Plans:
 - [x] 03-01-PLAN.md -- Backend: cowayBillingService + API endpoint + mock mode (COMPLETED)
 - [x] 03-02-PLAN.md -- UI: Generate Invoice page at /billing/generate-invoice (COMPLETED)
 
+### Phase 4: omnisource
+
+**Goal:** Make the billing system dynamic — allow adding customers with configurable data sources, AutoCount settings, products, and default field values.
+
+**Requirements:**
+- DS-01: Create DataSource interface with type, endpoint, auth, response mapping
+- DS-02: Add dataSources field to Customer model
+- DS-03: Create DataSource repository for CRUD operations
+- DS-04: Refactor cowayBillingService to generic billingService
+- DS-05: Update billing service to iterate through customer's dataSources
+- DS-06: Create DataSource API endpoints for admin UI
+- PM-01: Global product mappings (already exists via ServiceProductMapping)
+- PM-02: Customer override for product codes (already supported via serviceProductOverrides)
+- DV-01: Default field values in billing service (inherit + override)
+- DV-02: Default values configurable in admin UI
+- AC-01: Single AutoCount account per customer (autocountAccountBookId, autocountDebtorCode)
+- UI-01: Wizard UI for customer setup
+
+**Success Criteria:**
+1. Data sources configurable per customer (not hardcoded)
+2. Billing service works for any customer with configured data sources
+3. Product mappings support global defaults with customer overrides
+4. Admin can add new customers via wizard UI
+5. Default field values inherit from system and can be overridden
+
+**Depends on:** Phase 3
+**Plans:** 2/2 plans
+
+Plans:
+- [x] 04-01-PLAN.md -- Backend: DataSource abstraction & generic billing service (PLANNED)
+- [x] 04-02-PLAN.md -- Frontend: Customer wizard UI (PLANNED)
+
 ---
 
 | Phase | Requirements | Status |
 |-------|--------------|--------|
 | Phase 1 | EMAIL-01, EMAIL-02, EMAIL-03 | Complete |
 | Phase 2 | WA-01, WA-02, WA-03 | Planned |
-| Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | In Progress |
+| Phase 3 | INV-01, INV-02, INV-03, INV-04, INV-05, INV-06, INV-07, INV-08, INV-09 | Complete |
+| Phase 4 | DS-01, DS-02, DS-03, DS-04, DS-05, DS-06, PM-01, PM-02, DV-01, DV-02, AC-01, UI-01 | Planned |
 
-**Coverage:** 15 requirements | Mapped: 15 | Unmapped: 0 ✓
+**Coverage:** 27 requirements | Mapped: 27 | Unmapped: 0 ✓

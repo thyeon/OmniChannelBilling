@@ -111,14 +111,14 @@ export async function POST(
       const mockDocNo = `MOCK-${timestamp}`;
 
       await updateInvoice(invoice.id, {
-        status: "DRAFT",
+        status: "SYNCED",
         autocountRefId: mockDocNo,
         syncError: undefined,
       });
 
       return NextResponse.json({
         success: true,
-        status: "DRAFT",
+        status: "SYNCED",
         docNo: mockDocNo,
         isMock: true,
       });

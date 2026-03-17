@@ -101,6 +101,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [payloadJson, setPayloadJson] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Fetch history on load
   useEffect(() => {
@@ -265,6 +266,8 @@ export default function GenerateInvoicePage(): React.ReactElement {
     if (!selectedInvoiceId) return;
 
     setIsSubmitting(true);
+    setSubmitError("");
+    setSaveSuccess(false);
     try {
       const res = await fetch(`/api/invoices/${selectedInvoiceId}/payload`, {
         method: "PUT",
@@ -272,20 +275,19 @@ export default function GenerateInvoicePage(): React.ReactElement {
         body: JSON.stringify({ payload: payloadJson }),
       });
 
+      const result = await res.json();
+
       if (!res.ok) {
-        const err = await res.json();
-        setSubmitError(err.error || "Failed to save payload");
+        setSubmitError(result.error || "Failed to save payload");
+        setIsSubmitting(false);
         return;
       }
 
-      // Reload payload data
-      const dataRes = await fetch(`/api/invoices/${selectedInvoiceId}/payload`);
-      if (dataRes.ok) {
-        const data = await dataRes.json();
-        setPayloadData(data);
-        setPayloadJson(JSON.stringify(data.payload, null, 2));
-      }
-    } catch {
+      // Save succeeded
+      setSaveSuccess(true);
+      setPayloadData((prev: PayloadData | null) => prev ? { ...prev, hasCustomPayload: true } : null);
+    } catch (err) {
+      console.error("Save payload error:", err);
       setSubmitError("Failed to save payload");
     } finally {
       setIsSubmitting(false);
@@ -326,6 +328,42 @@ export default function GenerateInvoicePage(): React.ReactElement {
       }
     } catch {
       setSubmitError("Failed to submit invoice");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  // Direct submit handler (for DRAFT status - submits without opening modal)
+  async function handleSubmitDirect(invoiceId: string) {
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const res = await fetch(`/api/invoices/${invoiceId}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useCustomPayload: false }),
+      });
+
+      const json = await res.json();
+
+      if (!res.ok) {
+        setError(json.error || "Failed to submit");
+        return;
+      }
+
+      if (json.success) {
+        fetchHistory(); // Refresh history
+        setResult({
+          success: true,
+          message: `Invoice submitted successfully`,
+          docNo: json.docNo,
+        });
+      } else {
+        setError(json.error || "Submission failed");
+      }
+    } catch {
+      setError("Failed to submit invoice");
     } finally {
       setIsSubmitting(false);
     }
@@ -584,7 +622,7 @@ export default function GenerateInvoicePage(): React.ReactElement {
                     </TableCell>
                     <TableCell className="font-mono">{record.autocountRefId || "-"}</TableCell>
                     <TableCell className="text-muted-foreground">
-                      {new Date(record.createdAt).toLocaleDateString()}
+                      {new Date(record.createdAt).toLocaleString("en-MY", { timeZone: "Asia/Kuala_Lumpur", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false })}
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -608,16 +646,22 @@ export default function GenerateInvoicePage(): React.ReactElement {
                           <FileJson className="h-4 w-4" />
                         </Button>
 
-                        {/* Submit/Retry Button - only for DRAFT or ERROR */}
-                        {record.status === "DRAFT" && (
+                        {/* Submit Button - for DRAFT, or disabled for SYNCED/GENERATED */}
+                        {(record.status === "DRAFT" || record.status === "SYNCED" || record.status === "GENERATED") && (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              setSelectedInvoiceId(record.id);
-                              handlePayloadClick(record.id);
+                              if (record.status === "DRAFT") {
+                                // DRAFT: actually submit to AutoCount
+                                handleSubmitDirect(record.id);
+                              } else {
+                                // SYNCED/GENERATED: just view payload (already submitted)
+                                handlePayloadClick(record.id);
+                              }
                             }}
-                            title="Submit"
+                            disabled={record.status === "SYNCED" || record.status === "GENERATED"}
+                            title={record.status === "SYNCED" || record.status === "GENERATED" ? "Already submitted" : "Submit"}
                           >
                             <Send className="h-4 w-4" />
                           </Button>
@@ -714,6 +758,11 @@ export default function GenerateInvoicePage(): React.ReactElement {
                 onChange={(e) => setPayloadJson(e.target.value)}
                 className="font-mono text-sm min-h-[300px]"
               />
+              {saveSuccess && (
+                <div className="p-3 bg-green-50 text-green-600 rounded-md text-sm">
+                  Payload saved successfully!
+                </div>
+              )}
               {submitError && (
                 <div className="p-3 bg-red-50 text-red-600 rounded-md text-sm">
                   {submitError}

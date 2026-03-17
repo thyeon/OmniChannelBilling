@@ -34,7 +34,7 @@ export interface AutoCountInvoiceMaster {
   paymentAmt: number;
   paymentRef: string | null;
   taxEntity?: string;
-  submitEInvoice?: string;
+  submitEInvoice?: boolean;
 }
 
 export interface AutoCountInvoiceDetail {
@@ -70,7 +70,7 @@ export interface AutoCountInvoicePayload {
   master: AutoCountInvoiceMaster;
   details: AutoCountInvoiceDetail[];
   autoFillOption: AutoCountAutoFillOption;
-  saveApprove: string | null;
+  saveApprove: boolean;
 }
 
 export interface AutoCountInvoiceResponse {

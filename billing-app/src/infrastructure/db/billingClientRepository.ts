@@ -47,6 +47,14 @@ export async function findBillingClientBySourceName(sourceClientName: string): P
   return toBillingClient(doc);
 }
 
+/** Fetch a billing client by debtor code. */
+export async function findBillingClientByDebtorCode(debtorCode: string): Promise<BillingClient | null> {
+  const collection = await getCollection();
+  const doc = await collection.findOne({ debtor_code: debtorCode, is_active: true });
+  if (!doc) return null;
+  return toBillingClient(doc);
+}
+
 /** Insert a new billing client. */
 export async function insertBillingClient(client: BillingClient): Promise<BillingClient> {
   const collection = await getCollection();

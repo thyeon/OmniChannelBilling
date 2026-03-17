@@ -13,6 +13,9 @@ export interface ServiceProductMapping {
   description?: string;
   defaultUnitPrice?: number;
   defaultBillingMode?: "ITEMIZED" | "LUMP_SUM";
+  taxCode?: string;
+  invoiceDescriptionTemplate?: string;
+  furtherDescriptionTemplate?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,6 +27,9 @@ export interface ServiceProductMappingInput {
   description?: string;
   defaultUnitPrice?: number;
   defaultBillingMode?: "ITEMIZED" | "LUMP_SUM";
+  taxCode?: string;
+  invoiceDescriptionTemplate?: string;
+  furtherDescriptionTemplate?: string;
 }
 
 export interface ServiceProductMappingUpdate {
@@ -31,4 +37,7 @@ export interface ServiceProductMappingUpdate {
   description?: string;
   defaultUnitPrice?: number;
   defaultBillingMode?: "ITEMIZED" | "LUMP_SUM";
+  taxCode?: string;
+  invoiceDescriptionTemplate?: string;
+  furtherDescriptionTemplate?: string;
 }

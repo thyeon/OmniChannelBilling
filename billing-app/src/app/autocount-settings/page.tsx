@@ -32,6 +32,9 @@ interface ServiceProductMapping {
   description?: string;
   defaultUnitPrice?: number;
   defaultBillingMode?: "ITEMIZED" | "LUMP_SUM";
+  taxCode?: string;
+  invoiceDescriptionTemplate?: string;
+  furtherDescriptionTemplate?: string;
 }
 
 export default function AutoCountSettingsPage() {
@@ -67,6 +70,9 @@ export default function AutoCountSettingsPage() {
     description: "",
     defaultUnitPrice: "",
     defaultBillingMode: "LUMP_SUM" as "ITEMIZED" | "LUMP_SUM",
+    taxCode: "",
+    invoiceDescriptionTemplate: "",
+    furtherDescriptionTemplate: "",
   });
 
   useEffect(() => {
@@ -225,6 +231,9 @@ export default function AutoCountSettingsPage() {
       description: "",
       defaultUnitPrice: "",
       defaultBillingMode: "LUMP_SUM",
+      taxCode: "",
+      invoiceDescriptionTemplate: "",
+      furtherDescriptionTemplate: "",
     });
   };
 
@@ -259,6 +268,9 @@ export default function AutoCountSettingsPage() {
         description: mapping.description || "",
         defaultUnitPrice: mapping.defaultUnitPrice?.toString() || "",
         defaultBillingMode: mapping.defaultBillingMode || "LUMP_SUM",
+        taxCode: mapping.taxCode || "",
+        invoiceDescriptionTemplate: mapping.invoiceDescriptionTemplate || "",
+        furtherDescriptionTemplate: mapping.furtherDescriptionTemplate || "",
       });
     } else {
       resetMappingForm();
@@ -670,6 +682,45 @@ export default function AutoCountSettingsPage() {
               </select>
               <p className="text-xs text-muted-foreground">
                 Lump Sum avoids AutoCount&apos;s 2 decimal place rounding on unit price.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="taxCode">Tax Code (Optional)</Label>
+              <Input
+                id="taxCode"
+                value={mappingForm.taxCode}
+                onChange={(e) => setMappingForm({ ...mappingForm, taxCode: e.target.value })}
+                placeholder="SV-6"
+              />
+              <p className="text-xs text-muted-foreground">
+                AutoCount tax code (e.g., SV-6, SV-8, SR, ZS). Overrides account book default.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="invoiceDescriptionTemplate">Invoice Description Template (Optional)</Label>
+              <Input
+                id="invoiceDescriptionTemplate"
+                value={mappingForm.invoiceDescriptionTemplate}
+                onChange={(e) => setMappingForm({ ...mappingForm, invoiceDescriptionTemplate: e.target.value })}
+                placeholder="e.g., Email Service - {BillingCycle}"
+              />
+              <p className="text-xs text-muted-foreground">
+                Template for line item description. Use placeholders: {'{BillingCycle}'}, {'{EmailCount}'}, {'{EmailRate}'}, {'{EmailTotal}'}, etc.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="furtherDescriptionTemplate">Further Description Template (Optional)</Label>
+              <Input
+                id="furtherDescriptionTemplate"
+                value={mappingForm.furtherDescriptionTemplate}
+                onChange={(e) => setMappingForm({ ...mappingForm, furtherDescriptionTemplate: e.target.value })}
+                placeholder="e.g., For {BillingCycle}, {EmailCount} emails at {EmailRate}"
+              />
+              <p className="text-xs text-muted-foreground">
+                Template for further description. Use placeholders: {'{BillingCycle}'}, {'{SMSCount}'}, {'{SMSRate}'}, {'{EmailCount}'}, {'{EmailRate}'}, etc.
               </p>
             </div>
           </div>

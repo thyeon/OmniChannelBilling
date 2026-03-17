@@ -27,6 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-15)
 | Phase 1 | Complete |
 | Phase 2 | Not planned yet |
 | Phase 3 | In Progress (Plans 01-02 Complete) |
+| Phase 4 | Not planned yet |
 
 ## Roadmap Evolution
 
@@ -34,6 +35,7 @@ See: .planning/PROJECT.md (updated 2026-03-15)
 - Phase 3 added: AutoCount Invoice Generation - Generate invoices directly in AutoCount Cloud Accounting via API for Coway (Malaysia) Sdn Bhd
 - Phase 3 Plan 01 completed: Backend: cowayBillingService + API endpoint + mock mode
 - Phase 3 Plan 02 completed: Generate Invoice UI page at /billing/generate-invoice
+- Phase 4 added: omnisource
 
 ## Decisions Made
 

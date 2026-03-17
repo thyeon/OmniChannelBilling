@@ -14,6 +14,9 @@ import {
   findMappingByAccountBookAndService,
 } from "@/infrastructure/db/serviceProductMappingRepository";
 import {
+  findBillingClientByDebtorCode,
+} from "@/infrastructure/db/billingClientRepository";
+import {
   AutoCountInvoicePayload,
   AutoCountInvoiceMaster,
   AutoCountInvoiceDetail,
@@ -64,6 +67,9 @@ export async function buildAutoCountInvoice(
     };
   }
 
+  // Fetch billing client for address
+  const billingClient = await findBillingClientByDebtorCode(debtorCode);
+
   // Resolve credit term: customer override → account book default → error
   const creditTerm =
     customer.creditTermOverride ?? accountBook.defaultCreditTerm;
@@ -86,6 +92,7 @@ export async function buildAutoCountInvoice(
 
   // Build invoice details
   const details: AutoCountInvoiceDetail[] = [];
+  const detailMappings: Awaited<ReturnType<typeof findMappingByAccountBookAndService>>[] = [];
   const errors: string[] = [];
 
   for (const lineItem of lineItems) {
@@ -132,13 +139,16 @@ export async function buildAutoCountInvoice(
       unit: "unit",
       unitPrice,
       discount: null,
-      taxCode: accountBook.defaultTaxCode || null,
+      taxCode: mapping?.taxCode || accountBook.defaultTaxCode || null,
       taxAdjustment: 0,
       localTaxAdjustment: 0,
       tariffCode: null,
       localTotalCost: 0,
       classificationCode: "022",
     });
+
+    // Store mapping reference for later template resolution
+    detailMappings.push(mapping);
   }
 
   if (errors.length > 0) {
@@ -163,39 +173,46 @@ export async function buildAutoCountInvoice(
     accountBook.invoiceDescriptionTemplate ||
     DEFAULT_INVOICE_DESCRIPTION_TEMPLATE;
 
-  const furtherDescTemplate =
-    customer.furtherDescriptionTemplate ||
-    accountBook.furtherDescriptionTemplate ||
-    DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
-
   const resolvedInvoiceDescription = resolveTemplate(invoiceDescTemplate, templateContext);
-  const resolvedFurtherDescription = resolveTemplate(furtherDescTemplate, templateContext);
 
-  // Apply furtherDescription to each detail line
-  for (const detail of details) {
-    detail.furtherDescription = resolvedFurtherDescription;
+  // Truncate description to max 80 characters (AutoCount limit)
+  const truncatedDescription = resolvedInvoiceDescription.slice(0, 80);
+
+  // Apply furtherDescription to each detail line, resolved per service type
+  // Resolution order: mapping template → customer override → account book default → default
+  for (let i = 0; i < details.length; i++) {
+    const detail = details[i];
+    const mapping = detailMappings[i];
+
+    const furtherDescTemplate =
+      mapping?.furtherDescriptionTemplate ||
+      customer.furtherDescriptionTemplate ||
+      accountBook.furtherDescriptionTemplate ||
+      DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
+
+    detail.furtherDescription = resolveTemplate(furtherDescTemplate, templateContext);
   }
 
-  // Calculate doc date (1st day of the month following the billing cycle)
-  // Format today's date as DD/MM/YYYY
+  // Calculate doc date (today)
+  // Format as ISO 8601 date (YYYY-MM-DD) for AutoCount .NET API
   const today = new Date();
-  const todayDDMMYYYY = `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(2, "0")}/${today.getFullYear()}`;
+  const todayISO = today.toISOString().split("T")[0];
 
   // Build invoice master
   const master: AutoCountInvoiceMaster = {
     docNo: null,
     docNoFormatName: null,
-    docDate: todayDDMMYYYY,
-    taxDate: todayDDMMYYYY,
+    docDate: todayISO,
+    taxDate: todayISO,
     debtorCode: debtorCode,
     debtorName: customer.name,
     creditTerm,
     salesLocation,
     salesAgent: "Olivia Yap",
     email: null,
-    address: null,
+    address: billingClient?.address || null,
     ref: null,
-    description: resolvedInvoiceDescription,
+    description: truncatedDescription,
     note: null,
     remark1: null,
     remark2: null,
@@ -209,13 +226,13 @@ export async function buildAutoCountInvoice(
     paymentAmt: 0,
     paymentRef: null,
     taxEntity: accountBook.taxEntity || undefined,
-    submitEInvoice: "FALSE",
+    submitEInvoice: false,
   };
 
   // Build auto-fill options
   const autoFillOption: AutoCountAutoFillOption = {
     accNo: false,
-    taxCode: true,
+    taxCode: false, // Use provided taxCode instead of auto-filling from product
     tariffCode: false,
     localTotalCost: true,
   };
@@ -224,7 +241,7 @@ export async function buildAutoCountInvoice(
     master,
     details,
     autoFillOption,
-    saveApprove: null,
+    saveApprove: false,
   };
 
   return { success: true, payload };
