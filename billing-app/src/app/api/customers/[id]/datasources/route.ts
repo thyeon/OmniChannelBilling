@@ -24,11 +24,34 @@ function validateDataSourceBody(body: unknown): {
       token?: string;
       username?: string;
       password?: string;
+      headerName?: string;
     };
     responseMapping: {
       usageCountPath: string;
       sentPath?: string;
       failedPath?: string;
+    };
+    lineItemMappings?: {
+      lineIdentifier: string;
+      countPath: string;
+      ratePath?: string;
+      fallbackRate?: number;
+    }[];
+    requestTemplate?: {
+      method: 'GET' | 'POST';
+      headers?: Record<string, string>;
+      bodyTemplate?: string;
+    };
+    retryPolicy?: {
+      maxRetries: number;
+      retryDelaySeconds: number;
+      timeoutSeconds: number;
+    };
+    fallbackValues?: {
+      usageCount?: number;
+      sentCount?: number;
+      failedCount?: number;
+      useDefaultOnMissing: boolean;
     };
     isActive: boolean;
   };
@@ -58,6 +81,91 @@ function validateDataSourceBody(body: unknown): {
     return { valid: false, error: "Invalid or missing usageCountPath" };
   }
 
+  // Validate lineItemMappings (optional)
+  let lineItemMappings: { lineIdentifier: string; countPath: string; ratePath?: string; fallbackRate?: number }[] | undefined;
+  if (b.lineItemMappings !== undefined) {
+    if (!Array.isArray(b.lineItemMappings)) {
+      return { valid: false, error: "lineItemMappings must be an array" };
+    }
+    lineItemMappings = [];
+    for (const item of b.lineItemMappings as Record<string, unknown>[]) {
+      if (!item.lineIdentifier || typeof item.lineIdentifier !== "string") {
+        return { valid: false, error: "Invalid lineIdentifier in lineItemMappings" };
+      }
+      if (!item.countPath || typeof item.countPath !== "string") {
+        return { valid: false, error: "Invalid countPath in lineItemMappings" };
+      }
+      lineItemMappings.push({
+        lineIdentifier: item.lineIdentifier as string,
+        countPath: item.countPath as string,
+        ratePath: item.ratePath as string | undefined,
+        fallbackRate: item.fallbackRate as number | undefined,
+      });
+    }
+  }
+
+  // Validate requestTemplate (optional)
+  let requestTemplate: { method: 'GET' | 'POST'; headers?: Record<string, string>; bodyTemplate?: string } | undefined;
+  if (b.requestTemplate !== undefined) {
+    if (typeof b.requestTemplate !== "object") {
+      return { valid: false, error: "requestTemplate must be an object" };
+    }
+    const rt = b.requestTemplate as Record<string, unknown>;
+    if (!rt.method || !["GET", "POST"].includes(rt.method as string)) {
+      return { valid: false, error: "Invalid method in requestTemplate" };
+    }
+    requestTemplate = {
+      method: rt.method as 'GET' | 'POST',
+      headers: rt.headers as Record<string, string> | undefined,
+      bodyTemplate: rt.bodyTemplate as string | undefined,
+    };
+  }
+
+  // Validate retryPolicy (optional)
+  let retryPolicy: { maxRetries: number; retryDelaySeconds: number; timeoutSeconds: number } | undefined;
+  if (b.retryPolicy !== undefined) {
+    if (typeof b.retryPolicy !== "object") {
+      return { valid: false, error: "retryPolicy must be an object" };
+    }
+    const rp = b.retryPolicy as Record<string, unknown>;
+    if (typeof rp.maxRetries !== "number" || typeof rp.retryDelaySeconds !== "number" || typeof rp.timeoutSeconds !== "number") {
+      return { valid: false, error: "Invalid retryPolicy fields" };
+    }
+    retryPolicy = {
+      maxRetries: rp.maxRetries as number,
+      retryDelaySeconds: rp.retryDelaySeconds as number,
+      timeoutSeconds: rp.timeoutSeconds as number,
+    };
+  }
+
+  // Validate fallbackValues (optional)
+  let fallbackValues: { usageCount?: number; sentCount?: number; failedCount?: number; useDefaultOnMissing: boolean } | undefined;
+  if (b.fallbackValues !== undefined) {
+    if (typeof b.fallbackValues !== "object") {
+      return { valid: false, error: "fallbackValues must be an object" };
+    }
+    const fv = b.fallbackValues as Record<string, unknown>;
+    if (typeof fv.useDefaultOnMissing !== "boolean") {
+      return { valid: false, error: "Invalid useDefaultOnMissing in fallbackValues" };
+    }
+    fallbackValues = {
+      usageCount: fv.usageCount as number | undefined,
+      sentCount: fv.sentCount as number | undefined,
+      failedCount: fv.failedCount as number | undefined,
+      useDefaultOnMissing: fv.useDefaultOnMissing as boolean,
+    };
+  }
+
+  // Validate authCredentials.headerName (optional)
+  const authCredentials = b.authCredentials as Record<string, unknown> | undefined;
+  const validatedAuthCredentials = authCredentials ? {
+    key: authCredentials.key as string | undefined,
+    token: authCredentials.token as string | undefined,
+    username: authCredentials.username as string | undefined,
+    password: authCredentials.password as string | undefined,
+    headerName: authCredentials.headerName as string | undefined,
+  } : undefined;
+
   return {
     valid: true,
     data: {
@@ -66,17 +174,16 @@ function validateDataSourceBody(body: unknown): {
       name: b.name as string,
       apiEndpoint: b.apiEndpoint as string,
       authType: b.authType as AuthType,
-      authCredentials: b.authCredentials as {
-        key?: string;
-        token?: string;
-        username?: string;
-        password?: string;
-      } | undefined,
+      authCredentials: validatedAuthCredentials,
       responseMapping: {
         usageCountPath: rm.usageCountPath as string,
         sentPath: rm.sentPath as string | undefined,
         failedPath: rm.failedPath as string | undefined,
       },
+      lineItemMappings,
+      requestTemplate,
+      retryPolicy,
+      fallbackValues,
       isActive: b.isActive !== false,
     },
   };
