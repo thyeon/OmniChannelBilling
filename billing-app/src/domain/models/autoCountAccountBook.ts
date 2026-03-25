@@ -17,6 +17,11 @@ export interface AutoCountAccountBook {
   taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
+  defaultSalesAgent?: string;
+  defaultAccNo?: string;
+  defaultClassificationCode?: string;
+  inclusiveTax?: boolean;
+  submitEInvoice?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,6 +37,11 @@ export interface AutoCountAccountBookInput {
   taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
+  defaultSalesAgent?: string;
+  defaultAccNo?: string;
+  defaultClassificationCode?: string;
+  inclusiveTax?: boolean;
+  submitEInvoice?: boolean;
 }
 
 export interface AutoCountAccountBookUpdate {
@@ -45,4 +55,9 @@ export interface AutoCountAccountBookUpdate {
   taxEntity?: string;
   invoiceDescriptionTemplate?: string;
   furtherDescriptionTemplate?: string;
+  defaultSalesAgent?: string;
+  defaultAccNo?: string;
+  defaultClassificationCode?: string;
+  inclusiveTax?: boolean;
+  submitEInvoice?: boolean;
 }
