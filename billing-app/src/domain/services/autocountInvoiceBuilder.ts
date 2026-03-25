@@ -126,7 +126,7 @@ export async function buildAutoCountInvoice(
 
     details.push({
       productCode: resolvedProductCode,
-      accNo: "500-0000", // TODO: Make configurable per account book
+      accNo: accountBook.defaultAccNo || "500-0000",
       description: lineDescription,
       qty,
       unit: "unit",
@@ -137,7 +137,7 @@ export async function buildAutoCountInvoice(
       localTaxAdjustment: 0,
       tariffCode: null,
       localTotalCost: 0,
-      classificationCode: "022",
+      classificationCode: accountBook.defaultClassificationCode || "022",
     });
   }
 
@@ -191,7 +191,7 @@ export async function buildAutoCountInvoice(
     debtorName: customer.name,
     creditTerm,
     salesLocation,
-    salesAgent: "Olivia Yap",
+    salesAgent: accountBook.defaultSalesAgent || "Olivia Yap",
     email: null,
     address: null,
     ref: null,
@@ -202,14 +202,14 @@ export async function buildAutoCountInvoice(
     remark3: null,
     remark4: null,
     currencyRate: 1,
-    inclusiveTax: false,
+    inclusiveTax: accountBook.inclusiveTax ?? false,
     isRoundAdj: false,
     paymentMethod: null,
     toBankRate: 1,
     paymentAmt: 0,
     paymentRef: null,
     taxEntity: accountBook.taxEntity || undefined,
-    submitEInvoice: "FALSE",
+    submitEInvoice: accountBook.submitEInvoice ?? false,
   };
 
   // Build auto-fill options
