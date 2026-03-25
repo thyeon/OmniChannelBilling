@@ -74,6 +74,17 @@ export interface Customer {
     };
     isActive: boolean;
   }>;
+  // Customer status for lifecycle management
+  status: 'ACTIVE' | 'SUSPENDED' | 'MAINTENANCE';
+  // Billing frequency
+  billingCycle: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+  // Default field values for AutoCount invoice generation
+  defaultFields?: {
+    creditTerm?: string;
+    salesLocation?: string;
+    taxCode?: string;
+    description?: string;
+  };
 }
 
 export type ConnectionStatus = 'SUCCESS' | 'FAILED' | 'NOT_CONFIGURED';
