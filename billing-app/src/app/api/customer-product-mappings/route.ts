@@ -49,6 +49,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       "lineIdentifier",
       "productCode",
       "description",
+      "furtherDescriptionTemplate",
       "classificationCode",
       "unit",
       "taxCode",
