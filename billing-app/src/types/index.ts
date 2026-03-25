@@ -78,6 +78,8 @@ export interface Customer {
   status: 'ACTIVE' | 'SUSPENDED' | 'MAINTENANCE';
   // Billing frequency
   billingCycle: 'MONTHLY' | 'QUARTERLY' | 'YEARLY';
+  // For YEARLY billing cycle - the month (1-12) when billing should occur
+  billingStartMonth?: number;
   // Default field values for AutoCount invoice generation
   defaultFields?: {
     creditTerm?: string;
