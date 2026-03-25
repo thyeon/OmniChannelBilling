@@ -182,7 +182,7 @@ export async function PUT(
       );
     }
 
-    const updated = await updateDataSource(params.dsId, validation.data as Parameters<typeof updateData>[1]);
+    const updated = await updateDataSource(params.dsId, validation.data as Parameters<typeof updateDataSource>[1]);
     return NextResponse.json({ dataSource: updated });
   } catch (error) {
     console.error("Failed to update data source:", error);

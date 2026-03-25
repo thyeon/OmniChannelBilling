@@ -6,7 +6,7 @@
  */
 
 import { Customer, InvoiceLineItem, ServiceType, ConnectionStatus } from "@/types";
-import { DataSource, DataSourceType } from "@/domain/models/dataSource";
+import { DataSource } from "@/domain/models/dataSource";
 import { findCustomerById } from "@/infrastructure/db/customerRepository";
 import {
   findDataSourcesByCustomerId,

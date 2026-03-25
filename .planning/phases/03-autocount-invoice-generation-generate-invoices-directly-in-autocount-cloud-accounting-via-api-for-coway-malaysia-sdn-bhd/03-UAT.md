@@ -8,24 +8,21 @@ updated: 2026-03-16T12:15:00Z
 
 ## Current Test
 
-number: 1
-name: Navigate to Generate Invoice page
+number: 3
+name: Success response displays DocNo
 expected: |
-  User can navigate to /billing/generate-invoice and see the Generate Invoice form with:
-  - Customer selection (shows "Coway (Malaysia) Sdn Bhd")
-  - Billing month input
-  - "Generate Invoice" button
+  When invoice is generated successfully, the page displays "Invoice generated successfully" with the AutoCount document number
 awaiting: user response
 
 ## Tests
 
 ### 1. Navigate to Generate Invoice page
 expected: User can navigate to /billing/generate-invoice and see the Generate Invoice form with customer selection, billing month input, and Generate button
-result: [pending]
+result: pass
 
 ### 2. Submit Generate Invoice request
 expected: Clicking "Generate Invoice" calls the API with customerId and billingMonth. Shows loading state while processing.
-result: [pending]
+result: pass
 
 ### 3. Success response displays DocNo
 expected: When invoice is generated successfully, the page displays "Invoice generated successfully" with the AutoCount document number
@@ -42,9 +39,9 @@ result: [pending]
 ## Summary
 
 total: 5
-passed: 0
+passed: 2
 issues: 0
-pending: 5
+pending: 3
 skipped: 0
 
 ## Gaps

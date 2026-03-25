@@ -429,6 +429,47 @@ const nextConfig = {
 
 ---
 
+### Issue 4: Log File Permission Denied
+
+**Error:**
+```
+Error: EACCES: permission denied, open '/app/logs/autocount-mock-invoices.log'
+```
+
+**Cause:** The application writes to `/app/logs/` directory using the `logToFile()` function which uses `process.cwd()` (returns `/app` in container). The Dockerfile runs as non-root user `nextjs` (UID 1001) but the `/app/logs` directory doesn't exist or isn't owned by this user.
+
+**Solution:** Modify the Dockerfile to create the logs directory with proper ownership before switching to the `nextjs` user.
+
+**File Modified:** `Dockerfile`
+
+```diff
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
++# Create logs directory and set ownership
++RUN mkdir -p /app/logs && chown -R nextjs:nodejs /app/logs
+
+# Copy standalone output
+COPY --from=builder /app/.next/standalone ./
+```
+
+**Deploy Steps:**
+
+1. Fix the Dockerfile locally
+2. Increment version and rebuild:
+   ```bash
+   docker buildx build --platform linux/amd64 -t inglabn/billing-app:1.0.2 --push .
+   ```
+3. On Synology, pull and restart:
+   ```bash
+   ssh thyeon@192.168.68.50
+   cd /volume2/docker
+   sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml pull
+   sudo /usr/local/bin/docker-compose -f docker-compose.synology.yml up -d
+   ```
+
+---
+
 ## Version History
 
 | Date | Change |
@@ -436,6 +477,7 @@ const nextConfig = {
 | 2026-02-10 | Initial deployment with MongoDB 4.4 fix |
 | 2026-02-10 | Fixed MOCK_INVOICES TypeScript error |
 | 2026-02-10 | Created public directory for Docker build |
+| 2026-03-17 | Fixed logs directory permission for nextjs user |
 
 ---
 

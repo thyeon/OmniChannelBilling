@@ -2,9 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createDataSource,
   findDataSourcesByCustomerId,
-  findDataSourceById,
-  updateDataSource,
-  deleteDataSource,
 } from "@/infrastructure/db/dataSourceRepository";
 import { DataSourceType, AuthType, ServiceType } from "@/domain/models/dataSource";
 
