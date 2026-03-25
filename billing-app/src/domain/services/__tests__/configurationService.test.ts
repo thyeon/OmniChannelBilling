@@ -94,7 +94,7 @@ describe('ConfigurationService', () => {
       expect(result).not.toBeNull();
       expect(result?.customer).toEqual(mockCustomer);
       expect(result?.dataSources).toHaveLength(1);
-      expect(result?.dataSources[0].maskedCredentials).toEqual({ key: '****123' });
+      expect(result?.dataSources[0].maskedCredentials).toEqual({ key: '****-123' });
       expect(configCache.set).toHaveBeenCalledWith('customer:cust-123', expect.any(Object), 5);
     });
 
