@@ -16,6 +16,63 @@ export interface ResponseMapping {
   failedPath?: string;
 }
 
+/**
+ * Line item mapping for parsing multi-line API responses
+ */
+export interface LineItemMapping {
+  lineIdentifier: string;
+  countPath: string;
+  ratePath?: string;
+  fallbackRate?: number;
+}
+
+/**
+ * Result of processing multi-line data from API response
+ */
+export interface MultiLineResult {
+  lineIdentifier: string;
+  count: number;
+  rate?: number;
+  fallbackRate?: number;
+}
+
+/**
+ * Result of processing legacy single-line data from API response
+ */
+export interface SingleLineResult {
+  usageCount: number;
+  sentCount?: number;
+  failedCount?: number;
+}
+
+/**
+ * Request template for API calls
+ */
+export interface RequestTemplate {
+  method: 'GET' | 'POST';
+  headers?: Record<string, string>;
+  bodyTemplate?: string;
+}
+
+/**
+ * Retry policy configuration
+ */
+export interface RetryPolicy {
+  maxRetries: number;
+  retryDelaySeconds: number;
+  timeoutSeconds: number;
+}
+
+/**
+ * Fallback values when API response is missing fields
+ */
+export interface FallbackValues {
+  usageCount?: number;
+  sentCount?: number;
+  failedCount?: number;
+  useDefaultOnMissing: boolean;
+}
+
 export interface DataSource {
   id?: string;
   customerId: string;
@@ -29,8 +86,13 @@ export interface DataSource {
     token?: string;
     username?: string;
     password?: string;
+    headerName?: string;
   };
   responseMapping: ResponseMapping;
+  lineItemMappings?: LineItemMapping[];
+  requestTemplate?: RequestTemplate;
+  retryPolicy?: RetryPolicy;
+  fallbackValues?: FallbackValues;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
