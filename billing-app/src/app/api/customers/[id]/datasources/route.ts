@@ -166,6 +166,7 @@ function validateDataSourceBody(body: unknown): {
     headerName: authCredentials.headerName as string | undefined,
     user: authCredentials.user as string | undefined,
     secret: authCredentials.secret as string | undefined,
+    serviceProvider: authCredentials.serviceProvider as string | undefined,
   } : undefined;
 
   return {

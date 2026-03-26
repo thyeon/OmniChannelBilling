@@ -64,6 +64,7 @@ interface DataSourceFormData {
   authPassword: string;
   authUser: string;
   authSecret: string;
+  authServiceProvider: string;
   // Response mapping
   usageCountPath: string;
   sentPath: string;
@@ -96,6 +97,7 @@ const emptyFormData: DataSourceFormData = {
   authPassword: "",
   authUser: "",
   authSecret: "",
+  authServiceProvider: "",
   usageCountPath: "",
   sentPath: "",
   failedPath: "",
@@ -176,6 +178,7 @@ export default function DataSourceStep({
       authPassword: ds.authCredentials?.password || "",
       authUser: ds.authCredentials?.user || "",
       authSecret: ds.authCredentials?.secret || "",
+      authServiceProvider: ds.authCredentials?.serviceProvider || "",
       usageCountPath: ds.responseMapping?.usageCountPath || "",
       sentPath: ds.responseMapping?.sentPath || "",
       failedPath: ds.responseMapping?.failedPath || "",
@@ -217,9 +220,9 @@ export default function DataSourceStep({
     if (authType === "BASIC_AUTH" && authUsername && authPassword) {
       return { username: authUsername, password: authPassword };
     }
-    // COWAY_API uses "user" and "secret" in the request body
+    // COWAY_API uses "user", "secret", and "serviceProvider" in the request body
     if (type === "COWAY_API" && authUser && authSecret) {
-      return { user: authUser, secret: authSecret };
+      return { user: authUser, secret: authSecret, serviceProvider: formData.authServiceProvider || undefined };
     }
     return undefined;
   }
@@ -621,9 +624,9 @@ export default function DataSourceStep({
             </div>
 
             {/* Conditional auth fields */}
-            {/* COWAY_API uses "user" and "secret" in the request body */}
+            {/* COWAY_API uses "user", "secret", and "serviceProvider" in the request body */}
             {formData.type === "COWAY_API" && (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="authUser">User *</Label>
                   <Input
@@ -641,6 +644,15 @@ export default function DataSourceStep({
                     value={formData.authSecret}
                     onChange={(e) => setFormData({ ...formData, authSecret: e.target.value })}
                     placeholder="API secret"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authServiceProvider">Service Provider *</Label>
+                  <Input
+                    id="authServiceProvider"
+                    value={formData.authServiceProvider}
+                    onChange={(e) => setFormData({ ...formData, authServiceProvider: e.target.value })}
+                    placeholder="e.g., gts"
                   />
                 </div>
               </div>
