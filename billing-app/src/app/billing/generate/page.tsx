@@ -194,7 +194,8 @@ export default function GeneratePage(): React.ReactElement {
     setError("");
 
     try {
-      const res = await fetch("/api/invoices/generate", {
+      // Call the dedicated generic generate endpoint (handles full billing flow internally)
+      const res = await fetch("/api/invoices/generate/generic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ billingMonth, customerId: selectedCustomerId }),
