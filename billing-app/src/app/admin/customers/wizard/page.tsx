@@ -1,15 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import BasicInfoStep from "./BasicInfoStep";
 import DataSourceStep from "./DataSourceStep";
 import ProductMappingStep from "./ProductMappingStep";
+import { Customer } from "@/types";
 import { CustomerProductMapping } from "@/domain/models/customerProductMapping";
 
 interface WizardData {
   // Basic info step
-  customerName: string;
-  customerId: string;
+  customer?: Customer;
   // DataSource step
   dataSourceId?: string;
   // Product mapping step
@@ -31,10 +33,11 @@ const STEPS: WizardStepConfig[] = [
 ];
 
 export default function CustomerWizardPage() {
+  const searchParams = useSearchParams();
+  const customerIdParam = searchParams.get("customerId");
   const [currentStep, setCurrentStep] = useState<WizardStep>("info");
   const [data, setData] = useState<WizardData>({
-    customerName: "",
-    customerId: "",
+    customer: undefined,
     productMappings: [],
   });
 
@@ -97,32 +100,25 @@ export default function CustomerWizardPage() {
       {/* Step Content */}
       <div className="border rounded-lg p-6">
         {currentStep === "info" && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Customer Basic Information</h2>
-            <p className="text-muted-foreground">Enter basic customer details</p>
-            {/* Placeholder for basic info form */}
-            <div className="text-center py-8 text-muted-foreground">
-              Basic Info step - not implemented in this task
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={handleNext}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <BasicInfoStep
+            data={data.customer || {}}
+            editMode={!!customerIdParam}
+            onUpdate={(c) => setData((p) => ({ ...p, customer: c }))}
+            onNext={(c) => {
+              setData((p) => ({ ...p, customer: c }));
+              handleNext();
+            }}
+            onBack={handleBack}
+          />
         )}
 
         {currentStep === "dataSource" && (
-          <DataSourceStep customerId={data.customerId || "new-customer"} onNext={handleNext} onBack={handleBack} />
+          <DataSourceStep customerId={data.customer?.id || ""} onNext={handleNext} onBack={handleBack} />
         )}
 
         {currentStep === "productMapping" && (
           <ProductMappingStep
-            customerId={data.customerId || "new-customer"}
+            customerId={data.customer?.id || ""}
             data={data.productMappings}
             onUpdate={handleUpdateMappings}
             onNext={handleNext}
