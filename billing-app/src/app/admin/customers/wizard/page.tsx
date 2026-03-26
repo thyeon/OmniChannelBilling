@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import DataSourceStep from "./DataSourceStep";
 import ProductMappingStep from "./ProductMappingStep";
 import { CustomerProductMapping } from "@/domain/models/customerProductMapping";
 
@@ -116,30 +117,7 @@ export default function CustomerWizardPage() {
         )}
 
         {currentStep === "dataSource" && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Data Source Configuration</h2>
-            <p className="text-muted-foreground">Configure data source for this customer</p>
-            {/* Placeholder for DataSourceStep - Task 3.x */}
-            <div className="text-center py-8 text-muted-foreground">
-              DataSource step - not implemented in this task (Task 3.x)
-            </div>
-            <div className="flex justify-between">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="px-4 py-2 border rounded-md"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={handleNext}
-                className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-              >
-                Next
-              </button>
-            </div>
-          </div>
+          <DataSourceStep customerId={data.customerId || "new-customer"} onNext={handleNext} onBack={handleBack} />
         )}
 
         {currentStep === "productMapping" && (
