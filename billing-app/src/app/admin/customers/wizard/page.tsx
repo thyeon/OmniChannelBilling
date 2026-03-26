@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import BasicInfoStep from "./BasicInfoStep";
 import DataSourceStep from "./DataSourceStep";
@@ -34,6 +34,7 @@ const STEPS: WizardStepConfig[] = [
 
 export default function CustomerWizardPage() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const customerIdParam = searchParams.get("customerId");
   const [currentStep, setCurrentStep] = useState<WizardStep>("info");
   const [data, setData] = useState<WizardData>({
@@ -62,8 +63,15 @@ export default function CustomerWizardPage() {
   }
 
   function handleSubmit(): void {
-    console.log("Submitting customer data:", data);
-    // TODO: Implement API call to create customer
+    if (!data.customer?.id) {
+      alert("No customer found. Please complete the Basic Info step.");
+      return;
+    }
+    // Data sources already saved during DataSourceStep (immediate POST/PUT on save)
+    // Product mappings already saved during ProductMappingStep (immediate POST/PUT on save)
+    // Final submit just confirms and redirects
+    console.log("Customer creation complete:", data.customer);
+    router.push("/admin/customers");
   }
 
   return (
@@ -129,7 +137,9 @@ export default function CustomerWizardPage() {
         {currentStep === "review" && (
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Review & Submit</h2>
-            <p className="text-muted-foreground">Review your configuration before submitting</p>
+            <p className="text-muted-foreground">
+              Customer '{data.customer?.name}' with {data.dataSourceId ? "1" : "0"} data source(s) and {data.productMappings.length} product mapping(s) is ready.
+            </p>
             <pre className="bg-muted p-4 rounded-md text-sm overflow-auto">
               {JSON.stringify(data, null, 2)}
             </pre>
