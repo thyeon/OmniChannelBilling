@@ -75,15 +75,6 @@ function makeErrorLineItem(dataSource: DataSource, customer: Customer, message: 
   };
 }
 
-/** Convert period (YYYY-MM) to Malaysia timezone date range */
-function getDateRange(period: string): { dtFrom: string; dtTo: string } {
-  const [year, month] = period.split("-").map(Number);
-  const dtFrom = `${year}-${String(month).padStart(2, "0")}-01 00:00:00`;
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const dtTo = `${year}-${String(month).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")} 23:59:59`;
-  return { dtFrom, dtTo };
-}
-
 /**
  * Helper function to get nested value from object using JSON path.
  * Supports paths like "data.0.line_items.0.qty"
