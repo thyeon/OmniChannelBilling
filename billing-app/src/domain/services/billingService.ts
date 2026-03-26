@@ -17,11 +17,71 @@ import { fetchEmailReconSummary } from "@/infrastructure/external/reconClient";
 import { resolveTokens } from "./templateTokenResolver";
 import { processMultiLine, processLegacySingleLine } from "./lineItemProcessor";
 import { resolveRate } from "./rateResolver";
+import { getDateRange } from "@/infrastructure/external/cowayClient";
 
 interface BillableDataResult {
   customer: Customer | null;
   lineItems: InvoiceLineItem[];
   reason?: "skipped";
+}
+
+/** Fetch with retry logic and optional fallback. */
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+  dataSource?: DataSource
+): Promise<unknown> {
+  const maxRetries = dataSource?.retryPolicy?.maxRetries ?? 0;
+  const delayMs = (dataSource?.retryPolicy?.retryDelaySeconds ?? 1) * 1000;
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, { ...options, signal: AbortSignal.timeout((dataSource?.retryPolicy?.timeoutSeconds ?? 60) * 1000) });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < maxRetries) await new Promise((r) => setTimeout(r, delayMs));
+    }
+  }
+  if (dataSource?.fallbackValues?.useDefaultOnMissing) {
+    console.log(`Using fallback due to API failure for ${dataSource.id}`);
+    return { usageCount: dataSource.fallbackValues.usageCount ?? 0 };
+  }
+  throw lastError || new Error("All retry attempts failed");
+}
+
+/** Create an error line item. */
+function makeErrorLineItem(dataSource: DataSource, customer: Customer, message: string): InvoiceLineItem {
+  const rate = customer.rates?.[dataSource.serviceType] || 0;
+  return {
+    dataSourceId: dataSource.id,
+    service: dataSource.serviceType,
+    hasProvider: false,
+    reconServerStatus: "FAILED",
+    providerStatus: "NOT_CONFIGURED",
+    reconServerName: message,
+    providerName: "",
+    reconTotal: 0,
+    reconDetails: { sent: 0, failed: 0, withheld: 0 },
+    providerTotal: 0,
+    discrepancyPercentage: 0,
+    isMismatch: false,
+    thresholdUsed: customer.discrepancyThreshold || 0,
+    billableCount: 0,
+    wasOverridden: false,
+    rate,
+    totalCharge: 0,
+  };
+}
+
+/** Convert period (YYYY-MM) to Malaysia timezone date range */
+function getDateRange(period: string): { dtFrom: string; dtTo: string } {
+  const [year, month] = period.split("-").map(Number);
+  const dtFrom = `${year}-${String(month).padStart(2, "0")}-01 00:00:00`;
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const dtTo = `${year}-${String(month).padStart(2, "0")}-${String(daysInMonth).padStart(2, "0")} 23:59:59`;
+  return { dtFrom, dtTo };
 }
 
 /**
@@ -79,11 +139,14 @@ function createLineItemFromData(
   usageCount: number,
   customer: Customer,
   sentCount?: number,
-  failedCount?: number
+  failedCount?: number,
+  lineIdentifier?: string
 ): InvoiceLineItem {
   const rate = customer.rates?.[dataSource.serviceType] || 0;
 
   return {
+    dataSourceId: dataSource.id,
+    lineIdentifier,
     service: dataSource.serviceType,
     hasProvider: true,
     reconServerStatus: "SUCCESS" as ConnectionStatus,
@@ -134,6 +197,7 @@ function createErrorLineItem(
   const rate = customer.rates?.[dataSource.serviceType] || 0;
 
   return {
+    dataSourceId: dataSource.id,
     service: dataSource.serviceType,
     hasProvider: false,
     reconServerStatus: "FAILED" as ConnectionStatus,
@@ -159,43 +223,88 @@ function createErrorLineItem(
 }
 
 /**
- * Fetch billable data for a specific data source.
- * Switches on dataSource.type to determine which fetcher to use.
+ * Fetch billable line items for a specific data source.
+ * Returns one InvoiceLineItem per lineIdentifier (for multi-line) or one item per dataSource (for single-line).
  */
 async function fetchBillableForDataSource(
   dataSource: DataSource,
-  billingMonth: string
-): Promise<{ usageCount: number; sentCount?: number; failedCount?: number } | null> {
+  billingMonth: string,
+  customer: Customer
+): Promise<InvoiceLineItem[]> {
+  function makeLineItem(
+    count: number,
+    sent?: number,
+    failed?: number,
+    lineIdentifier?: string
+  ): InvoiceLineItem {
+    const rate = customer.rates?.[dataSource.serviceType] || 0;
+    return {
+      dataSourceId: dataSource.id,
+      lineIdentifier,
+      service: dataSource.serviceType,
+      hasProvider: true,
+      reconServerStatus: "SUCCESS",
+      providerStatus: "SUCCESS",
+      reconServerName: dataSource.name,
+      providerName: getProviderName(dataSource.serviceType),
+      reconTotal: count,
+      reconDetails: { sent: sent ?? count, failed: failed ?? 0, withheld: 0 },
+      providerTotal: count,
+      discrepancyPercentage: 0,
+      isMismatch: false,
+      thresholdUsed: customer.discrepancyThreshold || 0,
+      billableCount: count,
+      wasOverridden: false,
+      rate,
+      totalCharge: count * rate,
+    };
+  }
+
   try {
     switch (dataSource.type) {
       case "COWAY_API": {
-        // Use Coway API for SMS data
-        const data = await fetchCowayBillable(billingMonth);
-        if (data.length > 0) {
-          const usageCount = getNestedValue(
-            data,
-            dataSource.responseMapping.usageCountPath
-          ) as number;
-          return { usageCount: usageCount || 0 };
+        // COWAY_API uses user/secret/serviceProvider from dataSource.authCredentials
+        const user = dataSource.authCredentials?.user;
+        const secret = dataSource.authCredentials?.secret;
+        const serviceProvider = dataSource.authCredentials?.serviceProvider;
+        if (!user || !secret) {
+          return [makeErrorLineItem(dataSource, customer, "Missing COWAY_API credentials (user/secret)")];
         }
-        return { usageCount: 0 };
+
+        const { dtFrom, dtTo } = getDateRange(billingMonth);
+        const body = { user, secret, serviceProvider: serviceProvider || "gts", dtFrom, dtTo };
+        const json = await fetchWithRetry(dataSource.apiEndpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
+        let { usageCount, sentCount, failedCount } = singleLineResult;
+        if (
+          dataSource.fallbackValues?.useDefaultOnMissing &&
+          usageCount === 0 &&
+          dataSource.fallbackValues.usageCount !== undefined
+        ) {
+          usageCount = dataSource.fallbackValues.usageCount;
+        }
+        if (usageCount === 0) return [];
+        return [makeLineItem(usageCount, sentCount, failedCount)];
       }
 
       case "RECON_SERVER": {
-        // Use WhatsApp or Email recon server based on serviceType
         if (dataSource.serviceType === "WHATSAPP") {
-          // Need to extract auth credentials from dataSource
           const apiKey = dataSource.authCredentials?.key || "";
           const userId = dataSource.authCredentials?.username || "";
-          const usageCount = await fetchWhatsAppBillable(billingMonth, {
+          const count = await fetchWhatsAppBillable(billingMonth, {
             apiEndpoint: dataSource.apiEndpoint,
             userId,
             apiKey,
           });
-          return { usageCount };
+          if (count === 0) return [];
+          return [makeLineItem(count)];
         } else if (dataSource.serviceType === "EMAIL") {
-          // Use recon server config for email
-          const usageCount = await fetchEmailReconSummary(
+          const result = await fetchEmailReconSummary(
             {
               id: dataSource.id || "",
               name: dataSource.name,
@@ -206,149 +315,73 @@ async function fetchBillableForDataSource(
             },
             billingMonth
           );
-          return { usageCount: usageCount.count || 0 };
+          const count = result.count || 0;
+          if (count === 0) return [];
+          return [makeLineItem(count)];
         }
-        return null;
+        return [];
       }
 
       case "CUSTOM_REST_API": {
-        // Generic HTTP call with auth
-        const headers: Record<string, string> = {
-          "Content-Type": "application/json",
-        };
-
-        // Add auth headers based on authType
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (dataSource.authType === "API_KEY" && dataSource.authCredentials?.key) {
           headers["X-API-Key"] = dataSource.authCredentials.key;
-        } else if (
-          dataSource.authType === "BEARER_TOKEN" &&
-          dataSource.authCredentials?.token
-        ) {
+        } else if (dataSource.authType === "BEARER_TOKEN" && dataSource.authCredentials?.token) {
           headers["Authorization"] = `Bearer ${dataSource.authCredentials.token}`;
         } else if (
           dataSource.authType === "BASIC_AUTH" &&
           dataSource.authCredentials?.username &&
           dataSource.authCredentials?.password
         ) {
-          const credentials = Buffer.from(
+          headers["Authorization"] = `Basic ${Buffer.from(
             `${dataSource.authCredentials.username}:${dataSource.authCredentials.password}`
-          ).toString("base64");
-          headers["Authorization"] = `Basic ${credentials}`;
+          ).toString("base64")}`;
         }
-
-        // Support custom header name for token (e.g., "x-token")
         if (dataSource.authCredentials?.headerName && dataSource.authCredentials?.token) {
           headers[dataSource.authCredentials.headerName] = dataSource.authCredentials.token;
         }
 
-        // Determine request method (default to GET)
         const method = dataSource.requestTemplate?.method || "GET";
-
-        // Build URL (for GET requests, append billing month as query param)
         let url = dataSource.apiEndpoint;
         if (method === "GET") {
           url = dataSource.apiEndpoint.includes("?")
             ? `${dataSource.apiEndpoint}&period=${billingMonth}`
             : `${dataSource.apiEndpoint}?period=${billingMonth}`;
         } else if (method === "POST") {
-          // For POST, resolve tokens in the URL as well
           url = resolveTokens(dataSource.apiEndpoint, billingMonth);
         }
 
-        // Build request options
-        const fetchOptions: RequestInit = {
-          method,
-          headers,
-        };
-
-        // Add body for POST requests using bodyTemplate
+        let fetchOptions: RequestInit = { method, headers };
         if (method === "POST" && dataSource.requestTemplate?.bodyTemplate) {
-          const resolvedBody = resolveTokens(dataSource.requestTemplate.bodyTemplate, billingMonth);
-          fetchOptions.body = resolvedBody;
-        }
-
-        // Determine timeout from retryPolicy or default to 60 seconds
-        const timeoutMs = (dataSource.retryPolicy?.timeoutSeconds || 60) * 1000;
-        fetchOptions.signal = AbortSignal.timeout(timeoutMs);
-
-        // Execute fetch with retry logic
-        const maxRetries = dataSource.retryPolicy?.maxRetries || 0;
-        const retryDelayMs = (dataSource.retryPolicy?.retryDelaySeconds || 1) * 1000;
-
-        let lastError: Error | null = null;
-        let json: unknown = null;
-
-        for (let attempt = 0; attempt <= maxRetries; attempt++) {
-          try {
-            const response = await fetch(url, fetchOptions);
-
-            if (!response.ok) {
-              throw new Error(`Custom API returned ${response.status}`);
-            }
-
-            json = await response.json();
-            break; // Success, exit retry loop
-          } catch (error) {
-            lastError = error as Error;
-            console.warn(
-              `Attempt ${attempt + 1}/${maxRetries + 1} failed for data source ${dataSource.id}:`,
-              error
-            );
-
-            // If this is the last attempt, don't wait
-            if (attempt < maxRetries) {
-              await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
-            }
-          }
-        }
-
-        // If all attempts failed and fallbackValues is configured, use fallback
-        if (!json && dataSource.fallbackValues) {
-          console.log(
-            `Using fallback values for data source ${dataSource.id} due to API failure`
-          );
-          return {
-            usageCount: dataSource.fallbackValues.usageCount ?? 0,
-            sentCount: dataSource.fallbackValues.sentCount,
-            failedCount: dataSource.fallbackValues.failedCount,
+          fetchOptions = {
+            ...fetchOptions,
+            body: resolveTokens(dataSource.requestTemplate.bodyTemplate, billingMonth),
           };
         }
 
-        // If all attempts failed and no fallback, return null to indicate failure
-        if (!json) {
-          throw lastError || new Error("All retry attempts failed");
-        }
+        const json = await fetchWithRetry(url, fetchOptions);
 
-        // Parse response data based on lineItemMappings or responseMapping
-        let usageCount = 0;
-        let sentCount: number | undefined;
-        let failedCount: number | undefined;
-
+        // Multi-line: one InvoiceLineItem per lineIdentifier
         if (dataSource.lineItemMappings && dataSource.lineItemMappings.length > 0) {
-          // Use LineItemProcessor for multi-line data
           const multiLineResults = processMultiLine(json, dataSource.lineItemMappings);
-
-          // Aggregate all line items into single usage count
-          // For now, sum up all counts (could be extended to return multiple line items)
+          const items: InvoiceLineItem[] = [];
           for (const lineResult of multiLineResults) {
-            usageCount += lineResult.count;
+            let count = lineResult.count;
+            if (
+              dataSource.fallbackValues?.useDefaultOnMissing &&
+              count === 0 &&
+              dataSource.fallbackValues.usageCount !== undefined
+            ) {
+              count = dataSource.fallbackValues.usageCount;
+            }
+            if (count > 0) items.push(makeLineItem(count, count, undefined, lineResult.lineIdentifier));
           }
-
-          // Also extract sent/failed from first line item if available
-          if (multiLineResults.length > 0) {
-            const firstLine = multiLineResults[0];
-            sentCount = firstLine.count; // Use first line's count as sent
-            // failedCount can be derived if API provides it
-          }
-        } else {
-          // Fall back to legacy single-line responseMapping
-          const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
-          usageCount = singleLineResult.usageCount;
-          sentCount = singleLineResult.sentCount;
-          failedCount = singleLineResult.failedCount;
+          return items;
         }
 
-        // Apply fallback if useDefaultOnMissing and values are missing/zero
+        // Single-line
+        const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
+        let { usageCount, sentCount, failedCount } = singleLineResult;
         if (
           dataSource.fallbackValues?.useDefaultOnMissing &&
           usageCount === 0 &&
@@ -356,20 +389,17 @@ async function fetchBillableForDataSource(
         ) {
           usageCount = dataSource.fallbackValues.usageCount;
         }
-
-        return { usageCount, sentCount, failedCount };
+        if (usageCount === 0) return [];
+        return [makeLineItem(usageCount, sentCount, failedCount)];
       }
 
       default:
         console.warn(`Unknown data source type: ${dataSource.type}`);
-        return null;
+        return [];
     }
   } catch (error) {
-    console.error(
-      `Failed to fetch billable data for data source ${dataSource.id}:`,
-      error
-    );
-    return null;
+    console.error(`Failed to fetch billable data for data source ${dataSource.id}:`, error);
+    return [makeErrorLineItem(dataSource, customer, `Failed: ${error instanceof Error ? error.message : String(error)}`)];
   }
 }
 
@@ -425,9 +455,10 @@ export async function generateBillableData(
     };
   }
 
-  // Check customer status - skip non-ACTIVE customers
-  if (customer.status !== 'ACTIVE') {
-    console.log(`Customer ${customerId} has status '${customer.status}', skipping billing`);
+  // Check customer status - skip non-ACTIVE customers (treat missing status as ACTIVE for backward compat)
+  const effectiveStatus = customer.status ?? 'ACTIVE';
+  if (effectiveStatus !== 'ACTIVE') {
+    console.log(`Customer ${customerId} has status '${effectiveStatus}', skipping billing`);
     return {
       customer,
       lineItems: [],
@@ -463,33 +494,12 @@ export async function generateBillableData(
 
   const lineItems: InvoiceLineItem[] = [];
 
-  // Iterate through each active data source
+  // Iterate through each active data source — fetchBillableForDataSource returns
+  // InvoiceLineItem[] directly (one per lineIdentifier for multi-line, one per
+  // dataSource for single-line), so just spread them into lineItems.
   for (const dataSource of dataSources) {
-    const result = await fetchBillableForDataSource(dataSource, billingMonth);
-
-    if (result) {
-      if (result.usageCount > 0) {
-        lineItems.push(
-          createLineItemFromData(
-            dataSource,
-            result.usageCount,
-            customer,
-            result.sentCount,
-            result.failedCount
-          )
-        );
-      }
-      // If usageCount is 0, skip adding a line item (no charge)
-    } else {
-      // Fetch failed - add error line item
-      lineItems.push(
-        createErrorLineItem(
-          dataSource,
-          customer,
-          `Failed to fetch data from ${dataSource.name}`
-        )
-      );
-    }
+    const items = await fetchBillableForDataSource(dataSource, billingMonth, customer);
+    lineItems.push(...items);
   }
 
   return {

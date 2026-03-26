@@ -14,6 +14,9 @@ import {
   findMappingByAccountBookAndService,
 } from "@/infrastructure/db/serviceProductMappingRepository";
 import {
+  findCustomerProductMappingByKey,
+} from "@/infrastructure/db/customerProductMappingRepository";
+import {
   AutoCountInvoicePayload,
   AutoCountInvoiceMaster,
   AutoCountInvoiceDetail,
@@ -89,11 +92,16 @@ export async function buildAutoCountInvoice(
   const errors: string[] = [];
 
   for (const lineItem of lineItems) {
-    // Always fetch the product mapping for description and defaults
-    const mapping = await findMappingByAccountBookAndService(
+    // Look up per-DataSource per-lineIdentifier mapping first, fall back to
+    // account-book-level mapping if no per-datasource mapping exists
+    const customerMapping = lineItem.lineIdentifier
+      ? await findCustomerProductMappingByKey(customer.id, lineItem.service, lineItem.lineIdentifier)
+      : null;
+    const accountBookMapping = await findMappingByAccountBookAndService(
       accountBook.id,
       lineItem.service
     );
+    const mapping = customerMapping ?? accountBookMapping;
 
     // Resolve product code: customer override → account book mapping → error
     const customerOverride = customer.serviceProductOverrides?.find(

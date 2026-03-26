@@ -94,6 +94,9 @@ export interface Customer {
 export type ConnectionStatus = 'SUCCESS' | 'FAILED' | 'NOT_CONFIGURED';
 
 export interface InvoiceLineItem {
+  // DataSource identity (for looking up correct per-DataSource product mapping)
+  dataSourceId?: string;
+  lineIdentifier?: string;
   service: ServiceType;
   hasProvider: boolean;
   // Connection status (captured at generation time)
