@@ -437,14 +437,10 @@ export default function BasicInfoStep({
         </AccordionItem>
 
         {/* Section 4: Schedule (shown when AUTO_PILOT) */}
-        <AccordionItem value="schedule">
-          <AccordionTrigger>Schedule</AccordionTrigger>
-          <AccordionContent>
-            {formData.billingMode !== "AUTO_PILOT" ? (
-              <p className="text-sm text-muted-foreground">
-                Schedule settings are only available in AUTO_PILOT mode.
-              </p>
-            ) : (
+        {formData.billingMode === "AUTO_PILOT" && (
+          <AccordionItem value="schedule">
+            <AccordionTrigger>Schedule</AccordionTrigger>
+            <AccordionContent>
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="dayOfMonth">Day of Month (1-31)</Label>
@@ -510,9 +506,9 @@ export default function BasicInfoStep({
                   />
                 </div>
               </div>
-            )}
-          </AccordionContent>
-        </AccordionItem>
+            </AccordionContent>
+          </AccordionItem>
+        )}
       </Accordion>
 
       <div className="flex justify-between">
