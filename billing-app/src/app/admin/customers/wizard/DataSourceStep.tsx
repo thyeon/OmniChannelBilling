@@ -58,6 +58,7 @@ interface DataSourceFormData {
   authType: AuthType;
   // Auth credentials
   authKey: string;
+  authHeaderName: string;
   authToken: string;
   authUsername: string;
   authPassword: string;
@@ -87,6 +88,7 @@ const emptyFormData: DataSourceFormData = {
   apiEndpoint: "",
   authType: "NONE",
   authKey: "",
+  authHeaderName: "",
   authToken: "",
   authUsername: "",
   authPassword: "",
@@ -121,6 +123,11 @@ export default function DataSourceStep({
   const [dataSourceToDelete, setDataSourceToDelete] = useState<DataSource | null>(null);
   const [error, setError] = useState("");
 
+  // Guard for empty customerId
+  if (!customerId) {
+    return <div className="p-4 text-muted-foreground">Please complete the Basic Info step first.</div>;
+  }
+
   useEffect(() => {
     fetchDataSources();
   }, [customerId]);
@@ -154,6 +161,7 @@ export default function DataSourceStep({
       apiEndpoint: ds.apiEndpoint,
       authType: ds.authType,
       authKey: ds.authCredentials?.key || "",
+      authHeaderName: ds.authCredentials?.headerName || "",
       authToken: ds.authCredentials?.token || "",
       authUsername: ds.authCredentials?.username || "",
       authPassword: ds.authCredentials?.password || "",
@@ -186,9 +194,9 @@ export default function DataSourceStep({
   }
 
   function getAuthCredentials(): DataSource["authCredentials"] | undefined {
-    const { authType, authKey, authToken, authUsername, authPassword } = formData;
+    const { authType, authKey, authHeaderName, authToken, authUsername, authPassword } = formData;
     if (authType === "API_KEY" && authKey) {
-      return { key: authKey };
+      return { key: authKey, headerName: authHeaderName || undefined };
     }
     if (authType === "BEARER_TOKEN" && authToken) {
       return { token: authToken };
@@ -559,14 +567,25 @@ export default function DataSourceStep({
 
             {/* Conditional auth fields */}
             {formData.authType === "API_KEY" && (
-              <div className="space-y-2">
-                <Label htmlFor="authKey">API Key *</Label>
-                <Input
-                  id="authKey"
-                  type="password"
-                  value={formData.authKey}
-                  onChange={(e) => setFormData({ ...formData, authKey: e.target.value })}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="authKey">API Key *</Label>
+                  <Input
+                    id="authKey"
+                    type="password"
+                    value={formData.authKey}
+                    onChange={(e) => setFormData({ ...formData, authKey: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authHeaderName">Header Name (Optional)</Label>
+                  <Input
+                    id="authHeaderName"
+                    value={formData.authHeaderName}
+                    onChange={(e) => setFormData({ ...formData, authHeaderName: e.target.value })}
+                    placeholder="e.g., X-API-Key"
+                  />
+                </div>
               </div>
             )}
             {formData.authType === "BEARER_TOKEN" && (
