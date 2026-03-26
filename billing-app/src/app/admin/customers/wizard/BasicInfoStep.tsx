@@ -153,7 +153,9 @@ export default function BasicInfoStep({
         throw new Error(errorData.message || "Failed to save customer");
       }
 
-      const savedCustomer: Customer = await response.json();
+      const data = await response.json();
+      // API returns { customer: {...} } on create/update, unwrap it
+      const savedCustomer: Customer = data.customer ?? data;
       onNext(savedCustomer);
     } catch (error) {
       console.error("Failed to save customer:", error);

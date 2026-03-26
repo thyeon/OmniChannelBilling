@@ -33,19 +33,18 @@ export async function findCustomerById(id: string): Promise<Customer | null> {
   return toCustomer(doc);
 }
 
-/** Insert or upsert a customer. Returns the customer. */
+/** Insert or upsert a customer. Returns the customer with generated id if not provided. */
 export async function insertCustomer(customer: Customer): Promise<Customer> {
   const collection = await getCollection();
   const now = new Date();
+  const id = customer.id || `cust_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const doc = { ...customer, id, updatedAt: now };
   await collection.updateOne(
-    { id: customer.id },
-    {
-      $set: { ...customer, updatedAt: now },
-      $setOnInsert: { createdAt: now },
-    },
+    { id },
+    { $set: doc, $setOnInsert: { createdAt: now } },
     { upsert: true }
   );
-  return customer;
+  return doc;
 }
 
 /** Update an existing customer by id. Returns the updated customer or null. */
