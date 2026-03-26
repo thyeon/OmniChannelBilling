@@ -50,7 +50,9 @@ export default function BasicInfoStep({
         try {
           const response = await fetch(`/api/customers/${initialData.id}`);
           if (response.ok) {
-            const customer = await response.json();
+            const data = await response.json();
+            // API returns { customer: {...} }, unwrap it
+            const customer: Customer = data.customer ?? data;
             setFormData(customer);
             onUpdate(customer);
           }
