@@ -40,6 +40,7 @@ export default function BasicInfoStep({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(editMode);
+  const [fetchError, setFetchError] = useState("");
 
   // Fetch customer data when editMode is true
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function BasicInfoStep({
           }
         } catch (error) {
           console.error("Failed to fetch customer:", error);
+          setFetchError("Failed to load customer data. Please try again.");
         } finally {
           setIsFetching(false);
         }
@@ -182,6 +184,10 @@ export default function BasicInfoStep({
         <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md">
           {errors.submit}
         </div>
+      )}
+
+      {fetchError && (
+        <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">{fetchError}</div>
       )}
 
       <Accordion type="multiple" defaultValue={["core", "autocount", "billing", "schedule"]} className="w-full">

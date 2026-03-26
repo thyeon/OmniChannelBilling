@@ -116,12 +116,14 @@ export default function DataSourceStep({
   const [dataSources, setDataSources] = useState<DataSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingDataSource, setEditingDataSource] = useState<DataSource | null>(null);
   const [formData, setFormData] = useState<DataSourceFormData>(emptyFormData);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [dataSourceToDelete, setDataSourceToDelete] = useState<DataSource | null>(null);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   // Guard for empty customerId
   if (!customerId) {
@@ -136,6 +138,7 @@ export default function DataSourceStep({
     setIsLoading(true);
     try {
       const res = await fetch(`/api/customers/${customerId}/datasources`);
+      if (!res.ok) { setError("Failed to fetch data sources"); return; }
       const json = await res.json();
       setDataSources(json.dataSources || []);
     } catch (err) {
@@ -149,6 +152,8 @@ export default function DataSourceStep({
   function openAddDialog(): void {
     setEditingDataSource(null);
     setFormData(emptyFormData);
+    setFieldErrors({});
+    setError("");
     setDialogOpen(true);
   }
 
@@ -185,6 +190,8 @@ export default function DataSourceStep({
       fallbackValuesUseDefaultOnMissing: ds.fallbackValues?.useDefaultOnMissing || false,
       isActive: ds.isActive,
     });
+    setFieldErrors({});
+    setError("");
     setDialogOpen(true);
   }
 
@@ -271,12 +278,29 @@ export default function DataSourceStep({
   }
 
   function validateForm(): boolean {
-    const { name, type, serviceType, apiEndpoint, authType, usageCountPath } = formData;
-    if (!name || !type || !serviceType || !apiEndpoint || !authType || !usageCountPath) {
-      setError("Please fill in all required fields");
-      return false;
+    const newFieldErrors: Record<string, string> = {};
+
+    if (!formData.name?.trim()) {
+      newFieldErrors.name = "Name is required";
     }
-    return true;
+    if (!formData.type) {
+      newFieldErrors.type = "Type is required";
+    }
+    if (!formData.serviceType) {
+      newFieldErrors.serviceType = "Service type is required";
+    }
+    if (!formData.apiEndpoint?.trim()) {
+      newFieldErrors.apiEndpoint = "API endpoint is required";
+    }
+    if (!formData.authType) {
+      newFieldErrors.authType = "Auth type is required";
+    }
+    if (!formData.usageCountPath?.trim()) {
+      newFieldErrors.usageCountPath = "Usage count path is required";
+    }
+
+    setFieldErrors(newFieldErrors);
+    return Object.keys(newFieldErrors).length === 0;
   }
 
   async function handleSave(): Promise<void> {
@@ -339,12 +363,13 @@ export default function DataSourceStep({
 
   async function handleDelete(): Promise<void> {
     if (!dataSourceToDelete) return;
-    setIsSaving(true);
+    setIsDeleting(true);
 
     try {
-      await fetch(`/api/customers/${customerId}/datasources/${dataSourceToDelete.id}`, {
+      const delRes = await fetch(`/api/customers/${customerId}/datasources/${dataSourceToDelete.id}`, {
         method: "DELETE",
       });
+      if (!delRes.ok) { setError("Failed to delete data source"); return; }
       setDataSources((prev) => prev.filter((ds) => ds.id !== dataSourceToDelete.id));
       setDeleteConfirmOpen(false);
       setDataSourceToDelete(null);
@@ -352,7 +377,7 @@ export default function DataSourceStep({
       console.error("Failed to delete data source:", err);
       setError("Failed to delete data source");
     } finally {
-      setIsSaving(false);
+      setIsDeleting(false);
     }
   }
 
@@ -494,15 +519,22 @@ export default function DataSourceStep({
                 <Input
                   id="name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value });
+                    if (fieldErrors.name) setFieldErrors((prev) => { const n = { ...prev }; delete n.name; return n; });
+                  }}
                   placeholder="e.g., Coway SMS API"
                 />
+                {fieldErrors.name && <p className="text-sm text-destructive">{fieldErrors.name}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="type">Type *</Label>
                 <Select
                   value={formData.type}
-                  onValueChange={(v: DataSourceType) => setFormData({ ...formData, type: v })}
+                  onValueChange={(v: DataSourceType) => {
+                    setFormData({ ...formData, type: v });
+                    if (fieldErrors.type) setFieldErrors((prev) => { const n = { ...prev }; delete n.type; return n; });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -513,6 +545,7 @@ export default function DataSourceStep({
                     <SelectItem value="CUSTOM_REST_API">CUSTOM_REST_API</SelectItem>
                   </SelectContent>
                 </Select>
+                {fieldErrors.type && <p className="text-sm text-destructive">{fieldErrors.type}</p>}
               </div>
             </div>
 
@@ -521,7 +554,10 @@ export default function DataSourceStep({
                 <Label htmlFor="serviceType">Service Type *</Label>
                 <Select
                   value={formData.serviceType}
-                  onValueChange={(v: ServiceType) => setFormData({ ...formData, serviceType: v })}
+                  onValueChange={(v: ServiceType) => {
+                    setFormData({ ...formData, serviceType: v });
+                    if (fieldErrors.serviceType) setFieldErrors((prev) => { const n = { ...prev }; delete n.serviceType; return n; });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -532,15 +568,20 @@ export default function DataSourceStep({
                     <SelectItem value="WHATSAPP">WHATSAPP</SelectItem>
                   </SelectContent>
                 </Select>
+                {fieldErrors.serviceType && <p className="text-sm text-destructive">{fieldErrors.serviceType}</p>}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="apiEndpoint">API Endpoint *</Label>
                 <Input
                   id="apiEndpoint"
                   value={formData.apiEndpoint}
-                  onChange={(e) => setFormData({ ...formData, apiEndpoint: e.target.value })}
+                  onChange={(e) => {
+                    setFormData({ ...formData, apiEndpoint: e.target.value });
+                    if (fieldErrors.apiEndpoint) setFieldErrors((prev) => { const n = { ...prev }; delete n.apiEndpoint; return n; });
+                  }}
                   placeholder="https://api.example.com/usage"
                 />
+                {fieldErrors.apiEndpoint && <p className="text-sm text-destructive">{fieldErrors.apiEndpoint}</p>}
               </div>
             </div>
 
@@ -550,7 +591,10 @@ export default function DataSourceStep({
                 <Label htmlFor="authType">Auth Type *</Label>
                 <Select
                   value={formData.authType}
-                  onValueChange={(v: AuthType) => setFormData({ ...formData, authType: v })}
+                  onValueChange={(v: AuthType) => {
+                    setFormData({ ...formData, authType: v });
+                    if (fieldErrors.authType) setFieldErrors((prev) => { const n = { ...prev }; delete n.authType; return n; });
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -562,6 +606,7 @@ export default function DataSourceStep({
                     <SelectItem value="NONE">NONE</SelectItem>
                   </SelectContent>
                 </Select>
+                {fieldErrors.authType && <p className="text-sm text-destructive">{fieldErrors.authType}</p>}
               </div>
             </div>
 
@@ -630,9 +675,13 @@ export default function DataSourceStep({
                   <Input
                     id="usageCountPath"
                     value={formData.usageCountPath}
-                    onChange={(e) => setFormData({ ...formData, usageCountPath: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, usageCountPath: e.target.value });
+                      if (fieldErrors.usageCountPath) setFieldErrors((prev) => { const n = { ...prev }; delete n.usageCountPath; return n; });
+                    }}
                     placeholder="e.g., data.0.line_items.0.qty"
                   />
+                  {fieldErrors.usageCountPath && <p className="text-sm text-destructive">{fieldErrors.usageCountPath}</p>}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="sentPath">Sent Path (Optional)</Label>
@@ -864,8 +913,8 @@ export default function DataSourceStep({
             <Button variant="outline" onClick={() => setDeleteConfirmOpen(false)}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={isSaving}>
-              {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button variant="destructive" onClick={handleDelete} disabled={isDeleting}>
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Delete
             </Button>
           </div>
