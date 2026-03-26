@@ -62,6 +62,8 @@ interface DataSourceFormData {
   authToken: string;
   authUsername: string;
   authPassword: string;
+  authUser: string;
+  authSecret: string;
   // Response mapping
   usageCountPath: string;
   sentPath: string;
@@ -92,6 +94,8 @@ const emptyFormData: DataSourceFormData = {
   authToken: "",
   authUsername: "",
   authPassword: "",
+  authUser: "",
+  authSecret: "",
   usageCountPath: "",
   sentPath: "",
   failedPath: "",
@@ -170,6 +174,8 @@ export default function DataSourceStep({
       authToken: ds.authCredentials?.token || "",
       authUsername: ds.authCredentials?.username || "",
       authPassword: ds.authCredentials?.password || "",
+      authUser: ds.authCredentials?.user || "",
+      authSecret: ds.authCredentials?.secret || "",
       usageCountPath: ds.responseMapping?.usageCountPath || "",
       sentPath: ds.responseMapping?.sentPath || "",
       failedPath: ds.responseMapping?.failedPath || "",
@@ -201,7 +207,7 @@ export default function DataSourceStep({
   }
 
   function getAuthCredentials(): DataSource["authCredentials"] | undefined {
-    const { authType, authKey, authHeaderName, authToken, authUsername, authPassword } = formData;
+    const { authType, authKey, authHeaderName, authToken, authUsername, authPassword, authUser, authSecret, type } = formData;
     if (authType === "API_KEY" && authKey) {
       return { key: authKey, headerName: authHeaderName || undefined };
     }
@@ -210,6 +216,10 @@ export default function DataSourceStep({
     }
     if (authType === "BASIC_AUTH" && authUsername && authPassword) {
       return { username: authUsername, password: authPassword };
+    }
+    // COWAY_API uses "user" and "secret" in the request body
+    if (type === "COWAY_API" && authUser && authSecret) {
+      return { user: authUser, secret: authSecret };
     }
     return undefined;
   }
@@ -611,6 +621,31 @@ export default function DataSourceStep({
             </div>
 
             {/* Conditional auth fields */}
+            {/* COWAY_API uses "user" and "secret" in the request body */}
+            {formData.type === "COWAY_API" && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="authUser">User *</Label>
+                  <Input
+                    id="authUser"
+                    value={formData.authUser}
+                    onChange={(e) => setFormData({ ...formData, authUser: e.target.value })}
+                    placeholder="e.g., gi_xHdw6"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="authSecret">Secret *</Label>
+                  <Input
+                    id="authSecret"
+                    type="password"
+                    value={formData.authSecret}
+                    onChange={(e) => setFormData({ ...formData, authSecret: e.target.value })}
+                    placeholder="API secret"
+                  />
+                </div>
+              </div>
+            )}
+
             {formData.authType === "API_KEY" && (
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

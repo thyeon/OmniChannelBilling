@@ -87,6 +87,9 @@ export interface DataSource {
     username?: string;
     password?: string;
     headerName?: string;
+    // For COWAY_API: body fields "user" and "secret"
+    user?: string;
+    secret?: string;
   };
   responseMapping: ResponseMapping;
   lineItemMappings?: LineItemMapping[];
