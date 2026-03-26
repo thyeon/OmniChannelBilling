@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Accordion,
   AccordionContent,
@@ -329,6 +330,52 @@ export default function BasicInfoStep({
                   value={formData.salesLocationOverride || ""}
                   onChange={(e) => updateField("salesLocationOverride", e.target.value)}
                   placeholder="Enter sales location"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="taxEntity">Tax Entity</Label>
+                <Input
+                  id="taxEntity"
+                  value={formData.defaultFields?.taxEntity || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      defaultFields: { ...prev.defaultFields, taxEntity: e.target.value },
+                    }))
+                  }
+                  placeholder="e.g., TIN:C12113374050"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="taxCode">Tax Code</Label>
+                <Input
+                  id="taxCode"
+                  value={formData.defaultFields?.taxCode || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      defaultFields: { ...prev.defaultFields, taxCode: e.target.value },
+                    }))
+                  }
+                  placeholder="e.g., SV-6"
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="address">Invoice Address</Label>
+                <Textarea
+                  id="address"
+                  value={formData.defaultFields?.address || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      defaultFields: { ...prev.defaultFields, address: e.target.value },
+                    }))
+                  }
+                  placeholder="Enter customer address for invoices"
+                  rows={3}
                 />
               </div>
 

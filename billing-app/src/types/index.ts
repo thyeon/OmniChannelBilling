@@ -85,6 +85,8 @@ export interface Customer {
     creditTerm?: string;
     salesLocation?: string;
     taxCode?: string;
+    taxEntity?: string;
+    address?: string;
     description?: string;
   };
 }
