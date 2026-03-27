@@ -7,6 +7,7 @@
 import {
   LineItemMapping,
   MultiLineResult,
+  NestedResponseConfig,
   ResponseMapping,
   SingleLineResult,
 } from "@/domain/models/dataSource";
@@ -121,4 +122,59 @@ export function processLegacySingleLine(
     sentCount,
     failedCount,
   };
+}
+
+export interface InglabNestedResult {
+  description: string;
+  descriptionDetail?: string;
+  qty: number;
+  unitPrice: number;
+  service?: string;
+}
+
+export function processInglabNested(
+  apiResponse: unknown,
+  config: NestedResponseConfig
+): InglabNestedResult[] {
+  const results: InglabNestedResult[] = [];
+
+  const items = getNestedValue(apiResponse, config.itemsPath);
+  if (!Array.isArray(items)) {
+    return results;
+  }
+
+  for (const item of items) {
+    const lineItems = getNestedValue(item, config.lineItemsPath);
+    if (!Array.isArray(lineItems)) {
+      continue;
+    }
+
+    for (const li of lineItems) {
+      const qty = getNestedValue(li, config.qtyPath) as number;
+      const unitPrice = getNestedValue(li, config.unitPricePath) as number;
+      const description = getNestedValue(li, config.descriptionPath) as string;
+
+      if (typeof qty !== "number") {
+        continue;
+      }
+
+      const descriptionDetail = config.descriptionDetailPath
+        ? (getNestedValue(li, config.descriptionDetailPath) as string | undefined)
+        : undefined;
+
+      const service = config.servicePath
+        ? (getNestedValue(item, config.servicePath) as string | undefined)
+        : undefined;
+
+      results.push({
+        description: typeof description === "string" ? description : "",
+        descriptionDetail,
+        qty,
+        unitPrice: typeof unitPrice === "number" ? unitPrice : 0,
+        service,
+      });
+    }
+  }
+
+  return results;
 }

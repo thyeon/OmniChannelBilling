@@ -111,3 +111,17 @@ export type CreateDataSourceInput = Omit<DataSource, 'id' | 'createdAt' | 'updat
  * Helper type for updating an existing DataSource
  */
 export type UpdateDataSourceInput = Partial<Omit<DataSource, 'id' | 'customerId' | 'createdAt' | 'updatedAt'>>;
+
+/**
+ * Configuration for parsing nested INGLAB-style API responses.
+ * Used by processInglabNested to extract per-row data from items[].line_items[].
+ */
+export interface NestedResponseConfig {
+  itemsPath: string;
+  lineItemsPath: string;
+  descriptionPath: string;
+  descriptionDetailPath?: string;
+  qtyPath: string;
+  unitPricePath: string;
+  servicePath?: string;
+}
