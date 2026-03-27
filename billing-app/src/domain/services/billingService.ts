@@ -15,7 +15,7 @@ import {
 import { fetchCowayBillable, fetchWhatsAppBillable } from "@/infrastructure/external/cowayClient";
 import { fetchEmailReconSummary } from "@/infrastructure/external/reconClient";
 import { resolveTokens } from "./templateTokenResolver";
-import { processMultiLine, processLegacySingleLine } from "./lineItemProcessor";
+import { processMultiLine, processLegacySingleLine, processInglabNested } from "./lineItemProcessor";
 import { resolveRate } from "./rateResolver";
 import { getDateRange } from "@/infrastructure/external/cowayClient";
 
@@ -357,6 +357,57 @@ async function fetchBillableForDataSource(
         }
 
         const json = await fetchWithRetry(url, fetchOptions);
+
+        // Check if this is an INGLAB nested response DataSource
+        if (dataSource.nestedResponseConfig && dataSource.sourceClientId) {
+          // Append ?client_id= to the URL
+          const clientIdParam = `client_id=${encodeURIComponent(dataSource.sourceClientId)}`;
+          const urlWithClient = url.includes("?")
+            ? `${url}&${clientIdParam}`
+            : `${url}?${clientIdParam}`;
+
+          const nestedResponse = await fetchWithRetry(urlWithClient, fetchOptions);
+          const nestedResults = processInglabNested(nestedResponse, dataSource.nestedResponseConfig);
+
+          const items: InvoiceLineItem[] = [];
+          for (const nl of nestedResults) {
+            if (nl.qty === 0) continue;
+
+            // Gap 2 fix: unit_price = 0 is VALID (charge $0). undefined falls back to configured rate.
+            const resolvedUnitPrice = (nl.unitPrice !== undefined && nl.unitPrice !== null)
+              ? nl.unitPrice
+              : (customer.rates?.[dataSource.serviceType] ?? 0);
+
+            // Gap 1 fix: totalCharge uses resolvedUnitPrice (not raw nl.unitPrice which may be undefined)
+            const totalCharge = nl.qty * resolvedUnitPrice;
+
+            items.push({
+              dataSourceId: dataSource.id,
+              lineIdentifier: nl.description,
+              service: dataSource.serviceType,
+              hasProvider: true,
+              reconServerStatus: "SUCCESS",
+              providerStatus: "SUCCESS",
+              reconServerName: dataSource.name,
+              providerName: getProviderName(dataSource.serviceType),
+              reconTotal: nl.qty,
+              reconDetails: { sent: nl.qty, failed: 0, withheld: 0 },
+              providerTotal: nl.qty,
+              discrepancyPercentage: 0,
+              isMismatch: false,
+              thresholdUsed: customer.discrepancyThreshold || 0,
+              billableCount: nl.qty,
+              wasOverridden: false,
+              rate: resolvedUnitPrice,       // Gap 3 fix: ensures {SMSRate} in templates = INGLAB unit_price
+              totalCharge,
+              unitPrice: nl.unitPrice,      // original INGLAB unit_price (may be 0 or undefined)
+              description: nl.description,
+              descriptionDetail: nl.descriptionDetail,
+              lineItemService: nl.service,
+            });
+          }
+          return items;
+        }
 
         // Multi-line: one InvoiceLineItem per lineIdentifier
         if (dataSource.lineItemMappings && dataSource.lineItemMappings.length > 0) {

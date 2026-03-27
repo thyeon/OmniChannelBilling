@@ -101,6 +101,8 @@ export interface DataSource {
   fallbackValues?: FallbackValues;
   // INGLAB: client_id for ?client_id= query param on INGLAB API
   sourceClientId?: string;
+  // INGLAB: nested response config for parsing nested line items (e.g. items[].line_items[])
+  nestedResponseConfig?: NestedResponseConfig;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;

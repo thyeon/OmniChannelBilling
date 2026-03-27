@@ -128,7 +128,7 @@ export interface InglabNestedResult {
   description: string;
   descriptionDetail?: string;
   qty: number;
-  unitPrice: number;
+  unitPrice?: number;  // undefined when API does not return unit_price field (enables Gap 2 fallback check)
   service?: string;
 }
 
@@ -170,7 +170,7 @@ export function processInglabNested(
         description: typeof description === "string" ? description : "",
         descriptionDetail,
         qty,
-        unitPrice: typeof unitPrice === "number" ? unitPrice : 0,
+        unitPrice: typeof unitPrice === "number" ? unitPrice : undefined,
         service,
       });
     }

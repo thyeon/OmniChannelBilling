@@ -72,12 +72,12 @@ describe("processInglabNested", () => {
     expect(result[0].qty).toBe(100);
   });
 
-  it("should return unitPrice = 0 when unit_price field is missing", () => {
+  it("should return unitPrice = undefined when unit_price field is missing", () => {
     const apiResponse = {
       items: [{ line_items: [{ description: "SMS", qty: 100 }] }],
     };
     const result = processInglabNested(apiResponse, { ...baseConfig });
-    expect(result[0].unitPrice).toBe(0);
+    expect(result[0].unitPrice).toBeUndefined();
   });
 
   it("should use getNestedValue helper for path resolution", () => {
