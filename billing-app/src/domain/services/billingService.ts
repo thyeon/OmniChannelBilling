@@ -323,7 +323,9 @@ async function fetchBillableForDataSource(
       case "CUSTOM_REST_API": {
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (dataSource.authType === "API_KEY" && dataSource.authCredentials?.key) {
-          headers["X-API-Key"] = dataSource.authCredentials.key;
+          // Use custom headerName if set, otherwise default to X-API-Key
+          const headerKey = dataSource.authCredentials.headerName || "X-API-Key";
+          headers[headerKey] = dataSource.authCredentials.key;
         } else if (dataSource.authType === "BEARER_TOKEN" && dataSource.authCredentials?.token) {
           headers["Authorization"] = `Bearer ${dataSource.authCredentials.token}`;
         } else if (
@@ -334,9 +336,6 @@ async function fetchBillableForDataSource(
           headers["Authorization"] = `Basic ${Buffer.from(
             `${dataSource.authCredentials.username}:${dataSource.authCredentials.password}`
           ).toString("base64")}`;
-        }
-        if (dataSource.authCredentials?.headerName && dataSource.authCredentials?.token) {
-          headers[dataSource.authCredentials.headerName] = dataSource.authCredentials.token;
         }
 
         const method = dataSource.requestTemplate?.method || "GET";
