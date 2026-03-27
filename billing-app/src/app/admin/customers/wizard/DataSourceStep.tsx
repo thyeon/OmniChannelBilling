@@ -82,6 +82,15 @@ interface DataSourceFormData {
   fallbackValuesUseDefaultOnMissing: boolean;
   // Active
   isActive: boolean;
+  // INGLAB nested response config
+  sourceClientId: string;
+  nestedItemsPath: string;
+  nestedLineItemsPath: string;
+  nestedDescriptionPath: string;
+  nestedDescriptionDetailPath: string;
+  nestedQtyPath: string;
+  nestedUnitPricePath: string;
+  nestedServicePath: string;
 }
 
 const emptyFormData: DataSourceFormData = {
@@ -112,6 +121,14 @@ const emptyFormData: DataSourceFormData = {
   fallbackValuesFailedCount: 0,
   fallbackValuesUseDefaultOnMissing: false,
   isActive: true,
+  sourceClientId: "",
+  nestedItemsPath: "",
+  nestedLineItemsPath: "",
+  nestedDescriptionPath: "",
+  nestedDescriptionDetailPath: "",
+  nestedQtyPath: "",
+  nestedUnitPricePath: "",
+  nestedServicePath: "",
 };
 
 export default function DataSourceStep({
@@ -198,6 +215,14 @@ export default function DataSourceStep({
       fallbackValuesFailedCount: ds.fallbackValues?.failedCount || 0,
       fallbackValuesUseDefaultOnMissing: ds.fallbackValues?.useDefaultOnMissing || false,
       isActive: ds.isActive,
+      sourceClientId: ds.sourceClientId || "",
+      nestedItemsPath: ds.nestedResponseConfig?.itemsPath || "",
+      nestedLineItemsPath: ds.nestedResponseConfig?.lineItemsPath || "",
+      nestedDescriptionPath: ds.nestedResponseConfig?.descriptionPath || "",
+      nestedDescriptionDetailPath: ds.nestedResponseConfig?.descriptionDetailPath || "",
+      nestedQtyPath: ds.nestedResponseConfig?.qtyPath || "",
+      nestedUnitPricePath: ds.nestedResponseConfig?.unitPricePath || "",
+      nestedServicePath: ds.nestedResponseConfig?.servicePath || "",
     });
     setFieldErrors({});
     setError("");
@@ -339,6 +364,19 @@ export default function DataSourceStep({
       retryPolicy: getRetryPolicy(),
       fallbackValues: getFallbackValues(),
       isActive: formData.isActive,
+      sourceClientId: formData.sourceClientId || undefined,
+      nestedResponseConfig:
+        formData.nestedItemsPath && formData.nestedLineItemsPath && formData.nestedDescriptionPath && formData.nestedQtyPath && formData.nestedUnitPricePath
+          ? {
+              itemsPath: formData.nestedItemsPath,
+              lineItemsPath: formData.nestedLineItemsPath,
+              descriptionPath: formData.nestedDescriptionPath,
+              descriptionDetailPath: formData.nestedDescriptionDetailPath || undefined,
+              qtyPath: formData.nestedQtyPath,
+              unitPricePath: formData.nestedUnitPricePath,
+              servicePath: formData.nestedServicePath || undefined,
+            }
+          : undefined,
     };
 
     try {
@@ -933,6 +971,96 @@ export default function DataSourceStep({
               />
               <Label htmlFor="isActive">Active</Label>
             </div>
+
+            {/* INGLAB Nested Response section */}
+            {(formData.authType === "BEARER_TOKEN" || formData.type === "CUSTOM_REST_API") && (
+              <div className="space-y-2 border-t pt-4">
+                <h4 className="font-medium">INGLAB Nested Response (optional)</h4>
+                <p className="text-xs text-muted-foreground">
+                  Fill this section only if the API returns nested items[].line_items[]. Leave empty for flat responses.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="sourceClientId">sourceClientId (INGLAB client_id)</Label>
+                    <Input
+                      id="sourceClientId"
+                      value={formData.sourceClientId}
+                      onChange={(e) => setFormData({ ...formData, sourceClientId: e.target.value })}
+                      placeholder="e.g., CLIENT-AIA"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedServicePath">Service Path (optional)</Label>
+                    <Input
+                      id="nestedServicePath"
+                      value={formData.nestedServicePath}
+                      onChange={(e) => setFormData({ ...formData, nestedServicePath: e.target.value })}
+                      placeholder="e.g., service"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedItemsPath">Items Path *</Label>
+                    <Input
+                      id="nestedItemsPath"
+                      value={formData.nestedItemsPath}
+                      onChange={(e) => setFormData({ ...formData, nestedItemsPath: e.target.value })}
+                      placeholder="e.g., items"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedLineItemsPath">Line Items Path *</Label>
+                    <Input
+                      id="nestedLineItemsPath"
+                      value={formData.nestedLineItemsPath}
+                      onChange={(e) => setFormData({ ...formData, nestedLineItemsPath: e.target.value })}
+                      placeholder="e.g., line_items"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedQtyPath">Qty Path *</Label>
+                    <Input
+                      id="nestedQtyPath"
+                      value={formData.nestedQtyPath}
+                      onChange={(e) => setFormData({ ...formData, nestedQtyPath: e.target.value })}
+                      placeholder="e.g., qty"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedUnitPricePath">Unit Price Path *</Label>
+                    <Input
+                      id="nestedUnitPricePath"
+                      value={formData.nestedUnitPricePath}
+                      onChange={(e) => setFormData({ ...formData, nestedUnitPricePath: e.target.value })}
+                      placeholder="e.g., unit_price"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedDescriptionPath">Description Path *</Label>
+                    <Input
+                      id="nestedDescriptionPath"
+                      value={formData.nestedDescriptionPath}
+                      onChange={(e) => setFormData({ ...formData, nestedDescriptionPath: e.target.value })}
+                      placeholder="e.g., description"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="nestedDescriptionDetailPath">Description Detail Path</Label>
+                    <Input
+                      id="nestedDescriptionDetailPath"
+                      value={formData.nestedDescriptionDetailPath}
+                      onChange={(e) => setFormData({ ...formData, nestedDescriptionDetailPath: e.target.value })}
+                      placeholder="e.g., description_detail"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
