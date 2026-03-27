@@ -252,7 +252,7 @@ export async function buildAutoCountInvoice(
     master,
     details,
     autoFillOption,
-    saveApprove: customer.defaultFields?.saveApprove ?? null,
+    saveApprove: customer.defaultFields?.saveApprove ?? false,
   };
 
   return { success: true, payload };
