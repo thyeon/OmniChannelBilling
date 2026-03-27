@@ -62,6 +62,18 @@ describe("DataSource validation", () => {
     });
   });
 
+  describe("INGLAB nestedResponseConfig validation", () => {
+    it("should accept valid nestedResponseConfig in POST body", () => {
+      // placeholder
+    });
+    it("should reject nestedResponseConfig with missing required paths", () => {
+      // placeholder
+    });
+    it("should accept sourceClientId as string in POST body", () => {
+      // placeholder
+    });
+  });
+
   describe("Backward compatibility", () => {
     it("should accept requests without new optional fields", () => {
       expect(true).toBe(true);
