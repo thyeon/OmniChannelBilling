@@ -10,7 +10,7 @@
  * The sourceClientId (e.g., CLIENT-AIA) goes into the URL as a query param per customer.
  */
 
-import { connectDatabase, getDatabase } from "../src/infrastructure/db/mongodb";
+import { getDatabase } from "../src/infrastructure/db/mongodb";
 
 const INGLAB_BASE_URL = "https://partner-billing-inglab.hypedmind.ai/partner-api/INGLAB";
 
@@ -55,8 +55,7 @@ const INGLAB_CUSTOMERS: IngLabCustomer[] = [
 ];
 
 async function main() {
-  await connectDatabase();
-  const db = getDatabase();
+  const db = await getDatabase();
 
   // Get shared INGLAB token from env
   const sharedToken = process.env.AUTOCOUNT_API_TOKEN;
