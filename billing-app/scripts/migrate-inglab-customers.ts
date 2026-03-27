@@ -6,12 +6,8 @@
  * This script finds existing customers (AIA Malaysia, Zurich Malaysia, FWD Takaful,
  * Prudential Malaysia, Pizza Hut) and attaches INGLAB DataSource records to them.
  *
- * NOTE: Per-customer API tokens must be set in .env:
- *   INGLAB_TOKEN_CLIENT-AIA=your-aia-token
- *   INGLAB_TOKEN_CLIENT-ZURICH=your-zurich-token
- *   INGLAB_TOKEN_CLIENT-FWD=your-fwd-token
- *   INGLAB_TOKEN_CLIENT-PRUDENTIAL=your-prudential-token
- *   INGLAB_TOKEN_CLIENT-PIZZAHUT=your-pizzahut-token
+ * Uses the shared INGLAB API token from .env.local (AUTOCOUNT_API_TOKEN).
+ * The sourceClientId (e.g., CLIENT-AIA) goes into the URL as a query param per customer.
  */
 
 import { connectDatabase, getDatabase } from "../src/infrastructure/db/mongodb";
@@ -22,7 +18,6 @@ interface IngLabCustomer {
   name: string;
   displayName: string;
   sourceClientId: string;
-  tokenEnvKey: string;
   serviceType: "SMS" | "WHATSAPP";
 }
 
@@ -31,35 +26,30 @@ const INGLAB_CUSTOMERS: IngLabCustomer[] = [
     name: "AIA Malaysia",
     displayName: "AIA Malaysia",
     sourceClientId: "CLIENT-AIA",
-    tokenEnvKey: "INGLAB_TOKEN_CLIENT-AIA",
     serviceType: "SMS",
   },
   {
     name: "Zurich Malaysia",
     displayName: "Zurich Malaysia",
     sourceClientId: "CLIENT-ZURICH",
-    tokenEnvKey: "INGLAB_TOKEN_CLIENT-ZURICH",
     serviceType: "SMS",
   },
   {
     name: "FWD Takaful",
     displayName: "FWD Takaful",
     sourceClientId: "CLIENT-FWD",
-    tokenEnvKey: "INGLAB_TOKEN_CLIENT-FWD",
     serviceType: "SMS",
   },
   {
     name: "Prudential Malaysia",
     displayName: "Prudential Malaysia",
     sourceClientId: "CLIENT-PRUDENTIAL",
-    tokenEnvKey: "INGLAB_TOKEN_CLIENT-PRUDENTIAL",
     serviceType: "SMS",
   },
   {
     name: "Pizza Hut",
     displayName: "Pizza Hut",
     sourceClientId: "CLIENT-PIZZAHUT",
-    tokenEnvKey: "INGLAB_TOKEN_CLIENT-PIZZAHUT",
     serviceType: "SMS",
   },
 ];
@@ -68,24 +58,16 @@ async function main() {
   await connectDatabase();
   const db = getDatabase();
 
+  // Get shared INGLAB token from env
+  const sharedToken = process.env.AUTOCOUNT_API_TOKEN;
+  if (!sharedToken) {
+    console.error("❌ Error: AUTOCOUNT_API_TOKEN not found in .env.local");
+    console.error("   This is the shared INGLAB API token for all clients.");
+    process.exit(1);
+  }
+
   console.log("🔄 INGLAB DataSource Migration\n");
-  console.log("This script will attach INGLAB DataSources to existing customers.\n");
-
-  // Check for token env vars
-  const missingTokens: string[] = [];
-  for (const customer of INGLAB_CUSTOMERS) {
-    if (!process.env[customer.tokenEnvKey]) {
-      missingTokens.push(customer.tokenEnvKey);
-    }
-  }
-
-  if (missingTokens.length > 0) {
-    console.warn("⚠️  Warning: Missing environment variables:");
-    for (const key of missingTokens) {
-      console.warn(`   - ${key}`);
-    }
-    console.warn("\nSet these in .env before running. Using placeholder tokens for now.\n");
-  }
+  console.log(`✅ Using shared token: ${sharedToken.slice(0, 8)}...\n`);
 
   let migrated = 0;
   let skipped = 0;
@@ -115,9 +97,6 @@ async function main() {
       continue;
     }
 
-    // Get token from env or use placeholder
-    const token = process.env[inglab.tokenEnvKey] || "REPLACE_WITH_ACTUAL_TOKEN";
-
     const dataSourceId = `ds_inglab_${inglab.name.toLowerCase().replace(/\s+/g, "_")}_${Date.now()}`;
 
     const dataSource = {
@@ -129,7 +108,7 @@ async function main() {
       apiEndpoint: `${INGLAB_BASE_URL}/billable`,
       authType: "BEARER_TOKEN" as const,
       authCredentials: {
-        token,
+        token: sharedToken,
       },
       sourceClientId: inglab.sourceClientId,
       nestedResponseConfig: {
@@ -148,9 +127,8 @@ async function main() {
 
     await db.collection("dataSources").insertOne(dataSource);
 
-    const tokenStatus = process.env[inglab.tokenEnvKey] ? "✅" : "⚠️  (placeholder)";
     console.log(`   ✅ Created DataSource: ${dataSourceId}`);
-    console.log(`   📌 sourceClientId: ${inglab.sourceClientId} ${tokenStatus}`);
+    console.log(`   📌 sourceClientId: ${inglab.sourceClientId} (client_id query param)`);
     migrated++;
   }
 
@@ -160,14 +138,12 @@ async function main() {
   console.log(`   ⏭️  Skipped (already exists): ${skipped}`);
   console.log(`   ❌ Not found: ${notFound}`);
 
-  if (missingTokens.length > 0) {
-    console.log(`\n⚠️  Action required: Set missing tokens in .env and re-run to update tokens.`);
-  }
-
   if (migrated > 0) {
     console.log(`\n✅ Migration complete! ${migrated} DataSource(s) created.`);
   } else if (skipped > 0) {
     console.log(`\nℹ️  All customers already have INGLAB DataSources.`);
+  } else if (notFound > 0) {
+    console.log(`\n⚠️  ${notFound} customer(s) not found in MongoDB. Check customer names.`);
   }
 
   process.exit(0);
