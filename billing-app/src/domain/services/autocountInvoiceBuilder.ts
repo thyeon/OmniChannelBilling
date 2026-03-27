@@ -140,20 +140,32 @@ export async function buildAutoCountInvoice(
     // 2. customer-specific product mapping (has billingMode field)
     // 3. account-book-level mapping (has defaultBillingMode field)
     // 4. fallback to LUMP_SUM
+    // ⚠️ Gap 3 fix: billingMode=ITEMIZED when lineItem.unitPrice is present (INGLAB provides actual price)
     const billingMode =
-      customerOverride?.billingMode ||
-      (customerMapping as { billingMode?: string } | null)?.billingMode ||
-      (accountBookMapping as { defaultBillingMode?: string } | null)?.defaultBillingMode ||
-      "LUMP_SUM";
+      (lineItem.unitPrice !== undefined && lineItem.unitPrice !== null)
+        ? "ITEMIZED"
+        : (customerOverride?.billingMode ||
+          (customerMapping as { billingMode?: string } | null)?.billingMode ||
+          (accountBookMapping as { defaultBillingMode?: string } | null)?.defaultBillingMode ||
+          "LUMP_SUM");
+
+    // ⚠️ Gap 1 fix: unitPrice = 0 is VALID (charge $0). undefined/null falls back to configured rate.
+    const resolvedUnitPrice = (lineItem.unitPrice !== undefined && lineItem.unitPrice !== null)
+      ? lineItem.unitPrice
+      : (billingMode === "LUMP_SUM"
+          ? lineItem.totalCharge
+          : (customerMapping?.defaultUnitPrice ?? accountBookMapping?.defaultUnitPrice ?? lineItem.rate)
+      );
+
+    const resolvedDescription = (lineItem.description || lineItem.descriptionDetail)
+      ? `${lineItem.description || ""}${lineItem.descriptionDetail ? ` - ${lineItem.descriptionDetail}` : ""} - ${billingMonth}`
+      : lineDescription;
 
     // LUMP_SUM: qty=1, unitPrice=totalCharge (avoids AutoCount 2dp rounding)
     // ITEMIZED: qty=billableCount, unitPrice=defaultUnitPrice from mapping (customer mapping
     //            → account book mapping → lineItem.rate fallback)
     const qty = billingMode === "LUMP_SUM" ? 1 : lineItem.billableCount;
-    const unitPrice =
-      billingMode === "LUMP_SUM"
-        ? lineItem.totalCharge
-        : (customerMapping?.defaultUnitPrice ?? accountBookMapping?.defaultUnitPrice ?? lineItem.rate);
+    const unitPrice = resolvedUnitPrice;
 
     // Resolve furtherDescription: customer mapping → account book mapping → account book default → global default
     const furtherDescTemplate =
@@ -167,7 +179,7 @@ export async function buildAutoCountInvoice(
     details.push({
       productCode: resolvedProductCode,
       accNo: accountBook.defaultAccNo || "500-0000",
-      description: lineDescription,
+      description: resolvedDescription,
       furtherDescription: resolvedFurtherDesc,
       qty,
       unit: "unit",
