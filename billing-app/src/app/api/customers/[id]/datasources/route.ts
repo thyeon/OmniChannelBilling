@@ -53,6 +53,16 @@ function validateDataSourceBody(body: unknown): {
       failedCount?: number;
       useDefaultOnMissing: boolean;
     };
+    nestedResponseConfig?: {
+      itemsPath: string;
+      lineItemsPath: string;
+      descriptionPath: string;
+      descriptionDetailPath?: string;
+      qtyPath: string;
+      unitPricePath: string;
+      servicePath?: string;
+    };
+    sourceClientId?: string;
     isActive: boolean;
   };
 } {
@@ -79,6 +89,42 @@ function validateDataSourceBody(body: unknown): {
   const rm = b.responseMapping as Record<string, unknown>;
   if (!rm.usageCountPath || typeof rm.usageCountPath !== "string") {
     return { valid: false, error: "Invalid or missing usageCountPath" };
+  }
+
+  // Validate nestedResponseConfig (optional)
+  let nestedResponseConfig: {
+    itemsPath: string;
+    lineItemsPath: string;
+    descriptionPath: string;
+    descriptionDetailPath?: string;
+    qtyPath: string;
+    unitPricePath: string;
+    servicePath?: string;
+  } | undefined;
+  if (b.nestedResponseConfig !== undefined) {
+    if (typeof b.nestedResponseConfig !== "object") {
+      return { valid: false, error: "nestedResponseConfig must be an object" };
+    }
+    const nc = b.nestedResponseConfig as Record<string, unknown>;
+    if (typeof nc.itemsPath !== "string") return { valid: false, error: "nestedResponseConfig.itemsPath required" };
+    if (typeof nc.lineItemsPath !== "string") return { valid: false, error: "nestedResponseConfig.lineItemsPath required" };
+    if (typeof nc.descriptionPath !== "string") return { valid: false, error: "nestedResponseConfig.descriptionPath required" };
+    if (typeof nc.qtyPath !== "string") return { valid: false, error: "nestedResponseConfig.qtyPath required" };
+    if (typeof nc.unitPricePath !== "string") return { valid: false, error: "nestedResponseConfig.unitPricePath required" };
+    nestedResponseConfig = {
+      itemsPath: nc.itemsPath as string,
+      lineItemsPath: nc.lineItemsPath as string,
+      descriptionPath: nc.descriptionPath as string,
+      descriptionDetailPath: nc.descriptionDetailPath as string | undefined,
+      qtyPath: nc.qtyPath as string,
+      unitPricePath: nc.unitPricePath as string,
+      servicePath: nc.servicePath as string | undefined,
+    };
+  }
+
+  // Validate sourceClientId (optional)
+  if (b.sourceClientId !== undefined && typeof b.sourceClientId !== "string") {
+    return { valid: false, error: "sourceClientId must be a string" };
   }
 
   // Validate lineItemMappings (optional)
@@ -187,6 +233,8 @@ function validateDataSourceBody(body: unknown): {
       requestTemplate,
       retryPolicy,
       fallbackValues,
+      nestedResponseConfig,
+      sourceClientId: b.sourceClientId as string | undefined,
       isActive: b.isActive !== false,
     },
   };
