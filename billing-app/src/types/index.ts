@@ -127,6 +127,11 @@ export interface InvoiceLineItem {
   // Charge
   rate: number;
   totalCharge: number;
+  // INGLAB fields: actual unit price and description from INGLAB nested API response
+  unitPrice?: number;
+  description?: string;
+  descriptionDetail?: string;
+  lineItemService?: string;
 }
 
 export interface InvoiceHistory {

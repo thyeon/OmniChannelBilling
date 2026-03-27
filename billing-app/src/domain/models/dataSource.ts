@@ -14,6 +14,8 @@ export interface ResponseMapping {
   usageCountPath: string;
   sentPath?: string;
   failedPath?: string;
+  // INGLAB nested response config for parsing nested line items
+  nestedResponseConfig?: NestedResponseConfig;
 }
 
 /**
@@ -97,6 +99,8 @@ export interface DataSource {
   requestTemplate?: RequestTemplate;
   retryPolicy?: RetryPolicy;
   fallbackValues?: FallbackValues;
+  // INGLAB: client_id for ?client_id= query param on INGLAB API
+  sourceClientId?: string;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;

@@ -1,4 +1,4 @@
-import { Customer } from '../index';
+import { Customer, InvoiceLineItem } from '../index';
 
 describe('Customer type', () => {
   it('should include status field with valid values', () => {
@@ -84,5 +84,39 @@ describe('Customer type', () => {
     };
 
     expect(customer.defaultFields).toBeUndefined();
+  });
+});
+
+describe('InvoiceLineItem type', () => {
+  it("should have optional INGLAB fields on InvoiceLineItem", () => {
+    const item: InvoiceLineItem = {
+      dataSourceId: "ds_1",
+      lineIdentifier: "SMS",
+      service: "SMS",
+      hasProvider: true,
+      reconServerStatus: "SUCCESS",
+      providerStatus: "SUCCESS",
+      reconServerName: "INGLAB",
+      providerName: "GTS",
+      reconTotal: 100,
+      reconDetails: { sent: 100, failed: 0, withheld: 0 },
+      providerTotal: 100,
+      discrepancyPercentage: 0,
+      isMismatch: false,
+      thresholdUsed: 0,
+      billableCount: 100,
+      wasOverridden: false,
+      rate: 0.079,
+      totalCharge: 7.90,
+      // INGLAB fields:
+      unitPrice: 0.079,
+      description: "SMS",
+      descriptionDetail: "ECS SMS Service",
+      lineItemService: "WhatsApp Business API",
+    };
+    expect(item.unitPrice).toBe(0.079);
+    expect(item.description).toBe("SMS");
+    expect(item.descriptionDetail).toBe("ECS SMS Service");
+    expect(item.lineItemService).toBe("WhatsApp Business API");
   });
 });
