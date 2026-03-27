@@ -255,20 +255,26 @@ async function fetchBillableForDataSource(
     switch (dataSource.type) {
       case "COWAY_API": {
         // COWAY_API uses user/secret/serviceProvider from dataSource.authCredentials
-        const user = dataSource.authCredentials?.user;
-        const secret = dataSource.authCredentials?.secret;
-        const serviceProvider = dataSource.authCredentials?.serviceProvider;
+        const user = (dataSource.authCredentials?.user || "").trim();
+        const secret = (dataSource.authCredentials?.secret || "").trim();
+        const serviceProvider = (dataSource.authCredentials?.serviceProvider || "gts").trim();
         if (!user || !secret) {
           return [makeErrorLineItem(dataSource, customer, "Missing COWAY_API credentials (user/secret)")];
         }
 
         const { dtFrom, dtTo } = getDateRange(billingMonth);
-        const body = { user, secret, serviceProvider: serviceProvider || "gts", dtFrom, dtTo };
+        const body = { user, secret, serviceProvider, dtFrom, dtTo };
         const json = await fetchWithRetry(dataSource.apiEndpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
+
+        // Detect API-level errors (e.g., { success: false, error_code: "301", error_message: "..." })
+        if (typeof json === "object" && json !== null && "success" in json && (json as Record<string, unknown>).success === false) {
+          const errMsg = (json as Record<string, unknown>).error_message as string || "Unknown API error";
+          return [makeErrorLineItem(dataSource, customer, `COWAY_API error: ${errMsg}`)];
+        }
 
         const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
         let { usageCount, sentCount, failedCount } = singleLineResult;
@@ -280,7 +286,8 @@ async function fetchBillableForDataSource(
           usageCount = dataSource.fallbackValues.usageCount;
         }
         if (usageCount === 0) return [];
-        return [makeLineItem(usageCount, sentCount, failedCount)];
+        // Pass serviceProvider as lineIdentifier so customer product mappings can differentiate per-provider
+        return [makeLineItem(usageCount, sentCount, failedCount, serviceProvider)];
       }
 
       case "RECON_SERVER": {

@@ -19,6 +19,15 @@ export interface AutoCountInvoiceMaster {
   salesAgent: string | null;
   email: string | null;
   address: string | null;
+  emailCC?: string | null;
+  emailBCC?: string | null;
+  attention?: string | null;
+  phone1?: string | null;
+  fax1?: string | null;
+  deliverAddress?: string | null;
+  deliverContact?: string | null;
+  deliverPhone1?: string | null;
+  deliverFax1?: string | null;
   ref: string | null;
   description: string | null;
   note: string | null;
@@ -34,27 +43,28 @@ export interface AutoCountInvoiceMaster {
   paymentAmt: number;
   paymentRef: string | null;
   taxEntity?: string;
-  submitEInvoice?: string;
 }
 
 export interface AutoCountInvoiceDetail {
   productCode: string | null;
+  productVariant?: string | null;
   accNo: string;
   description: string;
+  furtherDescription?: string;
   qty: number;
   unit: string;
   unitPrice: number;
-  discount: string | null;
+  discount: number | null;
   taxCode: string | null;
   taxAdjustment: number;
   localTaxAdjustment: number;
   tariffCode: string | null;
+  taxExportCountry?: string | null;
+  taxPermitNo?: string | null;
   localTotalCost: number;
-  furtherDescription?: string;
-  productVariant?: string;
-  yourPONo?: string;
-  yourPODate?: string;
-  deptNo?: string;
+  yourPONo?: string | null;
+  yourPODate?: string | null;
+  deptNo?: string | null;
   unitType?: string;
   classificationCode?: string;
 }
@@ -70,7 +80,7 @@ export interface AutoCountInvoicePayload {
   master: AutoCountInvoiceMaster;
   details: AutoCountInvoiceDetail[];
   autoFillOption: AutoCountAutoFillOption;
-  saveApprove: string | null;
+  saveApprove: boolean | null;
 }
 
 export interface AutoCountInvoiceResponse {

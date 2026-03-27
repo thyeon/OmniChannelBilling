@@ -8,7 +8,8 @@ describe("Wizard handleSubmit guard logic", () => {
   });
 
   it("should show alert when customer.id is missing", () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    const alertSpy = vi.fn();
+    vi.spyOn(window, "alert").mockImplementation(alertSpy);
 
     // Simulate the guard logic from handleSubmit
     const data = { customer: undefined, productMappings: [] };
@@ -20,12 +21,11 @@ describe("Wizard handleSubmit guard logic", () => {
     expect(alertSpy).toHaveBeenCalledWith(
       "No customer found. Please complete the Basic Info step."
     );
-
-    alertSpy.mockRestore();
   });
 
   it("should NOT show alert when customer.id exists", () => {
-    const alertSpy = vi.spyOn(window, "alert").mockImplementation(() => {});
+    const alertSpy = vi.fn();
+    vi.spyOn(window, "alert").mockImplementation(alertSpy);
 
     // Simulate the guard logic from handleSubmit
     const data = {
@@ -38,8 +38,6 @@ describe("Wizard handleSubmit guard logic", () => {
     }
 
     expect(alertSpy).not.toHaveBeenCalled();
-
-    alertSpy.mockRestore();
   });
 
   it("should redirect when customer.id exists", () => {
@@ -77,17 +75,124 @@ describe("CustomerWizardPage rendering", () => {
     expect(STEPS[3].id).toBe("review");
   });
 
-  it("has correct review summary template", () => {
-    // Test the summary message template
+  it("has correct review summary template for create mode", () => {
+    // Test the summary message template for create mode
     const customerName = "Test Customer";
     const dataSourceCount = 1;
     const productMappingCount = 3;
+    const isEditMode = false;
 
-    const message = `Customer '${customerName}' with ${dataSourceCount} data source(s) and ${productMappingCount} product mapping(s) is ready.`;
+    const message = isEditMode
+      ? `Updating customer '${customerName}' with ${dataSourceCount} data source(s) and ${productMappingCount} product mapping(s).`
+      : `Creating customer '${customerName}' with ${dataSourceCount} data source(s) and ${productMappingCount} product mapping(s).`;
 
+    expect(message).toContain("Creating");
     expect(message).toContain("Test Customer");
     expect(message).toContain("1 data source(s)");
     expect(message).toContain("3 product mapping(s)");
-    expect(message).toContain("is ready");
+  });
+
+  it("has correct review summary template for edit mode", () => {
+    // Test the summary message template for edit mode
+    const customerName = "Test Customer";
+    const dataSourceCount = 2;
+    const productMappingCount = 5;
+    const isEditMode = true;
+
+    const message = isEditMode
+      ? `Updating customer '${customerName}' with ${dataSourceCount} data source(s) and ${productMappingCount} product mapping(s).`
+      : `Creating customer '${customerName}' with ${dataSourceCount} data source(s) and ${productMappingCount} product mapping(s).`;
+
+    expect(message).toContain("Updating");
+    expect(message).toContain("Test Customer");
+    expect(message).toContain("2 data source(s)");
+    expect(message).toContain("5 product mapping(s)");
+  });
+
+  it("shows correct button text for create mode", () => {
+    const isEditMode = false;
+    const buttonText = isEditMode ? "Update Customer" : "Create Customer";
+    expect(buttonText).toBe("Create Customer");
+  });
+
+  it("shows correct button text for edit mode", () => {
+    const isEditMode = true;
+    const buttonText = isEditMode ? "Update Customer" : "Create Customer";
+    expect(buttonText).toBe("Update Customer");
+  });
+});
+
+// Test edit mode logic
+describe("Edit mode logic", () => {
+  it("should set isEditMode to true when customerIdParam exists", () => {
+    const customerIdParam = "cust-123";
+    const isEditMode = !!customerIdParam;
+    expect(isEditMode).toBe(true);
+  });
+
+  it("should set isEditMode to false when customerIdParam is null", () => {
+    const customerIdParam = null;
+    const isEditMode = !!customerIdParam;
+    expect(isEditMode).toBe(false);
+  });
+
+  it("should initialize customer data with id in edit mode", () => {
+    const customerIdParam = "cust-123";
+    const customer = customerIdParam ? { id: customerIdParam } : undefined;
+
+    expect(customer).toBeDefined();
+    expect(customer?.id).toBe("cust-123");
+  });
+
+  it("should not initialize customer data when not in edit mode", () => {
+    const customerIdParam = null;
+    const customer = customerIdParam ? { id: customerIdParam } : undefined;
+
+    expect(customer).toBeUndefined();
+  });
+
+  it("should make PUT request in edit mode", async () => {
+    const isEditMode = true;
+    const customerId = "cust-123";
+    const customer = { id: customerId, name: "Test Customer" };
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({})
+    });
+    global.fetch = mockFetch;
+
+    if (isEditMode) {
+      await fetch(`/api/customers/${customer.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      });
+    }
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      `/api/customers/${customerId}`,
+      expect.objectContaining({
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(customer),
+      })
+    );
+  });
+
+  it("should NOT make PUT request in create mode", async () => {
+    const isEditMode = false;
+    const customer = { name: "New Customer" };
+
+    const mockFetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({})
+    });
+    global.fetch = mockFetch;
+
+    // In create mode, we don't make a final PUT request
+    // The customer is already created during BasicInfoStep
+
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

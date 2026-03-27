@@ -87,7 +87,15 @@ export interface Customer {
     taxCode?: string;
     taxEntity?: string;
     address?: string;
+    email?: string;
     description?: string;
+    // AutoFill options for invoice generation
+    autoFillAccNo?: boolean;
+    autoFillTaxCode?: boolean;
+    autoFillTariffCode?: boolean;
+    autoFillLocalTotalCost?: boolean;
+    // Save/approve behavior
+    saveApprove?: boolean | null;
   };
 }
 

@@ -35,10 +35,12 @@ const STEPS: WizardStepConfig[] = [
 export default function CustomerWizardPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const customerIdParam = searchParams.get("customerId");
+  const customerIdParam = searchParams.get("customerId") || searchParams.get("id");
+  const isEditMode = !!customerIdParam;
   const [currentStep, setCurrentStep] = useState<WizardStep>("info");
   const [data, setData] = useState<WizardData>({
-    customer: undefined,
+    // In edit mode, pass the customerIdParam as id so BasicInfoStep can fetch the customer
+    customer: customerIdParam ? { id: customerIdParam } as Customer : undefined,
     productMappings: [],
   });
 
@@ -62,15 +64,32 @@ export default function CustomerWizardPage() {
     setData((prev) => ({ ...prev, productMappings: mappings }));
   }
 
-  function handleSubmit(): void {
+  async function handleSubmit(): Promise<void> {
     if (!data.customer?.id) {
       alert("No customer found. Please complete the Basic Info step.");
       return;
     }
     // Data sources already saved during DataSourceStep (immediate POST/PUT on save)
     // Product mappings already saved during ProductMappingStep (immediate POST/PUT on save)
-    // Final submit just confirms and redirects
-    console.log("Customer creation complete:", data.customer);
+    // In edit mode, we need to update the customer as well
+    if (isEditMode) {
+      try {
+        const response = await fetch(`/api/customers/${data.customer.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data.customer),
+        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Failed to update customer");
+        }
+      } catch (error) {
+        console.error("Failed to update customer:", error);
+        alert(error instanceof Error ? error.message : "Failed to update customer");
+        return;
+      }
+    }
+    console.log(isEditMode ? "Customer update complete:" : "Customer creation complete:", data.customer);
     router.push("/admin/customers");
   }
 
@@ -138,7 +157,7 @@ export default function CustomerWizardPage() {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Review & Submit</h2>
             <p className="text-muted-foreground">
-              Customer '{data.customer?.name}' with {data.dataSourceId ? "1" : "0"} data source(s) and {data.productMappings.length} product mapping(s) is ready.
+              {isEditMode ? "Updating" : "Creating"} customer '{data.customer?.name}' with {data.dataSourceId ? "1" : "0"} data source(s) and {data.productMappings.length} product mapping(s).
             </p>
             <pre className="bg-muted p-4 rounded-md text-sm overflow-auto">
               {JSON.stringify(data, null, 2)}
@@ -156,7 +175,7 @@ export default function CustomerWizardPage() {
                 onClick={handleSubmit}
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
               >
-                Submit
+                {isEditMode ? "Update Customer" : "Create Customer"}
               </button>
             </div>
           </div>

@@ -29,12 +29,22 @@ export async function findAllAccountBooks(): Promise<AutoCountAccountBook[]> {
   return docs.map(toAutoCountAccountBook);
 }
 
-/** Fetch a single account book by id. */
+/** Fetch a single account book by internal id. */
 export async function findAccountBookById(
   id: string
 ): Promise<AutoCountAccountBook | null> {
   const collection = await getCollection();
   const doc = await collection.findOne({ id });
+  if (!doc) return null;
+  return toAutoCountAccountBook(doc);
+}
+
+/** Fetch a single account book by AutoCount's accountBookId field (for backward compat). */
+export async function findAccountBookByAccountBookId(
+  accountBookId: string
+): Promise<AutoCountAccountBook | null> {
+  const collection = await getCollection();
+  const doc = await collection.findOne({ accountBookId });
   if (!doc) return null;
   return toAutoCountAccountBook(doc);
 }

@@ -67,6 +67,8 @@ function getServiceData(
  *   {BillingCycle}     → "January 2026"
  *   {CustomerName}     → "Coway (M) Sdn Bhd"
  *   {TotalAmount}      → "RM 5.21"
+ *   {month}            → "March 2026"  (billing month, human-readable)
+ *   {total}            → "3,155,641"   (line item billable count, formatted)
  *   {SMSCount}         → "66"
  *   {SMSRate}          → "RM 0.079"
  *   {SMSTotal}         → "RM 5.21"
@@ -79,7 +81,9 @@ function getServiceData(
  */
 export function resolveTemplate(
   template: string,
-  context: TemplateContext
+  context: TemplateContext,
+  /** When provided, adds {total} and {month} tokens using this specific line item. */
+  lineItem?: InvoiceLineItem
 ): string {
   const sms = getServiceData(context.lineItems, "SMS");
   const email = getServiceData(context.lineItems, "EMAIL");
@@ -89,6 +93,8 @@ export function resolveTemplate(
     "{BillingCycle}": formatBillingCycle(context.billingMonth),
     "{CustomerName}": context.customerName,
     "{TotalAmount}": formatCurrency(context.totalAmount),
+    "{month}": formatBillingCycle(context.billingMonth),
+    "{total}": lineItem ? lineItem.billableCount.toLocaleString() : "",
     "{SMSCount}": sms.count.toLocaleString(),
     "{SMSRate}": formatCurrency(sms.rate, 4),
     "{SMSTotal}": formatCurrency(sms.total),

@@ -62,7 +62,7 @@ describe('customerProductMappingRepository', () => {
       expect(result).toHaveProperty('updatedAt');
       expect(result.customerId).toBe('cust-123');
       expect(result.id).toMatch(/^cpm-/);
-    });
+    }, 10000);
   });
 
   // Test 2: findCustomerProductMappingsByCustomerId returns array

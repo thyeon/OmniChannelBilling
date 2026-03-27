@@ -156,17 +156,17 @@ function validateDataSourceBody(body: unknown): {
     };
   }
 
-  // Validate authCredentials.headerName (optional)
+  // Validate authCredentials.headerName (optional) — trim all string values to prevent trailing-space auth failures
   const authCredentials = b.authCredentials as Record<string, unknown> | undefined;
   const validatedAuthCredentials = authCredentials ? {
-    key: authCredentials.key as string | undefined,
-    token: authCredentials.token as string | undefined,
-    username: authCredentials.username as string | undefined,
-    password: authCredentials.password as string | undefined,
-    headerName: authCredentials.headerName as string | undefined,
-    user: authCredentials.user as string | undefined,
-    secret: authCredentials.secret as string | undefined,
-    serviceProvider: authCredentials.serviceProvider as string | undefined,
+    key: (authCredentials.key as string | undefined)?.trim(),
+    token: (authCredentials.token as string | undefined)?.trim(),
+    username: (authCredentials.username as string | undefined)?.trim(),
+    password: (authCredentials.password as string | undefined)?.trim(),
+    headerName: (authCredentials.headerName as string | undefined)?.trim(),
+    user: (authCredentials.user as string | undefined)?.trim(),
+    secret: (authCredentials.secret as string | undefined)?.trim(),
+    serviceProvider: (authCredentials.serviceProvider as string | undefined)?.trim(),
   } : undefined;
 
   return {

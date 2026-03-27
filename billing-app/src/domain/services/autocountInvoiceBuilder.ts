@@ -9,6 +9,7 @@
 import { Customer, InvoiceLineItem } from "@/types";
 import {
   findAccountBookById,
+  findAccountBookByAccountBookId,
 } from "@/infrastructure/db/autoCountAccountBookRepository";
 import {
   findMappingByAccountBookAndService,
@@ -58,8 +59,12 @@ export async function buildAutoCountInvoice(
     };
   }
 
-  // Fetch account book configuration
-  const accountBook = await findAccountBookById(customer.autocountAccountBookId);
+  // Fetch account book configuration — try internal DB id first, then fall back to AutoCount accountBookId
+  let accountBook = await findAccountBookById(customer.autocountAccountBookId);
+  if (!accountBook) {
+    // Fallback: customer.autocountAccountBookId may contain the AutoCount accountBookId directly
+    accountBook = await findAccountBookByAccountBookId(customer.autocountAccountBookId);
+  }
   if (!accountBook) {
     return {
       success: false,
@@ -86,6 +91,15 @@ export async function buildAutoCountInvoice(
       error: "Sales location not configured (no default in account book and no customer override)",
     };
   }
+
+  // Build template context for placeholder resolution (needed inside loop for per-line furtherDesc)
+  const totalAmount = lineItems.reduce((sum, li) => sum + li.totalCharge, 0);
+  const templateContext: TemplateContext = {
+    billingMonth,
+    customerName: customer.name,
+    totalAmount,
+    lineItems,
+  };
 
   // Build invoice details
   const details: AutoCountInvoiceDetail[] = [];
@@ -121,21 +135,40 @@ export async function buildAutoCountInvoice(
       ? `${mapping.description} - ${billingMonth}`
       : `${lineItem.service} Service - ${billingMonth}`;
 
-    // Resolve billing mode: customer override → mapping default → LUMP_SUM fallback
+    // Resolve billing mode:
+    // 1. customer service override (by serviceType only, no lineIdentifier)
+    // 2. customer-specific product mapping (has billingMode field)
+    // 3. account-book-level mapping (has defaultBillingMode field)
+    // 4. fallback to LUMP_SUM
     const billingMode =
       customerOverride?.billingMode ||
-      mapping?.defaultBillingMode ||
+      (customerMapping as { billingMode?: string } | null)?.billingMode ||
+      (accountBookMapping as { defaultBillingMode?: string } | null)?.defaultBillingMode ||
       "LUMP_SUM";
 
     // LUMP_SUM: qty=1, unitPrice=totalCharge (avoids AutoCount 2dp rounding)
-    // ITEMIZED: qty=billableCount, unitPrice=rate (use when rate has ≤2dp)
+    // ITEMIZED: qty=billableCount, unitPrice=defaultUnitPrice from mapping (customer mapping
+    //            → account book mapping → lineItem.rate fallback)
     const qty = billingMode === "LUMP_SUM" ? 1 : lineItem.billableCount;
-    const unitPrice = billingMode === "LUMP_SUM" ? lineItem.totalCharge : lineItem.rate;
+    const unitPrice =
+      billingMode === "LUMP_SUM"
+        ? lineItem.totalCharge
+        : (customerMapping?.defaultUnitPrice ?? accountBookMapping?.defaultUnitPrice ?? lineItem.rate);
+
+    // Resolve furtherDescription: customer mapping → account book mapping → account book default → global default
+    const furtherDescTemplate =
+      (customerMapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
+      (mapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
+      accountBook.furtherDescriptionTemplate ||
+      DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
+
+    const resolvedFurtherDesc = resolveTemplate(furtherDescTemplate, templateContext, lineItem);
 
     details.push({
       productCode: resolvedProductCode,
       accNo: accountBook.defaultAccNo || "500-0000",
       description: lineDescription,
+      furtherDescription: resolvedFurtherDesc,
       qty,
       unit: "unit",
       unitPrice,
@@ -156,52 +189,40 @@ export async function buildAutoCountInvoice(
     };
   }
 
-  // Build template context for placeholder resolution
-  const totalAmount = lineItems.reduce((sum, li) => sum + li.totalCharge, 0);
-  const templateContext: TemplateContext = {
-    billingMonth,
-    customerName: customer.name,
-    totalAmount,
-    lineItems,
-  };
-
-  // Resolve description templates: customer override → account book default → hardcoded fallback
+  // Resolve master invoice description: customer override → account book default → hardcoded fallback
   const invoiceDescTemplate =
     customer.invoiceDescriptionTemplate ||
     accountBook.invoiceDescriptionTemplate ||
     DEFAULT_INVOICE_DESCRIPTION_TEMPLATE;
 
-  const furtherDescTemplate =
-    customer.furtherDescriptionTemplate ||
-    accountBook.furtherDescriptionTemplate ||
-    DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
-
   const resolvedInvoiceDescription = resolveTemplate(invoiceDescTemplate, templateContext);
-  const resolvedFurtherDescription = resolveTemplate(furtherDescTemplate, templateContext);
 
-  // Apply furtherDescription to each detail line
-  for (const detail of details) {
-    detail.furtherDescription = resolvedFurtherDescription;
-  }
-
-  // Calculate doc date (1st day of the month following the billing cycle)
-  // Format today's date as DD/MM/YYYY
+  // Calculate doc date — AutoCount API expects YYYY-MM-DD format per documentation
   const today = new Date();
-  const todayDDMMYYYY = `${String(today.getDate()).padStart(2, "0")}/${String(today.getMonth() + 1).padStart(2, "0")}/${today.getFullYear()}`;
+  const todayYYYYMMDD = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
 
   // Build invoice master
   const master: AutoCountInvoiceMaster = {
     docNo: null,
     docNoFormatName: null,
-    docDate: todayDDMMYYYY,
-    taxDate: todayDDMMYYYY,
+    docDate: todayYYYYMMDD,
+    taxDate: todayYYYYMMDD,
     debtorCode: debtorCode,
     debtorName: customer.name,
     creditTerm,
     salesLocation,
     salesAgent: accountBook.defaultSalesAgent || "Olivia Yap",
-    email: null,
-    address: null,
+    email: customer.defaultFields?.email || null,
+    address: customer.defaultFields?.address || null,
+    emailCC: null,
+    emailBCC: null,
+    attention: null,
+    phone1: null,
+    fax1: null,
+    deliverAddress: null,
+    deliverContact: null,
+    deliverPhone1: null,
+    deliverFax1: null,
     ref: null,
     description: resolvedInvoiceDescription,
     note: null,
@@ -216,23 +237,22 @@ export async function buildAutoCountInvoice(
     toBankRate: 1,
     paymentAmt: 0,
     paymentRef: null,
-    taxEntity: accountBook.taxEntity || undefined,
-    submitEInvoice: accountBook.submitEInvoice ?? false,
+    taxEntity: customer.defaultFields?.taxEntity || accountBook.taxEntity || undefined,
   };
 
-  // Build auto-fill options
+  // Build auto-fill options — per-customer from defaultFields, fall back to previous hardcoded defaults
   const autoFillOption: AutoCountAutoFillOption = {
-    accNo: false,
-    taxCode: true,
-    tariffCode: false,
-    localTotalCost: true,
+    accNo: customer.defaultFields?.autoFillAccNo ?? false,
+    taxCode: customer.defaultFields?.autoFillTaxCode ?? true,
+    tariffCode: customer.defaultFields?.autoFillTariffCode ?? false,
+    localTotalCost: customer.defaultFields?.autoFillLocalTotalCost ?? true,
   };
 
   const payload: AutoCountInvoicePayload = {
     master,
     details,
     autoFillOption,
-    saveApprove: null,
+    saveApprove: customer.defaultFields?.saveApprove ?? null,
   };
 
   return { success: true, payload };

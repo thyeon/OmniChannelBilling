@@ -40,13 +40,38 @@ describe("BasicInfoStep", () => {
     );
   };
 
-  it("renders all 4 accordion sections", () => {
-    renderComponent();
+  it("renders all accordion sections when in AUTO_PILOT mode", () => {
+    renderComponent({
+      data: {
+        billingMode: "AUTO_PILOT",
+        consolidateInvoice: false,
+        discrepancyThreshold: 1,
+        status: "ACTIVE",
+        billingCycle: "MONTHLY",
+      },
+    });
 
     expect(screen.getByText("Core Info")).toBeInTheDocument();
     expect(screen.getByText("AutoCount Configuration")).toBeInTheDocument();
     expect(screen.getByText("Billing Settings")).toBeInTheDocument();
     expect(screen.getByText("Schedule")).toBeInTheDocument();
+  });
+
+  it("renders only 3 accordion sections when not in AUTO_PILOT mode", () => {
+    renderComponent({
+      data: {
+        billingMode: "MANUAL",
+        consolidateInvoice: false,
+        discrepancyThreshold: 1,
+        status: "ACTIVE",
+        billingCycle: "MONTHLY",
+      },
+    });
+
+    expect(screen.getByText("Core Info")).toBeInTheDocument();
+    expect(screen.getByText("AutoCount Configuration")).toBeInTheDocument();
+    expect(screen.getByText("Billing Settings")).toBeInTheDocument();
+    expect(screen.queryByText("Schedule")).not.toBeInTheDocument();
   });
 
   it("renders form fields in Core Info section", () => {

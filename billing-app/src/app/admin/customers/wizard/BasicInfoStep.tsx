@@ -30,6 +30,12 @@ const SERVICE_TYPES: ServiceType[] = ["SMS", "EMAIL", "WHATSAPP"];
 const BILLING_CYCLES = ["MONTHLY", "QUARTERLY", "YEARLY"] as const;
 const STATUS_OPTIONS = ["ACTIVE", "SUSPENDED", "MAINTENANCE"] as const;
 
+interface AccountBookOption {
+  id: string;
+  name: string;
+  accountBookId: string;
+}
+
 export default function BasicInfoStep({
   data: initialData,
   editMode,
@@ -42,6 +48,15 @@ export default function BasicInfoStep({
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(editMode);
   const [fetchError, setFetchError] = useState("");
+  const [accountBooks, setAccountBooks] = useState<AccountBookOption[]>([]);
+
+  // Fetch account books for the dropdown
+  useEffect(() => {
+    fetch("/api/autocount/account-books")
+      .then((res) => res.json())
+      .then((data) => setAccountBooks(data.accountBooks || []))
+      .catch((err) => console.error("Failed to fetch account books:", err));
+  }, []);
 
   // Fetch customer data when editMode is true
   useEffect(() => {
@@ -296,13 +311,27 @@ export default function BasicInfoStep({
           <AccordionContent>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="autocountAccountBookId">Account Book ID</Label>
-                <Input
-                  id="autocountAccountBookId"
+                <Label htmlFor="autocountAccountBookId">Account Book</Label>
+                <Select
                   value={formData.autocountAccountBookId || ""}
-                  onChange={(e) => updateField("autocountAccountBookId", e.target.value)}
-                  placeholder="Enter AutoCount account book ID"
-                />
+                  onValueChange={(value) => updateField("autocountAccountBookId", value || undefined)}
+                >
+                  <SelectTrigger id="autocountAccountBookId">
+                    <SelectValue placeholder="Select an account book" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {accountBooks.length === 0 && (
+                      <SelectItem value="__empty__" disabled>
+                        No account books found
+                      </SelectItem>
+                    )}
+                    {accountBooks.map((book) => (
+                      <SelectItem key={book.id} value={book.id}>
+                        {book.name} ({book.accountBookId})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid gap-2">
@@ -382,6 +411,22 @@ export default function BasicInfoStep({
               </div>
 
               <div className="grid gap-2">
+                <Label htmlFor="email">Invoice Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.defaultFields?.email || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      defaultFields: { ...prev.defaultFields, email: e.target.value },
+                    }))
+                  }
+                  placeholder="Enter customer email for invoices"
+                />
+              </div>
+
+              <div className="grid gap-2">
                 <Label htmlFor="invoiceDescriptionTemplate">Invoice Description Template</Label>
                 <Input
                   id="invoiceDescriptionTemplate"
@@ -409,6 +454,80 @@ export default function BasicInfoStep({
                   onChange={(e) => updateField("furtherDescriptionSMSIntl", e.target.value)}
                   placeholder="Enter description"
                 />
+              </div>
+
+              <div className="border-t pt-4 mt-4">
+                <p className="text-sm font-medium mb-3">Invoice Auto-Fill Options</p>
+
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="autoFillAccNo" className="font-normal">Auto-Fill GL Account (accNo)</Label>
+                  <Switch
+                    id="autoFillAccNo"
+                    checked={formData.defaultFields?.autoFillAccNo ?? false}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        defaultFields: { ...prev.defaultFields, autoFillAccNo: checked },
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="autoFillTaxCode" className="font-normal">Auto-Fill Tax Code</Label>
+                  <Switch
+                    id="autoFillTaxCode"
+                    checked={formData.defaultFields?.autoFillTaxCode ?? true}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        defaultFields: { ...prev.defaultFields, autoFillTaxCode: checked },
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="autoFillTariffCode" className="font-normal">Auto-Fill Tariff Code</Label>
+                  <Switch
+                    id="autoFillTariffCode"
+                    checked={formData.defaultFields?.autoFillTariffCode ?? false}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        defaultFields: { ...prev.defaultFields, autoFillTariffCode: checked },
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between mb-3">
+                  <Label htmlFor="autoFillLocalTotalCost" className="font-normal">Auto-Fill Local Total Cost</Label>
+                  <Switch
+                    id="autoFillLocalTotalCost"
+                    checked={formData.defaultFields?.autoFillLocalTotalCost ?? true}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        defaultFields: { ...prev.defaultFields, autoFillLocalTotalCost: checked },
+                      }))
+                    }
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="saveApprove" className="font-normal">Save & Approve</Label>
+                  <Switch
+                    id="saveApprove"
+                    checked={formData.defaultFields?.saveApprove ?? false}
+                    onCheckedChange={(checked) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        defaultFields: { ...prev.defaultFields, saveApprove: checked },
+                      }))
+                    }
+                  />
+                </div>
               </div>
             </div>
           </AccordionContent>
