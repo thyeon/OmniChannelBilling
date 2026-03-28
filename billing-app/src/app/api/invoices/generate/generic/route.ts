@@ -64,25 +64,30 @@ export async function POST(request: NextRequest) {
       (li) => !li.reconServerStatus || li.reconServerStatus !== "FAILED"
     );
 
-    // Group INGLAB items by serviceId (non-INGLAB items have no serviceId → "DEFAULT")
+    // Group INGLAB items by projectName (usage + platform fee for same project share same projectName).
+    // Non-INGLAB items have no projectName → group by "DEFAULT".
     const groups = new Map<string, InvoiceLineItem[]>();
     for (const li of activeLineItems) {
-      const key = li.serviceId || "DEFAULT";
+      const key = li.projectName || "DEFAULT";
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(li);
     }
 
     // Generate one invoice per group
     const invoices = [];
-    for (const [serviceId, groupItems] of Array.from(groups.entries())) {
+    for (const [, groupItems] of Array.from(groups.entries())) {
       const projectName = groupItems[0]?.projectName || "";
+      // Primary serviceId = first non-platform-fee serviceId in the group (e.g., ZURICH-001 not ZURICH-001-1)
+      const primaryServiceId = groupItems.find(
+        (li) => li.serviceId && !li.serviceId.endsWith("-1")
+      )?.serviceId || groupItems[0]?.serviceId || "";
 
       // Build AutoCount invoice payload with serviceId/projectName overrides
       const buildResult = await buildAutoCountInvoice({
         customer,
         billingMonth,
         lineItems: groupItems,
-        serviceId,
+        serviceId: primaryServiceId,
         projectName,
       });
 
@@ -103,7 +108,7 @@ export async function POST(request: NextRequest) {
           schedule: customer.schedule,
           generatedBy: "MANUAL",
           lineItems: groupItems,
-          serviceId,
+          serviceId: primaryServiceId,
           projectName,
         };
         await insertInvoice(errorInvoice);
@@ -133,7 +138,7 @@ export async function POST(request: NextRequest) {
           schedule: customer.schedule,
           generatedBy: "MANUAL",
           lineItems: groupItems,
-          serviceId,
+          serviceId: primaryServiceId,
           projectName,
         };
         await insertInvoice(invoice);
@@ -153,7 +158,7 @@ export async function POST(request: NextRequest) {
           schedule: customer.schedule,
           generatedBy: "MANUAL",
           lineItems: groupItems,
-          serviceId,
+          serviceId: primaryServiceId,
           projectName,
         };
         await insertInvoice(invoice);

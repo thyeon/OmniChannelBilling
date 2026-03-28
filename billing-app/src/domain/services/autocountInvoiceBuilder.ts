@@ -190,8 +190,8 @@ export async function buildAutoCountInvoice(
     // Resolve furtherDescription: INGLAB descriptionDetail (exchange rate info) takes priority,
     // then customer mapping template → account book mapping template → account book default → global default
     let resolvedFurtherDesc: string | undefined;
-    if (lineItem.descriptionDetail) {
-      // INGLAB provides structured billing info (exchange rate, per-message cost, billing period)
+    if (lineItem.descriptionDetail !== undefined) {
+      // INGLAB provides structured billing info — use as-is (may be empty string for platform fee)
       resolvedFurtherDesc = lineItem.descriptionDetail;
     } else {
       const furtherDescTemplate =
