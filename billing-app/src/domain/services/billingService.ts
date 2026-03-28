@@ -387,6 +387,8 @@ async function fetchBillableForDataSource(
               providerStatus: "SUCCESS",
               reconServerName: dataSource.name,
               providerName: getProviderName(dataSource.serviceType),
+              serviceId: nl.serviceId,        // INGLAB: per-line service_id from nested response
+              projectName: nl.projectName,    // INGLAB: project_name propagated from item level
               reconTotal: nl.qty,
               reconDetails: { sent: nl.qty, failed: 0, withheld: 0 },
               providerTotal: nl.qty,
