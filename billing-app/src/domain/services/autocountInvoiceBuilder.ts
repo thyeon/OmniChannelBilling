@@ -171,9 +171,13 @@ export async function buildAutoCountInvoice(
       );
 
     let resolvedDescription: string;
-    if (lineItem.lineIdentifier?.includes("Monthly Platform Fee") && projectName) {
-      // INGLAB: append projectName to platform fee description
-      resolvedDescription = `WhatsApp Business API Monthly Platform Fee - ${projectName} - ${billingMonth}`;
+    if (lineItem.lineIdentifier?.includes("Monthly Platform Fee")) {
+      // INGLAB: include projectName if available, otherwise fall back to base serviceId
+      const baseServiceId = serviceId ? serviceId.replace(/-\d+$/, "") : serviceId;
+      const effectiveProjectName = projectName || baseServiceId || "";
+      resolvedDescription = effectiveProjectName
+        ? `WhatsApp Business API Monthly Platform Fee - ${effectiveProjectName} - ${billingMonth}`
+        : `WhatsApp Business API Monthly Platform Fee - ${billingMonth}`;
     } else {
       // description: short item name only (descriptionDetail / exchange rate info belongs in furtherDescription)
       resolvedDescription = lineItem.description
@@ -227,10 +231,12 @@ export async function buildAutoCountInvoice(
     };
   }
 
-  // INGLAB override: use serviceId + projectName for descriptive master description
+  // INGLAB override: use serviceId + projectName for descriptive master description.
+  // When projectName is blank (e.g. Jan data missing project_name), fall back to serviceId only.
   let resolvedInvoiceDescription: string;
-  if (serviceId && projectName) {
-    resolvedInvoiceDescription = `${customer.name} — ${serviceId} — ${projectName} — ${billingMonth}`;
+  if (serviceId) {
+    const effectiveProjectName = projectName || serviceId.replace(/-\d+$/, "");
+    resolvedInvoiceDescription = `${customer.name} — ${serviceId} — ${effectiveProjectName} — ${billingMonth}`;
   } else {
     const template =
       customer.invoiceDescriptionTemplate ||
