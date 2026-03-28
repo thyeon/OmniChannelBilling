@@ -34,6 +34,8 @@ interface BuildInvoiceOptions {
   customer: Customer;
   billingMonth: string;
   lineItems: InvoiceLineItem[];
+  serviceId?: string;    // INGLAB serviceId for description override
+  projectName?: string;  // INGLAB projectName for description enrichment
 }
 
 interface BuildInvoiceResult {
@@ -48,7 +50,7 @@ interface BuildInvoiceResult {
 export async function buildAutoCountInvoice(
   options: BuildInvoiceOptions
 ): Promise<BuildInvoiceResult> {
-  const { customer, billingMonth, lineItems } = options;
+  const { customer, billingMonth, lineItems, serviceId, projectName } = options;
 
   // Check if customer has AutoCount configuration
   const debtorCode = customer.autocountDebtorCode || customer.autocountCustomerId;
@@ -168,10 +170,16 @@ export async function buildAutoCountInvoice(
           : (customerMapping?.defaultUnitPrice ?? accountBookMapping?.defaultUnitPrice ?? lineItem.rate)
       );
 
-    // description: short item name only (descriptionDetail / exchange rate info belongs in furtherDescription)
-    const resolvedDescription = lineItem.description
-      ? `${lineItem.description} - ${billingMonth}`
-      : lineDescription;
+    let resolvedDescription: string;
+    if (lineItem.lineIdentifier?.includes("Monthly Platform Fee") && projectName) {
+      // INGLAB: append projectName to platform fee description
+      resolvedDescription = `WhatsApp Business API Monthly Platform Fee - ${projectName} - ${billingMonth}`;
+    } else {
+      // description: short item name only (descriptionDetail / exchange rate info belongs in furtherDescription)
+      resolvedDescription = lineItem.description
+        ? `${lineItem.description} - ${billingMonth}`
+        : lineDescription;
+    }
 
     // LUMP_SUM: qty=1, unitPrice=totalCharge (avoids AutoCount 2dp rounding)
     // ITEMIZED: qty=billableCount, unitPrice=defaultUnitPrice from mapping (customer mapping
@@ -219,13 +227,17 @@ export async function buildAutoCountInvoice(
     };
   }
 
-  // Resolve master invoice description: customer override → account book default → hardcoded fallback
-  const invoiceDescTemplate =
-    customer.invoiceDescriptionTemplate ||
-    accountBook.invoiceDescriptionTemplate ||
-    DEFAULT_INVOICE_DESCRIPTION_TEMPLATE;
-
-  const resolvedInvoiceDescription = resolveTemplate(invoiceDescTemplate, templateContext);
+  // INGLAB override: use serviceId + projectName for descriptive master description
+  let resolvedInvoiceDescription: string;
+  if (serviceId && projectName) {
+    resolvedInvoiceDescription = `${customer.name} — ${serviceId} — ${projectName} — ${billingMonth}`;
+  } else {
+    const template =
+      customer.invoiceDescriptionTemplate ||
+      accountBook.invoiceDescriptionTemplate ||
+      DEFAULT_INVOICE_DESCRIPTION_TEMPLATE;
+    resolvedInvoiceDescription = resolveTemplate(template, templateContext);
+  }
 
   // Calculate doc date — AutoCount API expects YYYY-MM-DD format per documentation
   const today = new Date();
