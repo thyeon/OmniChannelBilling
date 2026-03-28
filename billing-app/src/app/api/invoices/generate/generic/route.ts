@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
         // Build error invoice record
         const errorInvoice: InvoiceHistory = {
           id: `inv-${Date.now()}`,
+          tempDocNo: generateTempDocNo(),
           customerId,
           customerName: customer.name,
           billingMonth,
