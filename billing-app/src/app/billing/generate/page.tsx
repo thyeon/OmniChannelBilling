@@ -217,6 +217,7 @@ export default function GeneratePage(): React.ReactElement {
         id: string;
         status: string;
         autocountRefId?: string;
+        tempDocNo?: string;
         syncError?: string;
         serviceId?: string;
         projectName?: string;
