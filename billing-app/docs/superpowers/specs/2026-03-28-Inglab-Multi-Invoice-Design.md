@@ -103,6 +103,15 @@ No changes. `fetchBillableForDataSource` returns `InvoiceLineItem[]` with `servi
 
 **New logic after `generateBillableData`:**
 
+1. Filter active line items (non-FAILED)
+2. Group by `serviceId` (non-INGLAB → `"DEFAULT"`)
+3. Loop per group:
+   - Build invoice with `serviceId`/`projectName`
+   - Insert to MongoDB with `serviceId`/`projectName` fields
+   - In MOCK_MODE: log and mark DRAFT (no AutoCount call)
+   - In real mode: `createInvoice` → update `autocountRefId` on success
+4. Return `{ invoices: [], billingMonth, customerId }`
+
 ```typescript
 const { customer, lineItems } = billableResult;
 
@@ -123,23 +132,41 @@ for (const li of activeLineItems) {
 const invoices = [];
 for (const [serviceId, groupItems] of groups) {
   const projectName = groupItems[0]?.projectName || "";
+  const totalAmount = groupItems.reduce((sum, li) => sum + li.totalCharge, 0);
 
-  const { invoice, payload } = await buildAutoCountInvoice({
+  // Build AutoCount payload with serviceId/projectName overrides
+  const buildResult = await buildAutoCountInvoice({
     customer,
     billingMonth,
     lineItems: groupItems,
-    serviceId,     // passed to override master.description
-    projectName,   // passed for description enrichment
-  });
-
-  const docNo = await syncToAutoCount(payload);
-  const saved = await insertInvoice({
-    ...invoice,
     serviceId,
     projectName,
-    autocountRefId: docNo,
   });
-  invoices.push(saved);
+
+  if (!buildResult.success || !buildResult.payload) {
+    // Build error invoice record
+    const errorInvoice = { id: `inv-${Date.now()}`, ... };
+    await insertInvoice({ ...errorInvoice, serviceId, projectName, status: "ERROR" });
+    continue;
+  }
+
+  if (MOCK_MODE) {
+    // Log payload, insert as DRAFT
+    const invoice = { id: `inv-${Date.now()}`, serviceId, projectName, status: "DRAFT", ... };
+    await insertInvoice(invoice);
+    invoices.push(invoice);
+  } else {
+    // Real AutoCount sync
+    const syncResult = await createInvoice(creds, buildResult.payload);
+    if (syncResult.success && syncResult.docNo) {
+      const invoice = { id: `inv-${Date.now()}`, serviceId, projectName, status: "SYNCED", autocountRefId: syncResult.docNo, ... };
+      await insertInvoice(invoice);
+      invoices.push(invoice);
+    } else {
+      const invoice = { id: `inv-${Date.now()}`, serviceId, projectName, status: "ERROR", syncError: syncResult.error, ... };
+      await insertInvoice(invoice);
+    }
+  }
 }
 
 return Response.json({ invoices, billingMonth, customerId });
@@ -218,6 +245,22 @@ interface Invoice {
 
 ---
 
+## DocNo / Invoice Number Lifecycle
+
+**DocNo behavior is unchanged.** The existing lifecycle is preserved:
+
+1. **Generate** (`/api/invoices/generate/generic`):
+   - `id = inv-${Date.now()}` — internal MongoDB ID
+   - `autocountRefId = null` — not yet synced
+
+2. **Submit** (`/api/invoices/[id]/submit`):
+   - On success: `autocountRefId = syncResult.docNo` (real AutoCount invoice number), `status = SYNCED`
+   - On failure: `status = ERROR`, `syncError = message`, `autocountRefId` stays `null`
+
+`serviceId` and `projectName` are **informational metadata only** — used for grouping, description enrichment, and MongoDB record identification. They do NOT replace or influence DocNo.
+
+---
+
 ## Behavior Summary
 
 | Scenario | Behavior |
@@ -230,3 +273,4 @@ interface Invoice {
 | Platform Fee `furtherDescription` | Use INGLAB's `descriptionDetail`: "• Billing period: February 2026" |
 | Platform Fee `description` | Append `projectName`: "WhatsApp Business API Monthly Platform Fee - Policy Inquiry Bot - 2026-02" |
 | `master.description` | Use `serviceId` + `projectName`: "Zurich Malaysia — ZURICH-001 — Policy Inquiry Bot — February 2026" |
+| `autocountRefId` (DocNo) | Set only after AutoCount sync success; `null` before submit |
