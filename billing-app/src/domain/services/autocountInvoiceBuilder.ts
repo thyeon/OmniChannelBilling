@@ -117,11 +117,22 @@ export async function buildAutoCountInvoice(
     );
     const mapping = customerMapping ?? accountBookMapping;
 
-    // Resolve product code: customer override → account book mapping → error
+    // Resolve product code: customer override → account book mapping → INGLAB WhatsApp override
     const customerOverride = customer.serviceProductOverrides?.find(
       (o) => o.serviceType === lineItem.service
     );
-    const resolvedProductCode = customerOverride?.productCode || mapping?.productCode;
+    let resolvedProductCode = customerOverride?.productCode || mapping?.productCode;
+
+    // INGLAB WhatsApp: map by lineIdentifier to distinct AutoCount product codes
+    // - "Monthly Platform Fee" → MODE-WA-PLATFORM (fixed monthly charge)
+    // - All other WhatsApp lines (Marketing, Utility, Service) → MODE-WA-API (pay-per-use)
+    if (lineItem.service === "WHATSAPP" && lineItem.lineIdentifier) {
+      if (lineItem.lineIdentifier.includes("Monthly Platform Fee")) {
+        resolvedProductCode = "MODE-WA-PLATFORM";
+      } else {
+        resolvedProductCode = "MODE-WA-API";
+      }
+    }
 
     if (!resolvedProductCode) {
       errors.push(
