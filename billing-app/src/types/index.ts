@@ -146,6 +146,8 @@ export interface InvoiceHistory {
   status: InvoiceStatus;
   // Present only when status is SYNCED
   autocountRefId?: string;
+  // Temp DocNo assigned at DRAFT creation (ddmmyyhhmm format)
+  tempDocNo?: string | null;
   createdAt: string;
   // Enhanced fields
   billingMode: 'MANUAL' | 'AUTO_PILOT';
