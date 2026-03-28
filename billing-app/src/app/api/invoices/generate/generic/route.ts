@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { generateBillableData } from "@/domain/services/billingService";
 import { buildAutoCountInvoice } from "@/domain/services/autocountInvoiceBuilder";
 import { insertInvoice } from "@/infrastructure/db/invoiceRepository";
+import { generateTempDocNo } from "@/domain/utils/tempDocNo";
 import { InvoiceHistory, InvoiceLineItem } from "@/types";
 
 const MOCK_MODE = process.env.AUTOCOUNT_MOCK_MODE !== "false";
@@ -128,6 +129,7 @@ export async function POST(request: NextRequest) {
 
         const invoice: InvoiceHistory = {
           id: `inv-${Date.now()}`,
+          tempDocNo: generateTempDocNo(),
           customerId,
           customerName: customer.name,
           billingMonth,
@@ -148,6 +150,7 @@ export async function POST(request: NextRequest) {
         // For now, save as DRAFT with note
         const invoice: InvoiceHistory = {
           id: `inv-${Date.now()}`,
+          tempDocNo: generateTempDocNo(),
           customerId,
           customerName: customer.name,
           billingMonth,
