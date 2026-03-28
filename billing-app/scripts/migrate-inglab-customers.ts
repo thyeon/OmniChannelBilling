@@ -25,32 +25,32 @@ const INGLAB_CUSTOMERS: IngLabCustomer[] = [
   {
     name: "AIA Malaysia",
     displayName: "AIA Malaysia",
-    sourceClientId: "CLIENT-AIA",
-    serviceType: "SMS",
+    sourceClientId: "AIA Malaysia",
+    serviceType: "WHATSAPP",
   },
   {
     name: "Zurich Malaysia",
     displayName: "Zurich Malaysia",
-    sourceClientId: "CLIENT-ZURICH",
-    serviceType: "SMS",
+    sourceClientId: "Zurich Malaysia",
+    serviceType: "WHATSAPP",
   },
   {
     name: "FWD Takaful",
     displayName: "FWD Takaful",
-    sourceClientId: "CLIENT-FWD",
-    serviceType: "SMS",
+    sourceClientId: "FWD Takaful",
+    serviceType: "WHATSAPP",
   },
   {
     name: "Prudential Malaysia",
     displayName: "Prudential Malaysia",
-    sourceClientId: "CLIENT-PRUDENTIAL",
-    serviceType: "SMS",
+    sourceClientId: "Prudential Malaysia",
+    serviceType: "WHATSAPP",
   },
   {
     name: "Pizza Hut",
     displayName: "Pizza Hut",
-    sourceClientId: "CLIENT-PIZZAHUT",
-    serviceType: "SMS",
+    sourceClientId: "Pizza Hut",
+    serviceType: "WHATSAPP",
   },
 ];
 

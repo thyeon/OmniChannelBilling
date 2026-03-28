@@ -134,7 +134,8 @@ export interface InglabNestedResult {
 
 export function processInglabNested(
   apiResponse: unknown,
-  config: NestedResponseConfig
+  config: NestedResponseConfig,
+  sourceClientName?: string
 ): InglabNestedResult[] {
   const results: InglabNestedResult[] = [];
 
@@ -144,6 +145,12 @@ export function processInglabNested(
   }
 
   for (const item of items) {
+    // INGLAB returns all entries; filter by source_client_name to isolate per-customer
+    if (sourceClientName) {
+      const itemClientName = (item as Record<string, unknown>).source_client_name;
+      if (itemClientName !== sourceClientName) continue;
+    }
+
     const lineItems = getNestedValue(item, config.lineItemsPath);
     if (!Array.isArray(lineItems)) {
       continue;

@@ -358,13 +358,13 @@ async function fetchBillableForDataSource(
 
         // INGLAB nested: runs BEFORE any fetch (no duplicate fetch)
         if (dataSource.nestedResponseConfig && dataSource.sourceClientId) {
-          const clientIdParam = `client_id=${encodeURIComponent(dataSource.sourceClientId)}`;
+          const clientIdParam = `source_client_name=${encodeURIComponent(dataSource.sourceClientId)}`;
           const urlWithClient = url.includes("?")
             ? `${url}&${clientIdParam}`
             : `${url}?${clientIdParam}`;
 
           const nestedResponse = await fetchWithRetry(urlWithClient, fetchOptions);
-          const nestedResults = processInglabNested(nestedResponse, dataSource.nestedResponseConfig);
+          const nestedResults = processInglabNested(nestedResponse, dataSource.nestedResponseConfig, dataSource.sourceClientId);
 
           const items: InvoiceLineItem[] = [];
           for (const nl of nestedResults) {
