@@ -132,6 +132,9 @@ export interface InvoiceLineItem {
   description?: string;
   descriptionDetail?: string;
   lineItemService?: string;
+  // INGLAB fields: per-line service ID and project name (from processInglabNested)
+  serviceId?: string;       // e.g., "ZURICH-001" — from line_item.service_id
+  projectName?: string;     // e.g., "Policy Inquiry Bot" — from item.project_name
 }
 
 export interface InvoiceHistory {
@@ -151,6 +154,9 @@ export interface InvoiceHistory {
   generatedBy: 'MANUAL' | 'SCHEDULED';
   scheduledJobId?: string;
   syncError?: string;
+  // INGLAB: per-invoice service ID and project name (populated when serviceId grouping produces multiple invoices)
+  serviceId?: string;        // e.g., "ZURICH-001"
+  projectName?: string;      // e.g., "Policy Inquiry Bot"
   // Custom payload for AutoCount (user-edited)
   customPayload?: string;
 }
