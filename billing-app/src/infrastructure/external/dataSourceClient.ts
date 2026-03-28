@@ -89,7 +89,7 @@ export async function fetchDataSourceUsage(
   dataSource: DataSource,
   billingMonth: string
 ): Promise<SingleLineResult> {
-  const { apiEndpoint, requestTemplate, retryPolicy } = dataSource;
+  const { retryPolicy } = dataSource;
   const maxRetries = retryPolicy?.maxRetries ?? 0;
   const retryDelaySeconds = retryPolicy?.retryDelaySeconds ?? 1;
   const timeoutSeconds = retryPolicy?.timeoutSeconds ?? 30;
@@ -209,6 +209,12 @@ async function executeRequest(
   }
 
   // Extract usage counts via response mapping
+  if (!responseMapping) {
+    throw new DataSourceApiError(
+      `${dataSource.name} has no responseMapping configured`,
+      dataSource.name
+    );
+  }
   const usageCount = getPathValue(data, responseMapping.usageCountPath);
   const sentCount = responseMapping.sentPath
     ? getPathValue(data, responseMapping.sentPath)

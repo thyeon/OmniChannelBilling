@@ -5,18 +5,17 @@
  * Supports COWAY_API, RECON_SERVER, and CUSTOM_REST_API data source types.
  */
 
-import { Customer, InvoiceLineItem, ServiceType, ConnectionStatus } from "@/types";
+import { Customer, InvoiceLineItem, ServiceType } from "@/types";
 import { DataSource } from "@/domain/models/dataSource";
 import { findCustomerById } from "@/infrastructure/db/customerRepository";
 import {
   findDataSourcesByCustomerId,
   findActiveDataSourcesByCustomerId,
 } from "@/infrastructure/db/dataSourceRepository";
-import { fetchCowayBillable, fetchWhatsAppBillable } from "@/infrastructure/external/cowayClient";
+import { fetchWhatsAppBillable } from "@/infrastructure/external/cowayClient";
 import { fetchEmailReconSummary } from "@/infrastructure/external/reconClient";
 import { resolveTokens } from "./templateTokenResolver";
 import { processMultiLine, processLegacySingleLine, processInglabNested } from "./lineItemProcessor";
-import { resolveRate } from "./rateResolver";
 import { getDateRange } from "@/infrastructure/external/cowayClient";
 
 interface BillableDataResult {
@@ -76,92 +75,6 @@ function makeErrorLineItem(dataSource: DataSource, customer: Customer, message: 
 }
 
 /**
- * Helper function to get nested value from object using JSON path.
- * Supports paths like "data.0.line_items.0.qty"
- */
-function getNestedValue(obj: unknown, path: string): unknown {
-  const parts = path.split(".");
-  let current: unknown = obj;
-
-  for (const part of parts) {
-    if (current === null || current === undefined) {
-      return undefined;
-    }
-
-    // Handle array index notation (e.g., "0" or "[0]")
-    const indexMatch = part.match(/^(\d+)$/);
-    if (indexMatch && Array.isArray(current)) {
-      current = current[parseInt(indexMatch[1], 10)];
-      continue;
-    }
-
-    // Handle bracket notation (e.g., "items[0].qty")
-    const bracketMatch = part.match(/^(.+?)\[(\d+)\]$/);
-    if (bracketMatch) {
-      const key = bracketMatch[1];
-      const index = parseInt(bracketMatch[2], 10);
-      if (typeof current === "object" && key in current) {
-        current = (current as Record<string, unknown>)[key];
-        if (Array.isArray(current)) {
-          current = current[index];
-        }
-      } else {
-        return undefined;
-      }
-      continue;
-    }
-
-    // Handle dot notation (e.g., "data.count")
-    if (typeof current === "object") {
-      current = (current as Record<string, unknown>)[part];
-    } else {
-      return undefined;
-    }
-  }
-
-  return current;
-}
-
-/**
- * Convert billable count to InvoiceLineItem for a data source.
- */
-function createLineItemFromData(
-  dataSource: DataSource,
-  usageCount: number,
-  customer: Customer,
-  sentCount?: number,
-  failedCount?: number,
-  lineIdentifier?: string
-): InvoiceLineItem {
-  const rate = customer.rates?.[dataSource.serviceType] || 0;
-
-  return {
-    dataSourceId: dataSource.id,
-    lineIdentifier,
-    service: dataSource.serviceType,
-    hasProvider: true,
-    reconServerStatus: "SUCCESS" as ConnectionStatus,
-    providerStatus: "SUCCESS" as ConnectionStatus,
-    reconServerName: dataSource.name,
-    providerName: getProviderName(dataSource.serviceType),
-    reconTotal: usageCount,
-    reconDetails: {
-      sent: sentCount ?? usageCount,
-      failed: failedCount ?? 0,
-      withheld: 0,
-    },
-    providerTotal: usageCount,
-    discrepancyPercentage: 0,
-    isMismatch: false,
-    thresholdUsed: customer.discrepancyThreshold || 0,
-    billableCount: usageCount,
-    wasOverridden: false,
-    rate,
-    totalCharge: usageCount * rate,
-  };
-}
-
-/**
  * Get provider name for a service type (default values)
  */
 function getProviderName(serviceType: ServiceType): string {
@@ -175,42 +88,6 @@ function getProviderName(serviceType: ServiceType): string {
     default:
       return "Unknown";
   }
-}
-
-/**
- * Create an empty/error line item for a data source
- */
-function createErrorLineItem(
-  dataSource: DataSource,
-  customer: Customer,
-  errorMessage: string
-): InvoiceLineItem {
-  const rate = customer.rates?.[dataSource.serviceType] || 0;
-
-  return {
-    dataSourceId: dataSource.id,
-    service: dataSource.serviceType,
-    hasProvider: false,
-    reconServerStatus: "FAILED" as ConnectionStatus,
-    providerStatus: "NOT_CONFIGURED" as ConnectionStatus,
-    reconServerName: errorMessage,
-    providerName: "",
-    reconTotal: 0,
-    reconDetails: {
-      sent: 0,
-      failed: 0,
-      withheld: 0,
-    },
-    providerTotal: 0,
-    discrepancyPercentage: 0,
-    isMismatch: false,
-    thresholdUsed: customer.discrepancyThreshold || 0,
-    billableCount: 0,
-    wasOverridden: true,
-    overrideReason: errorMessage,
-    rate,
-    totalCharge: 0,
-  };
 }
 
 /**
@@ -276,8 +153,13 @@ async function fetchBillableForDataSource(
           return [makeErrorLineItem(dataSource, customer, `COWAY_API error: ${errMsg}`)];
         }
 
+        if (!dataSource.responseMapping) {
+          return [makeErrorLineItem(dataSource, customer, "COWAY_API missing responseMapping")];
+        }
         const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
-        let { usageCount, sentCount, failedCount } = singleLineResult;
+        let usageCount = singleLineResult.usageCount;
+        const sentCount = singleLineResult.sentCount;
+        const failedCount = singleLineResult.failedCount;
         if (
           dataSource.fallbackValues?.useDefaultOnMissing &&
           usageCount === 0 &&
@@ -437,7 +319,9 @@ async function fetchBillableForDataSource(
           throw new Error(`DataSource ${dataSource.id} has no nestedResponseConfig, lineItemMappings, or responseMapping`);
         }
         const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
-        let { usageCount, sentCount, failedCount } = singleLineResult;
+        let usageCount = singleLineResult.usageCount;
+        const sentCount = singleLineResult.sentCount;
+        const failedCount = singleLineResult.failedCount;
         if (
           dataSource.fallbackValues?.useDefaultOnMissing &&
           usageCount === 0 &&

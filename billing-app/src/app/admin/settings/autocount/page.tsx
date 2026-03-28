@@ -190,7 +190,7 @@ export default function AutoCountSettingsPage() {
       });
       const data = await res.json();
       setTestResult({ success: data.success, message: data.message || data.error });
-    } catch (error) {
+    } catch {
       setTestResult({ success: false, message: "Connection test failed" });
     } finally {
       setTestingConnection(false);
@@ -595,5 +595,3 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";

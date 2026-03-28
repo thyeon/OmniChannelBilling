@@ -55,6 +55,8 @@ function createEmptyCustomer(): Customer {
     reconServers: [],
     rates: { SMS: 0, EMAIL: 0, WHATSAPP: 0 },
     billingMode: "MANUAL",
+    billingCycle: "MONTHLY",
+    status: "ACTIVE",
     schedule: undefined,
     consolidateInvoice: false,
     discrepancyThreshold: 1.0,

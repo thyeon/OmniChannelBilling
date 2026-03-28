@@ -2,7 +2,10 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypt
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
+// TAG_LENGTH and SALT_LENGTH are defined for reference but not currently used
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TAG_LENGTH = 16;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SALT_LENGTH = 32;
 
 function getKey(): Buffer {

@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import React from "react";
 
 // Simple unit test for the guard logic - testing the behavior without full rendering
 describe("Wizard handleSubmit guard logic", () => {
@@ -181,8 +180,8 @@ describe("Edit mode logic", () => {
   });
 
   it("should NOT make PUT request in create mode", async () => {
-    const isEditMode = false;
-    const customer = { name: "New Customer" };
+    const _isEditMode = false;
+    const _customer = { name: "New Customer" };
 
     const mockFetch = vi.fn().mockResolvedValue({
       ok: true,

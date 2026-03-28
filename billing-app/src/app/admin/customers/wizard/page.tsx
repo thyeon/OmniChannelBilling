@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import BasicInfoStep from "./BasicInfoStep";
 import DataSourceStep from "./DataSourceStep";
 import ProductMappingStep from "./ProductMappingStep";
@@ -11,7 +11,7 @@ import { CustomerProductMapping } from "@/domain/models/customerProductMapping";
 
 interface WizardData {
   // Basic info step
-  customer?: Customer;
+  customer?: Partial<Customer>;
   // DataSource step
   dataSourceId?: string;
   // Product mapping step
@@ -157,7 +157,7 @@ export default function CustomerWizardPage() {
           <div className="space-y-4">
             <h2 className="text-xl font-semibold">Review & Submit</h2>
             <p className="text-muted-foreground">
-              {isEditMode ? "Updating" : "Creating"} customer '{data.customer?.name}' with {data.dataSourceId ? "1" : "0"} data source(s) and {data.productMappings.length} product mapping(s).
+              {isEditMode ? "Updating" : "Creating"} customer &quot;{data.customer?.name}&quot; with {data.dataSourceId ? "1" : "0"} data source(s) and {data.productMappings.length} product mapping(s).
             </p>
             <pre className="bg-muted p-4 rounded-md text-sm overflow-auto">
               {JSON.stringify(data, null, 2)}

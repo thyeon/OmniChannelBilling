@@ -59,6 +59,7 @@ export default function BasicInfoStep({
   }, []);
 
   // Fetch customer data when editMode is true
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (editMode && initialData.id) {
       const fetchCustomer = async () => {
@@ -119,7 +120,7 @@ export default function BasicInfoStep({
 
   const handleRateChange = (service: ServiceType, value: string) => {
     const rate = parseFloat(value) || 0;
-    const newRates = { ...formData.rates, [service]: rate };
+    const newRates: { [key in ServiceType]: number } = { SMS: 0, EMAIL: 0, WHATSAPP: 0, ...formData.rates, [service]: rate };
     updateField("rates", newRates);
   };
 
@@ -259,10 +260,10 @@ export default function BasicInfoStep({
                 {errors.services && <p className="text-sm text-destructive">{errors.services}</p>}
               </div>
 
-              {formData.services?.length > 0 && (
+              {(formData.services?.length ?? 0) > 0 && (
                 <div className="grid gap-2">
                   <Label>Rates</Label>
-                  {formData.services.map((service) => (
+                  {formData.services?.map((service) => (
                     <div key={service} className="grid grid-cols-3 gap-2 items-center">
                       <Label className="font-normal">{service} Rate</Label>
                       <Input
@@ -628,8 +629,10 @@ export default function BasicInfoStep({
                     value={formData.schedule?.dayOfMonth ?? ""}
                     onChange={(e) =>
                       updateField("schedule", {
-                        ...formData.schedule,
                         dayOfMonth: parseInt(e.target.value) || 1,
+                        time: formData.schedule?.time ?? "09:00",
+                        retryIntervalMinutes: formData.schedule?.retryIntervalMinutes ?? 30,
+                        maxRetries: formData.schedule?.maxRetries ?? 3,
                       })
                     }
                   />
@@ -643,8 +646,10 @@ export default function BasicInfoStep({
                     value={formData.schedule?.time || "09:00"}
                     onChange={(e) =>
                       updateField("schedule", {
-                        ...formData.schedule,
+                        dayOfMonth: formData.schedule?.dayOfMonth ?? 1,
                         time: e.target.value,
+                        retryIntervalMinutes: formData.schedule?.retryIntervalMinutes ?? 30,
+                        maxRetries: formData.schedule?.maxRetries ?? 3,
                       })
                     }
                   />
@@ -659,8 +664,10 @@ export default function BasicInfoStep({
                     value={formData.schedule?.retryIntervalMinutes ?? 30}
                     onChange={(e) =>
                       updateField("schedule", {
-                        ...formData.schedule,
+                        dayOfMonth: formData.schedule?.dayOfMonth ?? 1,
+                        time: formData.schedule?.time ?? "09:00",
                         retryIntervalMinutes: parseInt(e.target.value) || 30,
+                        maxRetries: formData.schedule?.maxRetries ?? 3,
                       })
                     }
                   />
@@ -675,7 +682,9 @@ export default function BasicInfoStep({
                     value={formData.schedule?.maxRetries ?? 3}
                     onChange={(e) =>
                       updateField("schedule", {
-                        ...formData.schedule,
+                        dayOfMonth: formData.schedule?.dayOfMonth ?? 1,
+                        time: formData.schedule?.time ?? "09:00",
+                        retryIntervalMinutes: formData.schedule?.retryIntervalMinutes ?? 30,
                         maxRetries: parseInt(e.target.value) || 3,
                       })
                     }

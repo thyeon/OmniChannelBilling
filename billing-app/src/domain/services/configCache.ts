@@ -26,11 +26,10 @@ class ConfigCache {
     // Clear all cache entries for a customer using prefix matching
     // Keys follow patterns: customer:${customerId}, datasources:${customerId}, mappings:${customerId}
     const prefixes = [`customer:${customerId}`, `datasources:${customerId}`, `mappings:${customerId}`];
-    for (const key of this.cache.keys()) {
-      if (prefixes.some(prefix => key === prefix || key.startsWith(prefix + ':') || key.startsWith(prefix + '/'))) {
-        this.cache.delete(key);
-      }
-    }
+    const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+      prefixes.some(prefix => key === prefix || key.startsWith(prefix + ':') || key.startsWith(prefix + '/'))
+    );
+    keysToDelete.forEach(key => this.cache.delete(key));
   }
 
   invalidateAll(): void {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   CustomerProductMappingInput,
-  CustomerProductMappingUpdate,
 } from "@/domain/models/customerProductMapping";
 import {
   findCustomerProductMappingsByCustomerId,

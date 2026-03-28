@@ -88,6 +88,7 @@ export default function ProductMappingStep({
 
   useEffect(() => {
     fetchMappings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customerId]);
 
   async function fetchMappings(): Promise<void> {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Loader2, CheckCircle2, XCircle, Eye, History, Settings, Users, FileJson, Send, RotateCcw } from "lucide-react";
+import { FileText, Loader2, CheckCircle2, XCircle, Eye, History, Users, FileJson, Send, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -248,10 +248,6 @@ export default function GeneratePage(): React.ReactElement {
         });
       } else {
         // All succeeded — show summary of generated invoices
-        const summaries = invoices.map(
-          (inv) =>
-            `${inv.projectName ? `${inv.projectName} (${inv.serviceId})` : `Invoice ${inv.id}`}: RM ${inv.totalAmount.toFixed(2)} [${inv.status}]`
-        );
         setResult({
           success: true,
           message:
@@ -420,8 +416,6 @@ export default function GeneratePage(): React.ReactElement {
       setIsSubmitting(false);
     }
   }
-
-  const selectedCustomerName = customers.find((c) => c.id === selectedCustomerId)?.name || "";
 
   return (
     <div className="container mx-auto py-8 px-4">

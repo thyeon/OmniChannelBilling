@@ -29,7 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Accordion,
   AccordionContent,
@@ -148,14 +147,15 @@ export default function DataSourceStep({
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+  useEffect(() => {
+    fetchDataSources();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [customerId]);
+
   // Guard for empty customerId
   if (!customerId) {
     return <div className="p-4 text-muted-foreground">Please complete the Basic Info step first.</div>;
   }
-
-  useEffect(() => {
-    fetchDataSources();
-  }, [customerId]);
 
   async function fetchDataSources(): Promise<void> {
     setIsLoading(true);
