@@ -546,7 +546,7 @@ export default function GeneratePage(): React.ReactElement {
             {result.message}
             {result.docNo && (
               <span className="block mt-1 font-mono">
-                AutoCount Doc No: {result.docNo}
+                Doc No: {result.docNo}
               </span>
             )}
           </AlertDescription>
