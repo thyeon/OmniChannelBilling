@@ -125,6 +125,8 @@ export function processLegacySingleLine(
 }
 
 export interface InglabNestedResult {
+  serviceId: string;
+  projectName: string;
   description: string;
   descriptionDetail?: string;
   qty: number;
@@ -156,6 +158,10 @@ export function processInglabNested(
       continue;
     }
 
+    const projectName = config.projectNamePath
+      ? (getNestedValue(item, config.projectNamePath) as string | undefined)?.toString() ?? ""
+      : "";
+
     for (const li of lineItems) {
       const qty = getNestedValue(li, config.qtyPath) as number;
       const unitPrice = getNestedValue(li, config.unitPricePath) as number;
@@ -173,7 +179,13 @@ export function processInglabNested(
         ? (getNestedValue(item, config.servicePath) as string | undefined)
         : undefined;
 
+      const serviceId = config.serviceIdPath
+        ? (getNestedValue(li, config.serviceIdPath) as string | undefined)?.toString() ?? ""
+        : "";
+
       results.push({
+        serviceId,
+        projectName,
         description: typeof description === "string" ? description : "",
         descriptionDetail,
         qty,

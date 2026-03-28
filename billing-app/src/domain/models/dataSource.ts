@@ -130,4 +130,6 @@ export interface NestedResponseConfig {
   qtyPath: string;
   unitPricePath: string;
   servicePath?: string;
+  serviceIdPath?: string;
+  projectNamePath?: string;
 }
