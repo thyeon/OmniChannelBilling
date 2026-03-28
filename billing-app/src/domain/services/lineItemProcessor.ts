@@ -158,6 +158,12 @@ export function processInglabNested(
       continue;
     }
 
+    // INGLAB: service_id is at the project/item level (shared across usage + platform fee lines)
+    // e.g., items[{ project_name: "Marketing", service_id: "AIAMY-001", line_items: [...] }]
+    const serviceId = config.serviceIdPath
+      ? (getNestedValue(item, config.serviceIdPath) as string | undefined)?.toString() ?? ""
+      : "";
+
     const projectName = config.projectNamePath
       ? (getNestedValue(item, config.projectNamePath) as string | undefined)?.toString() ?? ""
       : "";
@@ -178,10 +184,6 @@ export function processInglabNested(
       const service = config.servicePath
         ? (getNestedValue(item, config.servicePath) as string | undefined)
         : undefined;
-
-      const serviceId = config.serviceIdPath
-        ? (getNestedValue(li, config.serviceIdPath) as string | undefined)?.toString() ?? ""
-        : "";
 
       results.push({
         serviceId,
