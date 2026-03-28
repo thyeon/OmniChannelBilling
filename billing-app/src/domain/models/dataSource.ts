@@ -94,7 +94,7 @@ export interface DataSource {
     secret?: string;
     serviceProvider?: string;
   };
-  responseMapping: ResponseMapping;
+  responseMapping?: ResponseMapping;
   lineItemMappings?: LineItemMapping[];
   requestTemplate?: RequestTemplate;
   retryPolicy?: RetryPolicy;

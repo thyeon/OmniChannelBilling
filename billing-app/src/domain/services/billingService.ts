@@ -356,11 +356,8 @@ async function fetchBillableForDataSource(
           };
         }
 
-        const json = await fetchWithRetry(url, fetchOptions);
-
-        // Check if this is an INGLAB nested response DataSource
+        // INGLAB nested: runs BEFORE any fetch (no duplicate fetch)
         if (dataSource.nestedResponseConfig && dataSource.sourceClientId) {
-          // Append ?client_id= to the URL
           const clientIdParam = `client_id=${encodeURIComponent(dataSource.sourceClientId)}`;
           const urlWithClient = url.includes("?")
             ? `${url}&${clientIdParam}`
@@ -409,6 +406,9 @@ async function fetchBillableForDataSource(
           return items;
         }
 
+        // Non-INGLAB: flat/multi-line processing
+        const json = await fetchWithRetry(url, fetchOptions);
+
         // Multi-line: one InvoiceLineItem per lineIdentifier
         if (dataSource.lineItemMappings && dataSource.lineItemMappings.length > 0) {
           const multiLineResults = processMultiLine(json, dataSource.lineItemMappings);
@@ -427,7 +427,10 @@ async function fetchBillableForDataSource(
           return items;
         }
 
-        // Single-line
+        // Single-line: requires responseMapping
+        if (!dataSource.responseMapping) {
+          throw new Error(`DataSource ${dataSource.id} has no nestedResponseConfig, lineItemMappings, or responseMapping`);
+        }
         const singleLineResult = processLegacySingleLine(json, dataSource.responseMapping);
         let { usageCount, sentCount, failedCount } = singleLineResult;
         if (

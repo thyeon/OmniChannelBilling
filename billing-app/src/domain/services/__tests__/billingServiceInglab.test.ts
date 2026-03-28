@@ -18,10 +18,16 @@ describe("billingService — INGLAB nested CUSTOM_REST_API", () => {
     const mockCustomer = {
       id: mockCustomerId,
       name: "AIA Malaysia",
-      status: "ACTIVE" as const,
-      rates: { SMS: 0.05, WHATSAPP: 0.05 },
+      autocountCustomerId: "AIA-001",
+      services: ["SMS", "WHATSAPP"] as const,
+      providers: [] as const,
+      reconServers: [] as const,
+      rates: { SMS: 0.05, WHATSAPP: 0.05, EMAIL: 0.05 },
+      billingMode: "AUTO_PILOT" as const,
       billingCycle: "MONTHLY" as const,
       discrepancyThreshold: 1.0,
+      consolidateInvoice: false,
+      status: "ACTIVE" as const,
     };
 
     const mockDataSource = {
@@ -95,10 +101,16 @@ describe("billingService — INGLAB nested CUSTOM_REST_API", () => {
     const mockCustomer = {
       id: mockCustomerId,
       name: "AIA Malaysia",
-      status: "ACTIVE" as const,
-      rates: { SMS: 0.079 },
+      autocountCustomerId: "AIA-001",
+      services: ["SMS"] as const,
+      providers: [] as const,
+      reconServers: [] as const,
+      rates: { SMS: 0.079, WHATSAPP: 0.10, EMAIL: 0.05 },
+      billingMode: "AUTO_PILOT" as const,
       billingCycle: "MONTHLY" as const,
       discrepancyThreshold: 1.0,
+      consolidateInvoice: false,
+      status: "ACTIVE" as const,
     };
 
     const mockDataSource = {

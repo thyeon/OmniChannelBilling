@@ -17,8 +17,18 @@ describe("autocountInvoiceBuilder — uses actual INGLAB line item values", () =
     const customer = {
       id: "cust_aia",
       name: "AIA Malaysia",
+      autocountCustomerId: "AIA-001",
       autocountAccountBookId: "ab_001",
       autocountDebtorCode: "AIA-001",
+      services: ["SMS", "WHATSAPP"] as const,
+      providers: [] as const,
+      reconServers: [] as const,
+      rates: { SMS: 0.05, WHATSAPP: 0.05, EMAIL: 0.05 },
+      billingMode: "AUTO_PILOT" as const,
+      billingCycle: "MONTHLY" as const,
+      discrepancyThreshold: 1.0,
+      consolidateInvoice: false,
+      status: "ACTIVE" as const,
       defaultFields: {},
     };
     const billingMonth = "2026-03";
@@ -66,7 +76,6 @@ describe("autocountInvoiceBuilder — uses actual INGLAB line item values", () =
       accountBookId: "ab_001",
       serviceType: "SMS",
       productCode: "SMS-INGLAB",
-      accNo: "500-100",
       description: "INGLAB SMS Service",
       defaultUnitPrice: 0.05,
       defaultBillingMode: "ITEMIZED",
@@ -86,8 +95,18 @@ describe("autocountInvoiceBuilder — uses actual INGLAB line item values", () =
     const customer = {
       id: "cust_coway",
       name: "Coway",
+      autocountCustomerId: "COWAY-001",
       autocountAccountBookId: "ab_001",
       autocountDebtorCode: "COWAY-001",
+      services: ["SMS"] as const,
+      providers: [] as const,
+      reconServers: [] as const,
+      rates: { SMS: 0.05, WHATSAPP: 0.05, EMAIL: 0.05 },
+      billingMode: "AUTO_PILOT" as const,
+      billingCycle: "MONTHLY" as const,
+      discrepancyThreshold: 1.0,
+      consolidateInvoice: false,
+      status: "ACTIVE" as const,
       defaultFields: {},
     };
     const billingMonth = "2026-03";
@@ -131,7 +150,6 @@ describe("autocountInvoiceBuilder — uses actual INGLAB line item values", () =
       accountBookId: "ab_001",
       serviceType: "SMS",
       productCode: "SMS-001",
-      accNo: "500-100",
       description: "SMS Service",
       defaultUnitPrice: 0.06,
       defaultBillingMode: "ITEMIZED",
