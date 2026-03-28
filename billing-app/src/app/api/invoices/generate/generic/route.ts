@@ -9,8 +9,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateBillableData } from "@/domain/services/billingService";
 import { buildAutoCountInvoice } from "@/domain/services/autocountInvoiceBuilder";
-import { insertInvoice, updateInvoice } from "@/infrastructure/db/invoiceRepository";
-import { InvoiceHistory, InvoiceStatus } from "@/types";
+import { insertInvoice } from "@/infrastructure/db/invoiceRepository";
+import { InvoiceHistory, InvoiceLineItem } from "@/types";
 
 const MOCK_MODE = process.env.AUTOCOUNT_MOCK_MODE !== "false";
 
@@ -59,96 +59,109 @@ export async function POST(request: NextRequest) {
 
     const { customer, lineItems } = billableResult;
 
-    // Filter out zero-count line items
-    const activeLineItems = lineItems.filter((item) => item.billableCount > 0);
+    // Filter to active, non-skipped items
+    const activeLineItems = lineItems.filter(
+      (li) => !li.reconServerStatus || li.reconServerStatus !== "FAILED"
+    );
 
-    if (activeLineItems.length === 0) {
-      return NextResponse.json(
-        { error: "No billable data found for the specified billing month" },
-        { status: 404 }
-      );
+    // Group INGLAB items by serviceId (non-INGLAB items have no serviceId → "DEFAULT")
+    const groups = new Map<string, InvoiceLineItem[]>();
+    for (const li of activeLineItems) {
+      const key = li.serviceId || "DEFAULT";
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(li);
     }
 
-    // 2. Validate AutoCount configuration
-    if (!customer.autocountAccountBookId || !customer.autocountDebtorCode) {
-      return NextResponse.json(
-        {
-          error: "Customer is not configured for AutoCount billing (missing account book or debtor code)",
-        },
-        { status: 400 }
-      );
-    }
+    // Generate one invoice per group
+    const invoices = [];
+    for (const [serviceId, groupItems] of groups) {
+      const projectName = groupItems[0]?.projectName || "";
 
-    const totalAmount = activeLineItems.reduce((sum, item) => sum + item.totalCharge, 0);
-
-    // 3. Save invoice with GENERATED/DRAFT status to MongoDB
-    const invoice: InvoiceHistory = {
-      id: `inv-${Date.now()}`,
-      customerId,
-      customerName: customer.name,
-      billingMonth,
-      totalAmount,
-      status: "GENERATED" as InvoiceStatus,
-      createdAt: new Date().toISOString(),
-      billingMode: customer.billingMode,
-      schedule: customer.schedule,
-      generatedBy: "MANUAL",
-      lineItems: activeLineItems,
-    };
-
-    await insertInvoice(invoice);
-
-    // 4. Build AutoCount invoice payload
-    const buildResult = await buildAutoCountInvoice({
-      customer,
-      billingMonth,
-      lineItems: activeLineItems,
-    });
-
-    if (!buildResult.success || !buildResult.payload) {
-      await updateInvoice(invoice.id, {
-        status: "ERROR",
-        syncError: buildResult.error || "Failed to build AutoCount invoice",
-      });
-      invoice.status = "ERROR";
-      invoice.syncError = buildResult.error || "Failed to build AutoCount invoice";
-      return NextResponse.json({ invoice });
-    }
-
-    // 5. In MOCK_MODE: log the payload and mark as DRAFT (no real AutoCount API call)
-    if (MOCK_MODE) {
-      const payloadLog = {
-        invoiceId: invoice.id,
-        customerId,
-        customerName: customer.name,
+      // Build AutoCount invoice payload with serviceId/projectName overrides
+      const buildResult = await buildAutoCountInvoice({
+        customer,
         billingMonth,
-        generatedAt: new Date().toISOString(),
-        payload: buildResult.payload,
-      };
-
-      const fs = await import("fs/promises");
-      const path = await import("path");
-      const logDir = path.join(process.cwd(), "logs");
-      await fs.mkdir(logDir, { recursive: true });
-      await fs.appendFile(
-        path.join(logDir, "generic-mock-invoices.log"),
-        JSON.stringify(payloadLog, null, 2) + "\n"
-      );
-
-      await updateInvoice(invoice.id, { status: "DRAFT" });
-      invoice.status = "DRAFT";
-
-      return NextResponse.json({
-        invoice: {
-          ...invoice,
-          status: "DRAFT",
-          note: "Mock mode — invoice saved as DRAFT. Check logs/generic-mock-invoices.log for payload.",
-        },
+        lineItems: groupItems,
+        serviceId,
+        projectName,
       });
+
+      const totalAmount = groupItems.reduce((sum, li) => sum + li.totalCharge, 0);
+
+      if (!buildResult.success || !buildResult.payload) {
+        // Build error invoice record
+        const errorInvoice: InvoiceHistory = {
+          id: `inv-${Date.now()}`,
+          customerId,
+          customerName: customer.name,
+          billingMonth,
+          totalAmount,
+          status: "ERROR",
+          syncError: buildResult.error || "Failed to build AutoCount invoice",
+          createdAt: new Date().toISOString(),
+          billingMode: customer.billingMode,
+          schedule: customer.schedule,
+          generatedBy: "MANUAL",
+          lineItems: groupItems,
+          serviceId,
+          projectName,
+        };
+        await insertInvoice(errorInvoice);
+        continue;
+      }
+
+      if (MOCK_MODE) {
+        // Log payload, save as DRAFT
+        const fs = await import("fs/promises");
+        const path = await import("path");
+        const logDir = path.join(process.cwd(), "logs");
+        await fs.mkdir(logDir, { recursive: true });
+        await fs.appendFile(
+          path.join(logDir, "generic-mock-invoices.log"),
+          JSON.stringify({ invoiceId: `inv-${Date.now()}`, customerId, billingMonth, payload: buildResult.payload }, null, 2) + "\n"
+        );
+
+        const invoice: InvoiceHistory = {
+          id: `inv-${Date.now()}`,
+          customerId,
+          customerName: customer.name,
+          billingMonth,
+          totalAmount,
+          status: "DRAFT",
+          createdAt: new Date().toISOString(),
+          billingMode: customer.billingMode,
+          schedule: customer.schedule,
+          generatedBy: "MANUAL",
+          lineItems: groupItems,
+          serviceId,
+          projectName,
+        };
+        await insertInvoice(invoice);
+        invoices.push({ ...invoice, status: "DRAFT" });
+      } else {
+        // TODO: Real AutoCount sync when not in mock mode
+        // For now, save as DRAFT with note
+        const invoice: InvoiceHistory = {
+          id: `inv-${Date.now()}`,
+          customerId,
+          customerName: customer.name,
+          billingMonth,
+          totalAmount,
+          status: "DRAFT",
+          createdAt: new Date().toISOString(),
+          billingMode: customer.billingMode,
+          schedule: customer.schedule,
+          generatedBy: "MANUAL",
+          lineItems: groupItems,
+          serviceId,
+          projectName,
+        };
+        await insertInvoice(invoice);
+        invoices.push(invoice);
+      }
     }
 
-    // TODO: Real AutoCount API call when not in mock mode
-    return NextResponse.json({ invoice });
+    return NextResponse.json({ invoices, billingMonth, customerId });
   } catch (error) {
     console.error("Error generating invoice:", error);
     return NextResponse.json(
