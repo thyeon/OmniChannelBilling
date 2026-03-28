@@ -211,24 +211,52 @@ export default function GeneratePage(): React.ReactElement {
         return;
       }
 
-      const invoice = json.invoice;
-      if (invoice.status === "DRAFT" || invoice.status === "GENERATED") {
-        setResult({
-          success: true,
-          message: "Invoice generated successfully.",
-          docNo: invoice.autocountRefId,
-        });
-        fetchHistory();
-      } else if (invoice.status === "ERROR") {
+      // Support both single-invoice (legacy) and multi-invoice (INGLAB) response formats
+      const invoices: Array<{
+        id: string;
+        status: string;
+        autocountRefId?: string;
+        syncError?: string;
+        serviceId?: string;
+        projectName?: string;
+        totalAmount: number;
+      }> = Array.isArray(json.invoices)
+        ? json.invoices
+        : json.invoice
+          ? [json.invoice]
+          : [];
+
+      if (invoices.length === 0) {
         setResult({
           success: false,
-          message: invoice.syncError || "Invoice generation failed",
+          message: "No invoices were generated.",
+        });
+        setIsGenerating(false);
+        return;
+      }
+
+      const errors = invoices.filter((inv) => inv.status === "ERROR");
+      if (errors.length > 0) {
+        const errorDetails = errors
+          .map((e) => `${e.projectName || e.serviceId || e.id}: ${e.syncError || "Unknown error"}`)
+          .join("; ");
+        setResult({
+          success: false,
+          message: `Invoice generation failed: ${errorDetails}`,
         });
       } else {
+        // All succeeded — show summary of generated invoices
+        const summaries = invoices.map(
+          (inv) =>
+            `${inv.projectName ? `${inv.projectName} (${inv.serviceId})` : `Invoice ${inv.id}`}: RM ${inv.totalAmount.toFixed(2)} [${inv.status}]`
+        );
         setResult({
           success: true,
-          message: `Invoice generated (status: ${invoice.status})`,
-          docNo: invoice.autocountRefId,
+          message:
+            invoices.length === 1
+              ? `Invoice generated successfully.`
+              : `${invoices.length} invoices generated (${invoices.map((i) => i.serviceId || "DEFAULT").join(", ")}).`,
+          docNo: invoices[0].autocountRefId,
         });
         fetchHistory();
       }
