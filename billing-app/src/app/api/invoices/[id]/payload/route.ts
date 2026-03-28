@@ -47,6 +47,8 @@ export async function GET(
       customer,
       billingMonth: invoice.billingMonth,
       lineItems: invoice.lineItems,
+      serviceId: invoice.serviceId,
+      projectName: invoice.projectName,
     });
 
     if (!buildResult.success || !buildResult.payload) {

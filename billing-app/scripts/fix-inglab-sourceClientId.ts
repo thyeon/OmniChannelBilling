@@ -1,8 +1,12 @@
 /**
- * Fix DataSource sourceClientId values after migration
+ * Fix DataSource sourceClientId and sourceClientName values
  *
- * The migration script incorrectly set sourceClientId to "CLIENT-*" values.
- * INGLAB actually uses source_client_name (e.g., "AIA Malaysia") as the identifier.
+ * INGLAB uses two distinct identifiers:
+ * - client_id: Used in ?client_id= URL query param (e.g., "PIZZAHUT", "AIAMY", "ZURICH")
+ * - source_client_name: Used for filtering nested results (e.g., "Pizza Hut", "AIA Malaysia")
+ *
+ * The migration script incorrectly set sourceClientId to source_client_name values.
+ * This script corrects both fields based on the /clients API response.
  *
  * Run: npx tsx scripts/fix-inglab-sourceClientId.ts
  */
@@ -10,11 +14,12 @@
 import { getDatabase } from "../src/infrastructure/db/mongodb";
 
 const FIXES = [
-  { name: "AIA Malaysia", sourceClientId: "AIA Malaysia", serviceType: "WHATSAPP" as const },
-  { name: "Zurich Malaysia", sourceClientId: "Zurich Malaysia", serviceType: "WHATSAPP" as const },
-  { name: "FWD Takaful", sourceClientId: "FWD Takaful", serviceType: "WHATSAPP" as const },
-  { name: "Prudential Malaysia", sourceClientId: "Prudential Malaysia", serviceType: "WHATSAPP" as const },
-  { name: "Pizza Hut", sourceClientId: "Pizza Hut", serviceType: "WHATSAPP" as const },
+  // client_id values from INGLAB /clients API + source_client_name for nested filter
+  { name: "AIA Malaysia",      sourceClientId: "AIAMY",       sourceClientName: "AIA Malaysia",      serviceType: "WHATSAPP" as const },
+  { name: "Zurich Malaysia",   sourceClientId: "ZURICH",      sourceClientName: "Zurich Malaysia",   serviceType: "WHATSAPP" as const },
+  { name: "FWD Takaful",       sourceClientId: "FWD",         sourceClientName: "FWD Takaful",       serviceType: "WHATSAPP" as const },
+  { name: "Prudential Malaysia", sourceClientId: "PRUDENTIAL", sourceClientName: "Prudential Malaysia", serviceType: "WHATSAPP" as const },
+  { name: "Pizza Hut",         sourceClientId: "PIZZAHUT",    sourceClientName: "Pizza Hut",         serviceType: "WHATSAPP" as const },
 ];
 
 async function main() {
@@ -24,7 +29,6 @@ async function main() {
   let notFound = 0;
 
   for (const fix of FIXES) {
-    // Find DataSource by name pattern
     const ds = await db.collection("dataSources").findOne({
       name: { $regex: `INGLAB.*${fix.name}`, $options: "i" },
     });
@@ -35,12 +39,20 @@ async function main() {
       continue;
     }
 
-    const result = await db.collection("dataSources").updateOne(
+    await db.collection("dataSources").updateOne(
       { _id: ds._id },
-      { $set: { sourceClientId: fix.sourceClientId, serviceType: fix.serviceType } }
+      {
+        $set: {
+          sourceClientId: fix.sourceClientId,
+          sourceClientName: fix.sourceClientName,
+          serviceType: fix.serviceType,
+        },
+      }
     );
 
-    console.log(`✅ ${ds.name}: sourceClientId → "${fix.sourceClientId}", serviceType → "${fix.serviceType}"`);
+    console.log(
+      `✅ ${ds.name}: sourceClientId="${fix.sourceClientId}", sourceClientName="${fix.sourceClientName}"`
+    );
     updated++;
   }
 

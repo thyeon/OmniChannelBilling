@@ -79,11 +79,13 @@ export async function POST(
         });
       }
     } else {
-      // Build payload from line items
+      // Build payload from line items — pass serviceId/projectName for correct INGLAB master description
       const buildResult = await buildAutoCountInvoice({
         customer,
         billingMonth: invoice.billingMonth,
         lineItems: invoice.lineItems,
+        serviceId: invoice.serviceId,
+        projectName: invoice.projectName,
       });
 
       if (!buildResult.success || !buildResult.payload) {

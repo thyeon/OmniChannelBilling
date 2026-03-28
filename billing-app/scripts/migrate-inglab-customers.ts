@@ -17,7 +17,8 @@ const INGLAB_BASE_URL = "https://partner-billing-inglab.hypedmind.ai/partner-api
 interface IngLabCustomer {
   name: string;
   displayName: string;
-  sourceClientId: string;
+  sourceClientId: string;      // INGLAB client_id for ?client_id= URL param
+  sourceClientName: string;    // INGLAB source_client_name for nested result filter
   serviceType: "SMS" | "WHATSAPP";
 }
 
@@ -25,31 +26,36 @@ const INGLAB_CUSTOMERS: IngLabCustomer[] = [
   {
     name: "AIA Malaysia",
     displayName: "AIA Malaysia",
-    sourceClientId: "AIA Malaysia",
+    sourceClientId: "AIAMY",
+    sourceClientName: "AIA Malaysia",
     serviceType: "WHATSAPP",
   },
   {
     name: "Zurich Malaysia",
     displayName: "Zurich Malaysia",
-    sourceClientId: "Zurich Malaysia",
+    sourceClientId: "ZURICH",
+    sourceClientName: "Zurich Malaysia",
     serviceType: "WHATSAPP",
   },
   {
     name: "FWD Takaful",
     displayName: "FWD Takaful",
-    sourceClientId: "FWD Takaful",
+    sourceClientId: "FWD",
+    sourceClientName: "FWD Takaful",
     serviceType: "WHATSAPP",
   },
   {
     name: "Prudential Malaysia",
     displayName: "Prudential Malaysia",
-    sourceClientId: "Prudential Malaysia",
+    sourceClientId: "PRUDENTIAL",
+    sourceClientName: "Prudential Malaysia",
     serviceType: "WHATSAPP",
   },
   {
     name: "Pizza Hut",
     displayName: "Pizza Hut",
-    sourceClientId: "Pizza Hut",
+    sourceClientId: "PIZZAHUT",
+    sourceClientName: "Pizza Hut",
     serviceType: "WHATSAPP",
   },
 ];
@@ -84,10 +90,10 @@ async function main() {
 
     console.log(`\n📋 Found customer: ${inglab.name} (${customer.id})`);
 
-    // Check if INGLAB DataSource already exists for this customer
+    // Check if INGLAB DataSource already exists for this customer (match by customerId + name pattern)
     const existingDs = await db.collection("dataSources").findOne({
       customerId: customer.id,
-      sourceClientId: inglab.sourceClientId,
+      name: { $regex: `INGLAB.*${inglab.name}`, $options: "i" },
     });
 
     if (existingDs) {
@@ -110,6 +116,7 @@ async function main() {
         token: sharedToken,
       },
       sourceClientId: inglab.sourceClientId,
+      sourceClientName: inglab.sourceClientName,
       nestedResponseConfig: {
         itemsPath: "items",
         lineItemsPath: "line_items",

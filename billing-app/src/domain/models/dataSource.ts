@@ -99,8 +99,10 @@ export interface DataSource {
   requestTemplate?: RequestTemplate;
   retryPolicy?: RetryPolicy;
   fallbackValues?: FallbackValues;
-  // INGLAB: client_id for ?client_id= query param on INGLAB API
+  // INGLAB: client_id for ?client_id= URL query param on INGLAB API (e.g., "PIZZAHUT", "AIAMY")
   sourceClientId?: string;
+  // INGLAB: source_client_name for filtering nested results (e.g., "Pizza Hut", "AIA Malaysia")
+  sourceClientName?: string;
   // INGLAB: nested response config for parsing nested line items (e.g. items[].line_items[])
   nestedResponseConfig?: NestedResponseConfig;
   isActive: boolean;
