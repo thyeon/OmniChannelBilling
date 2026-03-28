@@ -157,8 +157,9 @@ export async function buildAutoCountInvoice(
           : (customerMapping?.defaultUnitPrice ?? accountBookMapping?.defaultUnitPrice ?? lineItem.rate)
       );
 
-    const resolvedDescription = (lineItem.description || lineItem.descriptionDetail)
-      ? `${lineItem.description || ""}${lineItem.descriptionDetail ? ` - ${lineItem.descriptionDetail}` : ""} - ${billingMonth}`
+    // description: short item name only (descriptionDetail / exchange rate info belongs in furtherDescription)
+    const resolvedDescription = lineItem.description
+      ? `${lineItem.description} - ${billingMonth}`
       : lineDescription;
 
     // LUMP_SUM: qty=1, unitPrice=totalCharge (avoids AutoCount 2dp rounding)
@@ -167,14 +168,20 @@ export async function buildAutoCountInvoice(
     const qty = billingMode === "LUMP_SUM" ? 1 : lineItem.billableCount;
     const unitPrice = resolvedUnitPrice;
 
-    // Resolve furtherDescription: customer mapping → account book mapping → account book default → global default
-    const furtherDescTemplate =
-      (customerMapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
-      (mapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
-      accountBook.furtherDescriptionTemplate ||
-      DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
-
-    const resolvedFurtherDesc = resolveTemplate(furtherDescTemplate, templateContext, lineItem);
+    // Resolve furtherDescription: INGLAB descriptionDetail (exchange rate info) takes priority,
+    // then customer mapping template → account book mapping template → account book default → global default
+    let resolvedFurtherDesc: string | undefined;
+    if (lineItem.descriptionDetail) {
+      // INGLAB provides structured billing info (exchange rate, per-message cost, billing period)
+      resolvedFurtherDesc = lineItem.descriptionDetail;
+    } else {
+      const furtherDescTemplate =
+        (customerMapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
+        (mapping as { furtherDescriptionTemplate?: string } | null)?.furtherDescriptionTemplate ||
+        accountBook.furtherDescriptionTemplate ||
+        DEFAULT_FURTHER_DESCRIPTION_TEMPLATE;
+      resolvedFurtherDesc = resolveTemplate(furtherDescTemplate, templateContext, lineItem);
+    }
 
     details.push({
       productCode: resolvedProductCode,
