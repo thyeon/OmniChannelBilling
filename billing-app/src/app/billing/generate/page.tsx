@@ -82,6 +82,7 @@ interface HistoryRecord {
   customerName: string;
   status: string;
   autocountRefId?: string;
+  tempDocNo?: string;
   createdAt: string;
 }
 
@@ -256,7 +257,7 @@ export default function GeneratePage(): React.ReactElement {
             invoices.length === 1
               ? `Invoice generated successfully.`
               : `${invoices.length} invoices generated (${invoices.map((i) => i.serviceId || "DEFAULT").join(", ")}).`,
-          docNo: invoices[0].autocountRefId,
+          docNo: invoices[0].tempDocNo ?? invoices[0].autocountRefId,
         });
         fetchHistory();
       }
@@ -643,7 +644,7 @@ export default function GeneratePage(): React.ReactElement {
                         {record.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono">{record.autocountRefId || "-"}</TableCell>
+                    <TableCell className="font-mono">{record.tempDocNo ?? record.autocountRefId ?? "-"}</TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(record.createdAt).toLocaleDateString()}
                     </TableCell>
