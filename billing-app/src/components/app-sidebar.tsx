@@ -40,15 +40,20 @@ const NAV_SECTIONS: NavSection[] = [
   {
     label: "Billing",
     items: [
+      { label: "Invoice Generation", href: "/billing/generate", icon: <FileText className="h-4 w-4" /> },
+    ],
+  },
+  {
+    label: "Deprecated",
+    items: [
       { label: "Overview", href: "/billing", icon: <Receipt className="h-4 w-4" /> },
       { label: "Coway Invoice Generation", href: "/billing/generate-invoice", icon: <FileText className="h-4 w-4" /> },
-      { label: "Invoice Generation", href: "/billing/generate", icon: <FileText className="h-4 w-4" /> },
+      { label: "INGLAB Export", href: "/billing-export", icon: <FileText className="h-4 w-4" /> },
     ],
   },
   {
     label: "Export",
     items: [
-      { label: "INGLAB Export", href: "/billing-export", icon: <FileText className="h-4 w-4" /> },
       { label: "History", href: "/history", icon: <History className="h-4 w-4" /> },
       { label: "Settings", href: "/autocount-settings", icon: <Settings className="h-4 w-4" /> },
     ],
@@ -61,6 +66,7 @@ export function AppSidebar(): React.ReactElement {
     Admin: true,
     Billing: true,
     Export: true,
+    Deprecated: true,
   });
 
   function toggleSection(label: string) {
