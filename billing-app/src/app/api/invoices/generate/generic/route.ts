@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     // Generate one invoice per group
     const invoices = [];
-    for (const [serviceId, groupItems] of groups) {
+    for (const [serviceId, groupItems] of Array.from(groups.entries())) {
       const projectName = groupItems[0]?.projectName || "";
 
       // Build AutoCount invoice payload with serviceId/projectName overrides
