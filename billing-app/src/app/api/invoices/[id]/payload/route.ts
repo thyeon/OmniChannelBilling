@@ -101,12 +101,15 @@ export async function PUT(
     // Validate payload is valid JSON
     let payloadString: string;
     try {
-      payloadString = typeof body.payload === 'string'
-        ? body.payload
-        : JSON.stringify(body.payload, null, 2);
+      if (typeof body.payload === 'string') {
+        JSON.parse(body.payload); // validate it's valid JSON
+        payloadString = body.payload;
+      } else {
+        payloadString = JSON.stringify(body.payload, null, 2);
+      }
     } catch {
       return NextResponse.json(
-        { error: "Invalid payload format" },
+        { error: "Invalid JSON format" },
         { status: 400 }
       );
     }

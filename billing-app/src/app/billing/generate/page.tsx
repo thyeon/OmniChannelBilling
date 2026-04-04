@@ -639,7 +639,7 @@ export default function GeneratePage(): React.ReactElement {
                         {record.status}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono">{record.tempDocNo ?? record.autocountRefId ?? "-"}</TableCell>
+                    <TableCell className="font-mono">{record.autocountRefId ?? record.tempDocNo ?? "-"}</TableCell>
                     <TableCell className="text-muted-foreground">
                       {new Date(record.createdAt).toLocaleDateString()}
                     </TableCell>

@@ -71,8 +71,11 @@ export async function updateInvoice(
   updates: Partial<InvoiceHistory>
 ): Promise<InvoiceHistory | null> {
   const collection = await getCollection();
+  const filter = ObjectId.isValid(id)
+    ? { _id: new ObjectId(id) }
+    : { id };
   const result = await collection.findOneAndUpdate(
-    { id },
+    filter,
     { $set: updates },
     { returnDocument: "after" }
   );
