@@ -52,7 +52,7 @@ async function fetchWithRetry(
 
 /** Create an error line item. */
 function makeErrorLineItem(dataSource: DataSource, customer: Customer, message: string): InvoiceLineItem {
-  const rate = customer.rates?.[dataSource.serviceType] || 0;
+  const rate = Number(customer.rates?.[dataSource.serviceType]) || 0;
   return {
     dataSourceId: dataSource.id,
     service: dataSource.serviceType,
@@ -105,7 +105,7 @@ async function fetchBillableForDataSource(
     failed?: number,
     lineIdentifier?: string
   ): InvoiceLineItem {
-    const rate = customer.rates?.[dataSource.serviceType] || 0;
+    const rate = Number(customer.rates?.[dataSource.serviceType]) || 0;
     return {
       dataSourceId: dataSource.id,
       lineIdentifier,

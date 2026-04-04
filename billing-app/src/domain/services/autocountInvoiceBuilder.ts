@@ -189,7 +189,7 @@ export async function buildAutoCountInvoice(
     // ITEMIZED: qty=billableCount, unitPrice=defaultUnitPrice from mapping (customer mapping
     //            → account book mapping → lineItem.rate fallback)
     const qty = billingMode === "LUMP_SUM" ? 1 : lineItem.billableCount;
-    const unitPrice = resolvedUnitPrice;
+    const unitPrice = Number(resolvedUnitPrice);
 
     // Resolve furtherDescription: INGLAB descriptionDetail (exchange rate info) takes priority,
     // then customer mapping template → account book mapping template → account book default → global default
